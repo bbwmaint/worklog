@@ -203,6 +203,8 @@ var TECHS=["Praful", "Lahcen", "Viktor", "Adam", "Abin", "Akshay", "Anupam", "Ma
 var ADMIN="Praful";
 var APIN="0319";
 var MAILTO="maintenance@brunswickbierworks.com";
+var SB="https://mdiyisxvxdywfrspigpt.supabase.co";
+var SBKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kaXlpc3h2eGR5d2Zyc3BpZ3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwMDU2MDIsImV4cCI6MjA5MzU4MTYwMn0.NTf0Ahny8ZbDxrZRZaNGD6KtV1jw1zALYdV8O5T8iZM";
 
 var TMPLS=[
   {id:'t1',name:'Boiler Water Check',asset:'Boiler',code:'BBWBR1',type:'pm',desc:'Boiler water level checked - within normal range, feed pump operating correctly'},
@@ -343,9 +345,13 @@ function loginUser(name){
   gid('uav').textContent=name.charAt(0);
   gid('unm').textContent=name;
   gid('exp-m') && (gid('exp-m').value=new Date().getMonth());
+  loadFromSB();
+  loadUtilFromSB();
   renderAll();
   showPage('pg-app');
   checkUBanner();
+  // Refresh every 30 seconds
+  setInterval(function(){if(user)loadFromSB();},30000);
   // Long press chip for admin
   var chip=gid('uchip');
   if(chip){
@@ -527,15 +533,105 @@ function submitEntry(){
   var entry={id:editId||Date.now(),date:td(),shift:isDay()?'Day':'Night',type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
   if(editId){var ei=entries.findIndex(function(x){return x.id===editId;});if(ei>=0)entries[ei]=entry;var ai=allE.findIndex(function(x){return x.id===editId;});if(ai>=0)allE[ai]=entry;}
   else{entries.push(entry);allE.push(entry);}
-  save();closeSheet();renderAll();checkUBanner();
+  save();
+  syncEntry(entry);
+  closeSheet();renderAll();checkUBanner();
 }
 
 function save(){
+  // Keep localStorage as backup
   try{localStorage.setItem('bbw_e',JSON.stringify(entries));}catch(e){}
   try{localStorage.setItem('bbw_ae',JSON.stringify(allE.slice(0,3000)));}catch(e){}
 }
 
+function sbFetch(path,opts){
+  opts=opts||{};
+  var headers={'apikey':SBKEY,'Authorization':'Bearer '+SBKEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  Object.keys(opts.headers||{}).forEach(function(k){headers[k]=opts.headers[k];});
+  return fetch(SB+'/rest/v1/'+path,{method:opts.method||'GET',headers:headers,body:opts.body||undefined});
+}
+
+function syncEntry(e){
+  // Save to Supabase
+  var body=JSON.stringify({
+    date:e.date,shift:e.shift,type:e.type,priority:e.priority||null,
+    asset_name:e.assetName||null,asset_code:e.assetCode||null,
+    description:e.desc||null,start_time:e.start||null,end_time:e.end||null,
+    downtime_hrs:e.dt||0,part_name:e.partName||null,part_qty:e.partQty||null,
+    who:e.who||null,shift_note:e.shiftNote||null,
+    logged_at:e.loggedAt||new Date().toISOString()
+  });
+  sbFetch('bbw_worklog',{method:'POST',body:body})
+    .then(function(r){return r.json();})
+    .then(function(d){if(d&&d[0]&&d[0].id){e.sbId=d[0].id;save();}})
+    .catch(function(err){console.warn('Sync failed',err);});
+}
+
+function deleteFromSB(sbId){
+  if(!sbId)return;
+  sbFetch('bbw_worklog?id=eq.'+sbId,{method:'DELETE',headers:{'Prefer':'return=minimal'}}).catch(function(){});
+}
+
+function loadFromSB(){
+  var today=td();
+  // Load today and yesterday
+  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  var yd=yesterday.toISOString().split('T')[0];
+  sbFetch('bbw_worklog?date=gte.'+yd+'&order=logged_at.asc')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data))return;
+      // Merge with local - remote wins
+      data.forEach(function(r){
+        var existing=allE.findIndex(function(e){return e.sbId===r.id;});
+        var entry={
+          id:r.id,sbId:r.id,date:r.date,shift:r.shift,type:r.type,priority:r.priority||'',
+          assetName:r.asset_name||'',assetCode:r.asset_code||'',desc:r.description||'',
+          start:r.start_time||'',end:r.end_time||'',dt:r.downtime_hrs||0,
+          partName:r.part_name||'',partQty:r.part_qty||'1',who:r.who||'',
+          shiftNote:r.shift_note||'',loggedAt:r.logged_at,photo:'',synced:true
+        };
+        if(existing>=0){allE[existing]=entry;}else{allE.push(entry);}
+      });
+      // Rebuild current shift entries from allE
+      var isday=isDay();
+      entries=allE.filter(function(e){return e.date===today&&e.shift===(isday?'Day':'Night');});
+      save();
+      renderAll();
+      checkUBanner();
+    })
+    .catch(function(err){console.warn('Load from SB failed',err);});
+}
+
+// Sync utility readings
+function syncUtil(rec){
+  sbFetch('bbw_util_log?date=eq.'+rec.date,{method:'GET'})
+    .then(function(r){return r.json();})
+    .then(function(existing){
+      var body=JSON.stringify({date:rec.date,time:rec.time,by_who:rec.by,w3:rec.w3||null,w5:rec.w5||null,gas:rec.gas||null,elec:rec.elec||null,boil:rec.boil||null,past:rec.past||null,cool:rec.cool||null,steam:rec.steam||null});
+      if(existing&&existing.length>0){
+        return sbFetch('bbw_util_log?date=eq.'+rec.date,{method:'PATCH',body:body,headers:{'Prefer':'return=minimal'}});
+      }else{
+        return sbFetch('bbw_util_log',{method:'POST',body:body});
+      }
+    })
+    .catch(function(err){console.warn('Util sync failed',err);});
+}
+
+function loadUtilFromSB(){
+  sbFetch('bbw_util_log?order=date.desc&limit=30')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data))return;
+      utilLogs=data.map(function(r){return {date:r.date,time:r.time,by:r.by_who,w3:r.w3,w5:r.w5,gas:r.gas,elec:r.elec,boil:r.boil,past:r.past,cool:r.cool,steam:r.steam};});
+      try{localStorage.setItem('bbw_util',JSON.stringify(utilLogs));}catch(e){}
+    })
+    .catch(function(){});
+}
+
 function delEntry(id){
+  var entry=allE.find(function(e){return e.id===id;});
+  if(entry&&entry.sbId)deleteFromSB(entry.sbId);
   entries=entries.filter(function(e){return e.id!==id;});
   allE=allE.filter(function(e){return e.id!==id;});
   save();renderAll();
@@ -653,6 +749,7 @@ function saveUtil(){
   var idx=utilLogs.findIndex(function(r){return r.date===td();});
   if(idx>=0)utilLogs[idx]=rec;else utilLogs.unshift(rec);
   try{localStorage.setItem('bbw_util',JSON.stringify(utilLogs));}catch(e){}
+  syncUtil(rec);
   renderUtil();
 }
 
@@ -724,14 +821,133 @@ function showSendModal(){
 function confirmSend(send){
   gid('send-modal').style.display='none';
   if(!send)return;
-  manualSend();
-  entries=[];save();renderAll();
+  generateAndSendReport();
 }
 
 function manualSend(){
-  var b=buildReport();
-  var subj=encodeURIComponent('BBW Shift Report - '+(isDay()?'Day':'Night')+' - '+td());
-  window.location.href='mailto:'+MAILTO+'?subject='+subj+'&body='+encodeURIComponent(b);
+  generateAndSendReport();
+}
+
+function generateAndSendReport(){
+  // Get ALL entries for current shift from allE (all technicians)
+  var shiftEntries = allE.filter(function(e){
+    return e.date===td() && e.shift===(isDay()?'Day':'Night');
+  });
+
+  // Sort by logged time
+  shiftEntries.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
+
+  var shiftLabel = isDay()?'Day Shift (07:00-19:00)':'Night Shift (19:00-07:00)';
+  var techs = [...new Set(shiftEntries.map(function(e){return e.who;}))].filter(Boolean);
+  var totalDT = shiftEntries.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+
+  // Categorise
+  var done     = shiftEntries.filter(function(e){return e.type==='done'||e.type==='pm';});
+  var ongoing  = shiftEntries.filter(function(e){return e.type==='ongoing';});
+  var issues   = shiftEntries.filter(function(e){return e.type==='issue';});
+  var parts    = shiftEntries.filter(function(e){return e.type==='part';});
+  var notes    = shiftEntries.filter(function(e){return e.type==='note';});
+
+  // Build HTML for print/PDF
+  var W = window.open('','_blank','width=800,height=900');
+  if(!W){alert('Please allow popups to generate PDF');return;}
+
+  var logo = document.querySelector('img[src^="data:image"]');
+  var logoSrc = logo ? logo.src : '';
+
+  var rows = function(items, cols){
+    if(!items.length) return '<tr><td colspan="'+cols+'" style="padding:10px;color:#999;font-style:italic">None</td></tr>';
+    return items.map(function(e){
+      var time = e.start?(e.start+(e.end?' - '+e.end:'')):'';
+      var dt = e.dt>0?e.dt+'h':'';
+      if(cols===4){
+        return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+
+          (e.assetName||'General')+(e.assetCode?' <span style="color:#999;font-size:11px">('+e.assetCode+')</span>':'')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee">'+sanitize(e.desc||'')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666;white-space:nowrap">'+time+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666">'+e.who+'</td></tr>';
+      } else if(cols===3){
+        var pcolor = e.priority==='urgent'?'#dc2626':e.priority==='high'?'#ea580c':e.priority==='monitor'?'#d97706':'#2563eb';
+        return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee"><span style="background:'+pcolor+'22;color:'+pcolor+';padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">'+(e.priority||'info').toUpperCase()+'</span></td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+
+          (e.assetName||'General')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee">'+sanitize(e.desc||'')+'</td></tr>';
+      } else {
+        return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+sanitize(e.partName||e.desc||'')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee">'+sanitize(e.assetName||'')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee;text-align:center">'+sanitize(e.partQty||'1')+'</td>'+
+          '<td style="padding:8px 10px;border-bottom:1px solid #eee">'+e.who+'</td></tr>';
+      }
+    }).join('');
+  };
+
+  function sanitize(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function section(title, color, headers, items, cols){
+    var thead = headers.map(function(h){return '<th style="padding:9px 10px;text-align:left;background:#f8f8f8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid '+color+'">'+h+'</th>';}).join('');
+    return '<div style="margin-bottom:28px">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+      '<div style="width:4px;height:22px;background:'+color+';border-radius:2px"></div>'+
+      '<h3 style="margin:0;font-size:15px;font-weight:700;color:#1a1a1e">'+title+'</h3>'+
+      '<span style="font-size:13px;color:#999">('+items.length+')</span></div>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+thead+'</tr></thead>'+
+      '<tbody>'+rows(items,cols)+'</tbody></table></div>';
+  }
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">'+
+    '<title>BBW Shift Report - '+shiftLabel+' - '+td()+'</title>'+
+    '<style>'+
+    'body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:0;padding:0;color:#1a1a1e;background:#fff}'+
+    '.page{max-width:800px;margin:0 auto;padding:32px}'+
+    'table{border-radius:8px;overflow:hidden}'+
+    'tr:hover td{background:#fafafa}'+
+    '@media print{.no-print{display:none!important}.page{padding:16px}}'+
+    '</style></head><body>'+
+    '<div class="page">'+
+
+    // HEADER
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #111;margin-bottom:24px">'+
+    '<div>'+
+    (logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:12px;display:block" alt="BBW">':'')+
+    '<h1 style="margin:0;font-size:22px;font-weight:800;color:#111">Shift Handover Report</h1>'+
+    '<div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &nbsp;|&nbsp; '+td()+'</div>'+
+    '</div>'+
+    '<div style="text-align:right">'+
+    '<div style="font-size:13px;color:#666;margin-bottom:4px">Technicians on shift</div>'+
+    '<div style="font-size:14px;font-weight:600;color:#111">'+(techs.join(', ')||'—')+'</div>'+
+    '</div></div>'+
+
+    // STATS ROW
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">'+
+    '<div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#111">'+shiftEntries.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Total Tasks</div></div>'+
+    '<div style="background:#fef2f2;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#dc2626">'+issues.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Open Issues</div></div>'+
+    '<div style="background:#fff7ed;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ea580c">'+parts.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Parts Needed</div></div>'+
+    '<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#d97706">'+totalDT+'h</div><div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:2px">Downtime</div></div>'+
+    '</div>'+
+
+    // SECTIONS
+    (issues.length?
+      section('Open Issues — Next Shift Must Action','#dc2626',['Priority','Asset','Description'],issues,3):
+      '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:28px;font-weight:600;color:#16a34a;font-size:14px">&#10003; No open issues — clean handover</div>')+
+
+    section('Work Completed This Shift','#16a34a',['Asset','Description','Time','Technician'],done,4)+
+
+    (ongoing.length?section('Work In Progress — Continue Next Shift','#d97706',['Asset','Description','Time','Technician'],ongoing,4):'')+
+
+    (parts.length?section('Parts to Order','#ea580c',['Part Name','Asset','Qty','Requested By'],parts,4):'')+
+
+    (notes.length?section('Notes','#2563eb',['Asset','Note','Time','Technician'],notes,4):'')+
+
+    // FOOTER
+    '<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center">'+
+    '<div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div>'+
+    '<button onclick="window.print()" class="no-print" style="padding:10px 20px;background:#111;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">&#128438; Save as PDF</button>'+
+    '</div>'+
+    '</div></body></html>';
+
+  W.document.write(html);
+  W.document.close();
+  setTimeout(function(){W.focus();},300);
 }
 
 function doExport(){

@@ -552,7 +552,6 @@ function sbFetch(path,opts){
 }
 
 function syncEntry(e){
-  console.log('BBW: Syncing entry to Supabase:', e.type, e.assetName);
   var body=JSON.stringify({
     date:e.date,shift:e.shift,type:e.type,priority:e.priority||null,
     asset_name:e.assetName||null,asset_code:e.assetCode||null,
@@ -576,7 +575,6 @@ function loadFromSB(){
   var today=td();
   var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   var yd=yesterday.toISOString().split('T')[0];
-  console.log('BBW: Loading from Supabase...');
   sbFetch('bbw_worklog?date=gte.'+yd+'&order=logged_at.asc')
     .then(function(r){
       console.log('BBW: Supabase response status:', r.status);
@@ -584,7 +582,7 @@ function loadFromSB(){
     })
     .then(function(data){
       console.log('BBW: Got', Array.isArray(data)?data.length:'ERROR', 'entries from Supabase', data);
-      if(!Array.isArray(data)){console.error('BBW: Supabase error:', data);return;}
+      if(!Array.isArray(data)){return;}
       // Merge with local - remote wins
       data.forEach(function(r){
         var existing=allE.findIndex(function(e){return e.sbId===r.id;});

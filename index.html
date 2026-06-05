@@ -893,9 +893,12 @@ function renderLog(){
   // PMs due today that haven't been logged by ANYONE in last 24hrs
   var myPMs=PMS.filter(function(pm){
     if(!isDueToday2(pm))return false;
+    // Only show PMs assigned to this user
+    var assignee=getAssignee(pm);
+    if(assignee&&assignee!==user&&assignee!=='Unassigned')return false;
     // Check not already logged by anyone today
     var alreadyDone=allE.some(function(e){
-      return e.type==='pm'&&e.desc&&e.desc.indexOf(pm.code)>=0&&e.date===today;
+      return (e.type==='pm'||e.type==='completed')&&e.desc&&e.desc.indexOf(pm.code)>=0&&e.date===today;
     });
     return !alreadyDone;
   });

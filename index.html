@@ -772,7 +772,7 @@ function renderAll(){renderLog();renderShift();checkUBanner();}
 
 function card(e,mine){
   var colors={done:'#16a34a',ongoing:'#d97706',issue:'#dc2626',pm:'#7c3aed',part:'#ea580c',note:'#2563eb'};
-  var labels={done:T('done'),ongoing:T('ongoing'),issue:T('issue'),pm:T('pm'),part:T('part'),note:T('note')};
+  var labels={done:T('done'),ongoing:T('ongoing'),issue:T('issue'),pm:T('pmtype'),part:T('part'),note:T('note')};
   var c=colors[e.type]||'#666';
   var time=e.start?(e.start+(e.end?'-'+e.end:'')):'';
   var html='<div style="background:#1a1a1a;border-radius:12px;padding:13px 14px;margin-bottom:9px;border-left:4px solid '+c+';position:relative">';
@@ -1176,7 +1176,7 @@ function openLB(src,lbl){var lb=gid('lb');gid('lb-img').src=src;gid('lb-lbl').te
 var lang = 'en';
 var TRANS = {
   en: {
-    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', done:'Done', ongoing:'Ongoing', issue:'Issue', pm2:'PM Done', part:'Part Needed', note:'Note',
+    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Done', ongoing:'Ongoing', issue:'Issue', part:'Part Needed', note:'Note',
     signin: 'Sign In', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
     createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
     hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
@@ -1215,7 +1215,8 @@ var TRANS = {
     manualsend: '\u0412\u0456\u0434\u043a\u0440\u0438\u0442\u0438 Outlook', monthly: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442', month: '\u041c\u0456\u0441\u044f\u0446\u044c', year: '\u0420\u0456\u043a',
     workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
     shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
-    signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
+    signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',,
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Проблема', part: 'Деталь', note: 'Нотатка'
   }
 };
 

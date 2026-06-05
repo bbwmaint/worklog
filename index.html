@@ -250,6 +250,53 @@ var pmOverrides={}, user=null, ctype='', cprio='', photo='', selA=null, editId=n
 var entries=[], allE=[], utilLogs=[];
 var pbuf='', puser='', pstep='name', psfirst='';
 
+var lang = 'en';
+var TRANS = {
+  en: {
+    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Done', ongoing:'Ongoing', issue:'Issue', part:'Part Needed', note:'Note',
+    signin: 'Sign In', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
+    createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
+    hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
+    incorrect: 'Incorrect PIN', nomatch: 'PINs do not match', tryagain: 'Try again',
+    addlog: 'Add to Log', cancel: 'Cancel', logwork: 'Log Work', editentry: 'Edit Entry',
+    templates: 'Templates', quickadd: 'Quick Add', type: 'Type', asset: 'Asset',
+    whatdone: 'What was done / Issue', start: 'Start', end: 'End', dthrs: 'DT hrs',
+    partnumber: 'Part name / number', priority: 'Priority', photo: 'Photo (optional)',
+    tapphoто: '\uD83D\uDCF7 Tap to add photo', photoadded: '\uD83D\uDCF7 Photo added',
+    nothing: 'Nothing logged yet', tapplus: 'Tap + to log your first task',
+    noshift: 'No entries this shift yet', noprev: 'No previous shift data',
+    tasks: 'Tasks', issues: 'Issues', parts: 'Parts', dthrs2: 'DT hrs',
+    handover: 'Shift Handover', nourgent: 'No urgent issues handed over',
+    ackbtn: 'I have read this handover', savereading: 'Save Readings',
+    manualsend: 'Open Outlook', monthly: 'Monthly Export', month: 'Month', year: 'Year',
+    workcsv: 'Work Log CSV', utilcsv: 'Utilities CSV', recap: 'Monthly Recap Email',
+    shiftreport: 'Send Shift Report?', sendnow: 'Send Now', skip: 'Skip',
+    signout: 'Sign out?', back: '\u2190 Back',
+  },
+  uk: {
+    mylog: '\u0416\u0443\u0440\u043d\u0430\u043b', shift: '\u0417\u043c\u0456\u043d\u0430', prev: '\u041f\u043e\u043f\u0435\u0440\u0435\u0434\u043d\u044f', util: '\u041a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0456', more: '\u0411\u0456\u043b\u044c\u0448\u0435',
+    signin: '\u0423\u0432\u0456\u0439\u0442\u0438', selectname: '\u0412\u0438\u0431\u0435\u0440\u0456\u0442\u044c \u0441\u0432\u043e\u0454 \u0456\u043c\u2019\u044f', enterpin: '\u0412\u0432\u0435\u0434\u0456\u0442\u044c 4-\u0446\u0438\u0444\u0440\u043e\u0432\u0438\u0439 PIN',
+    createpin: '\u0421\u0442\u0432\u043e\u0440\u0456\u0442\u044c PIN', confirmpin: '\u041f\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0456\u0442\u044c PIN',
+    hello: '\u041f\u0440\u0438\u0432\u0456\u0442, ', welcome: '\u0414\u043e\u0431\u0440\u0435 \u043f\u043e\u0436\u0430\u043b\u0443\u0432\u0430\u0442\u0438, ', enterpin2: '\u0412\u0432\u0435\u0434\u0456\u0442\u044c PIN', createpin2: '\u0421\u0442\u0432\u043e\u0440\u0456\u0442\u044c PIN',
+    incorrect: '\u041d\u0435\u0432\u0456\u0440\u043d\u0438\u0439 PIN', nomatch: 'PIN \u043d\u0435 \u0441\u0431\u0456\u0433\u0430\u0454\u0442\u044c\u0441\u044f', tryagain: '\u0421\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0449\u0435',
+    addlog: '\u0414\u043e\u0434\u0430\u0442\u0438', cancel: '\u0421\u043a\u0430\u0441\u0443\u0432\u0430\u0442\u0438', logwork: '\u0417\u0430\u043f\u0438\u0441\u0430\u0442\u0438 \u0440\u043e\u0431\u043e\u0442\u0443', editentry: '\u0420\u0435\u0434\u0430\u0433\u0443\u0432\u0430\u0442\u0438',
+    templates: '\u0428\u0430\u0431\u043b\u043e\u043d\u0438', quickadd: '\u0428\u0432\u0438\u0434\u043a\u0435 \u0434\u043e\u0434\u0430\u0432\u0430\u043d\u043d\u044f', type: '\u0422\u0438\u043f', asset: '\u0410\u043a\u0442\u0438\u0432',
+    whatdone: '\u0429\u043e \u0437\u0440\u043e\u0431\u043b\u0435\u043d\u043e / \u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0430', start: '\u041f\u043e\u0447\u0430\u0442\u043e\u043a', end: '\u041a\u0456\u043d\u0435\u0446\u044c', dthrs: '\u041f\u0440\u043e\u0441\u0442\u0456\u0439',
+    partnumber: '\u041d\u0430\u0437\u0432\u0430 / \u043d\u043e\u043c\u0435\u0440 \u0434\u0435\u0442\u0430\u043b\u0456', priority: '\u041f\u0440\u0456\u043e\u0440\u0438\u0442\u0435\u0442', photo: '\u0424\u043e\u0442\u043e (\u043d\u0435\u043e\u0431\u043e\u0432\u2019\u044f\u0437\u043a\u043e\u0432\u043e)',
+    tapphoто: '\uD83D\uDCF7 \u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c \u0434\u043b\u044f \u0444\u043e\u0442\u043e', photoadded: '\uD83D\uDCF7 \u0424\u043e\u0442\u043e \u0434\u043e\u0434\u0430\u043d\u043e',
+    nothing: '\u041d\u0456\u0447\u043e\u0433\u043e \u043d\u0435 \u0437\u0430\u043f\u0438\u0441\u0430\u043d\u043e', tapplus: '\u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c + \u0449\u043e\u0431 \u0434\u043e\u0434\u0430\u0442\u0438 \u0437\u0430\u043f\u0438\u0441',
+    noshift: '\u041d\u0435\u043c\u0430\u0454 \u0437\u0430\u043f\u0438\u0441\u0456\u0432 \u0446\u0456\u0454\u0457 \u0437\u043c\u0456\u043d\u0438', noprev: '\u041d\u0435\u043c\u0430\u0454 \u0434\u0430\u043d\u0438\u0445 \u043f\u043e\u043f\u0435\u0440\u0435\u0434\u043d\u044c\u043e\u0457 \u0437\u043c\u0456\u043d\u0438',
+    tasks: '\u0417\u0430\u0432\u0434\u0430\u043d\u043d\u044f', issues: '\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0438', parts: '\u0414\u0435\u0442\u0430\u043b\u0456', dthrs2: '\u041f\u0440\u043e\u0441\u0442\u0456\u0439',
+    handover: '\u041f\u0435\u0440\u0435\u0434\u0430\u0447\u0430 \u0437\u043c\u0456\u043d\u0438', nourgent: '\u041d\u0435\u043c\u0430\u0454 \u0442\u0435\u0440\u043c\u0456\u043d\u043e\u0432\u0438\u0445 \u043f\u0440\u043e\u0431\u043b\u0435\u043c',
+    ackbtn: '\u042f \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u0432 \u0446\u044e \u043f\u0435\u0440\u0435\u0434\u0430\u0447\u0443', savereading: '\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u043f\u043e\u043a\u0430\u0437\u043d\u0438\u043a\u0438',
+    manualsend: '\u0412\u0456\u0434\u043a\u0440\u0438\u0442\u0438 Outlook', monthly: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442', month: '\u041c\u0456\u0441\u044f\u0446\u044c', year: '\u0420\u0456\u043a',
+    workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
+    shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
+    signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Проблема', part: 'Деталь', note: 'Нотатка'
+  }
+};
+
 function gid(id){return document.getElementById(id);}
 function td(){return new Date().toISOString().split('T')[0];}
 function isDay(){var h=new Date().getHours();return h>=7&&h<19;}
@@ -1173,52 +1220,6 @@ function renderMore(){
 function openLB(src,lbl){var lb=gid('lb');gid('lb-img').src=src;gid('lb-lbl').textContent=lbl||'';lb.style.display='flex';}
 
 
-var lang = 'en';
-var TRANS = {
-  en: {
-    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Done', ongoing:'Ongoing', issue:'Issue', part:'Part Needed', note:'Note',
-    signin: 'Sign In', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
-    createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
-    hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
-    incorrect: 'Incorrect PIN', nomatch: 'PINs do not match', tryagain: 'Try again',
-    addlog: 'Add to Log', cancel: 'Cancel', logwork: 'Log Work', editentry: 'Edit Entry',
-    templates: 'Templates', quickadd: 'Quick Add', type: 'Type', asset: 'Asset',
-    whatdone: 'What was done / Issue', start: 'Start', end: 'End', dthrs: 'DT hrs',
-    partnumber: 'Part name / number', priority: 'Priority', photo: 'Photo (optional)',
-    tapphoто: '\uD83D\uDCF7 Tap to add photo', photoadded: '\uD83D\uDCF7 Photo added',
-    nothing: 'Nothing logged yet', tapplus: 'Tap + to log your first task',
-    noshift: 'No entries this shift yet', noprev: 'No previous shift data',
-    tasks: 'Tasks', issues: 'Issues', parts: 'Parts', dthrs2: 'DT hrs',
-    handover: 'Shift Handover', nourgent: 'No urgent issues handed over',
-    ackbtn: 'I have read this handover', savereading: 'Save Readings',
-    manualsend: 'Open Outlook', monthly: 'Monthly Export', month: 'Month', year: 'Year',
-    workcsv: 'Work Log CSV', utilcsv: 'Utilities CSV', recap: 'Monthly Recap Email',
-    shiftreport: 'Send Shift Report?', sendnow: 'Send Now', skip: 'Skip',
-    signout: 'Sign out?', back: '\u2190 Back',
-  },
-  uk: {
-    mylog: '\u0416\u0443\u0440\u043d\u0430\u043b', shift: '\u0417\u043c\u0456\u043d\u0430', prev: '\u041f\u043e\u043f\u0435\u0440\u0435\u0434\u043d\u044f', util: '\u041a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0456', more: '\u0411\u0456\u043b\u044c\u0448\u0435',
-    signin: '\u0423\u0432\u0456\u0439\u0442\u0438', selectname: '\u0412\u0438\u0431\u0435\u0440\u0456\u0442\u044c \u0441\u0432\u043e\u0454 \u0456\u043c\u2019\u044f', enterpin: '\u0412\u0432\u0435\u0434\u0456\u0442\u044c 4-\u0446\u0438\u0444\u0440\u043e\u0432\u0438\u0439 PIN',
-    createpin: '\u0421\u0442\u0432\u043e\u0440\u0456\u0442\u044c PIN', confirmpin: '\u041f\u0456\u0434\u0442\u0432\u0435\u0440\u0434\u0456\u0442\u044c PIN',
-    hello: '\u041f\u0440\u0438\u0432\u0456\u0442, ', welcome: '\u0414\u043e\u0431\u0440\u0435 \u043f\u043e\u0436\u0430\u043b\u0443\u0432\u0430\u0442\u0438, ', enterpin2: '\u0412\u0432\u0435\u0434\u0456\u0442\u044c PIN', createpin2: '\u0421\u0442\u0432\u043e\u0440\u0456\u0442\u044c PIN',
-    incorrect: '\u041d\u0435\u0432\u0456\u0440\u043d\u0438\u0439 PIN', nomatch: 'PIN \u043d\u0435 \u0441\u0431\u0456\u0433\u0430\u0454\u0442\u044c\u0441\u044f', tryagain: '\u0421\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u0449\u0435',
-    addlog: '\u0414\u043e\u0434\u0430\u0442\u0438', cancel: '\u0421\u043a\u0430\u0441\u0443\u0432\u0430\u0442\u0438', logwork: '\u0417\u0430\u043f\u0438\u0441\u0430\u0442\u0438 \u0440\u043e\u0431\u043e\u0442\u0443', editentry: '\u0420\u0435\u0434\u0430\u0433\u0443\u0432\u0430\u0442\u0438',
-    templates: '\u0428\u0430\u0431\u043b\u043e\u043d\u0438', quickadd: '\u0428\u0432\u0438\u0434\u043a\u0435 \u0434\u043e\u0434\u0430\u0432\u0430\u043d\u043d\u044f', type: '\u0422\u0438\u043f', asset: '\u0410\u043a\u0442\u0438\u0432',
-    whatdone: '\u0429\u043e \u0437\u0440\u043e\u0431\u043b\u0435\u043d\u043e / \u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0430', start: '\u041f\u043e\u0447\u0430\u0442\u043e\u043a', end: '\u041a\u0456\u043d\u0435\u0446\u044c', dthrs: '\u041f\u0440\u043e\u0441\u0442\u0456\u0439',
-    partnumber: '\u041d\u0430\u0437\u0432\u0430 / \u043d\u043e\u043c\u0435\u0440 \u0434\u0435\u0442\u0430\u043b\u0456', priority: '\u041f\u0440\u0456\u043e\u0440\u0438\u0442\u0435\u0442', photo: '\u0424\u043e\u0442\u043e (\u043d\u0435\u043e\u0431\u043e\u0432\u2019\u044f\u0437\u043a\u043e\u0432\u043e)',
-    tapphoто: '\uD83D\uDCF7 \u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c \u0434\u043b\u044f \u0444\u043e\u0442\u043e', photoadded: '\uD83D\uDCF7 \u0424\u043e\u0442\u043e \u0434\u043e\u0434\u0430\u043d\u043e',
-    nothing: '\u041d\u0456\u0447\u043e\u0433\u043e \u043d\u0435 \u0437\u0430\u043f\u0438\u0441\u0430\u043d\u043e', tapplus: '\u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c + \u0449\u043e\u0431 \u0434\u043e\u0434\u0430\u0442\u0438 \u0437\u0430\u043f\u0438\u0441',
-    noshift: '\u041d\u0435\u043c\u0430\u0454 \u0437\u0430\u043f\u0438\u0441\u0456\u0432 \u0446\u0456\u0454\u0457 \u0437\u043c\u0456\u043d\u0438', noprev: '\u041d\u0435\u043c\u0430\u0454 \u0434\u0430\u043d\u0438\u0445 \u043f\u043e\u043f\u0435\u0440\u0435\u0434\u043d\u044c\u043e\u0457 \u0437\u043c\u0456\u043d\u0438',
-    tasks: '\u0417\u0430\u0432\u0434\u0430\u043d\u043d\u044f', issues: '\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u0438', parts: '\u0414\u0435\u0442\u0430\u043b\u0456', dthrs2: '\u041f\u0440\u043e\u0441\u0442\u0456\u0439',
-    handover: '\u041f\u0435\u0440\u0435\u0434\u0430\u0447\u0430 \u0437\u043c\u0456\u043d\u0438', nourgent: '\u041d\u0435\u043c\u0430\u0454 \u0442\u0435\u0440\u043c\u0456\u043d\u043e\u0432\u0438\u0445 \u043f\u0440\u043e\u0431\u043b\u0435\u043c',
-    ackbtn: '\u042f \u043f\u0440\u043e\u0447\u0438\u0442\u0430\u0432 \u0446\u044e \u043f\u0435\u0440\u0435\u0434\u0430\u0447\u0443', savereading: '\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438 \u043f\u043e\u043a\u0430\u0437\u043d\u0438\u043a\u0438',
-    manualsend: '\u0412\u0456\u0434\u043a\u0440\u0438\u0442\u0438 Outlook', monthly: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442', month: '\u041c\u0456\u0441\u044f\u0446\u044c', year: '\u0420\u0456\u043a',
-    workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
-    shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
-    signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',,
-    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Проблема', part: 'Деталь', note: 'Нотатка'
-  }
-};
 
 function setLang(l){
   lang=l;

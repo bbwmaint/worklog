@@ -25,7 +25,7 @@
 
       <!-- STEP 1: DROPDOWN -->
       <div id="step-names">
-        <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Who are you?</div>
+        <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Please choose your name</div>
         <select id="name-select" onchange="onNameSelect(this.value)" style="width:100%;background:#222;border:1.5px solid #444;border-radius:10px;padding:14px 16px;font-size:17px;color:#fff;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer">
           <option value="" style="background:#222;color:#666">— Select your name —</option>
         </select>
@@ -132,60 +132,60 @@
   <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:16px" id="sheet-title">Log Work</div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Templates</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-templates">Templates</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="tpl-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Quick Add</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-quickadd">Quick Add</div>
     <div style="display:flex;flex-wrap:wrap;gap:7px" id="quick-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Type</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-type">Type</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="type-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Asset</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-asset">Asset</div>
     <input type="text" id="asearch" placeholder="Search asset..." oninput="filterA(this.value)" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
     <div id="alist" style="max-height:180px;overflow-y:auto;border:1px solid #333;border-radius:9px;background:#111"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">What was done / Issue</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-whatdone">What was done / Issue</div>
     <textarea id="f-desc" rows="3" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;resize:none;font-family:inherit"></textarea>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
     <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px">Start</div>
+      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-start">Start</div>
       <input type="time" id="f-start" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
     </div>
     <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px">End</div>
+      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-end">End</div>
       <input type="time" id="f-end" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
     </div>
     <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px">DT hrs</div>
+      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-dthrs">DT hrs</div>
       <input type="number" id="f-dt" min="0" step="0.25" placeholder="0.0" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
     </div>
   </div>
   <div id="dt-auto" style="display:none;background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:8px;padding:8px 12px;font-size:13px;color:#4ade80;margin-bottom:10px"></div>
 
   <div id="fg-part" style="display:none;margin-bottom:14px">
-    <div style="font-size:12px;color:#888;margin-bottom:5px">Part name / number</div>
+    <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-partnum">Part name / number</div>
     <input type="text" id="f-pname" placeholder="e.g. Bearing SKF-6205" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
     <input type="number" id="f-pqty" placeholder="Qty" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;font-family:monospace">
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Priority</div>
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-priority">Priority</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px" id="prio-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;color:#888;margin-bottom:6px">Photo (optional)</div>
+    <div style="font-size:12px;color:#888;margin-bottom:6px" id="lbl-photo">Photo (optional)</div>
     <div id="photo-area" onclick="document.getElementById('photo-in').click()" style="border:2px dashed #444;border-radius:9px;padding:14px;text-align:center;cursor:pointer;background:#222">
       <div style="font-size:14px;color:#888" id="photo-lbl">&#128247; Tap to add photo</div>
       <img id="photo-prev" style="display:none;max-width:100%;max-height:120px;border-radius:7px;margin-top:8px" alt="">
@@ -873,12 +873,11 @@ function renderLog(){
     if(w.indexOf('every 4 days')>=0&&dow==='Monday')return true;
     return false;
   }
+  // PMs due today that haven't been logged by ANYONE in last 24hrs
   var myPMs=PMS.filter(function(pm){
-    var assignee=getAssignee(pm);
-    if(assignee!==user)return false;
     if(!isDueToday2(pm))return false;
-    // Check not already logged
-    var alreadyDone=entries.some(function(e){
+    // Check not already logged by anyone today
+    var alreadyDone=allE.some(function(e){
       return e.type==='pm'&&e.desc&&e.desc.indexOf(pm.code)>=0&&e.date===today;
     });
     return !alreadyDone;
@@ -1243,13 +1242,19 @@ function setLang(l){
     if(el)el.textContent=TRANS[l][tabMap[t]]||el.textContent;
   });
   // Update static UI text
-  var UI={
-    'sheet-title': T('logwork')||'Log Work',
-    'submit-btn': T('addlog')||'Add to Log',
-    'pin-title': T('choosename')||'Please choose your name',
-    'pin-sub': T('selectname')||'Select your name to continue',
-  };
+  var LABELS_EN={'lbl-templates':'Templates','lbl-quickadd':'Quick Add','lbl-type':'Type','lbl-asset':'Asset','lbl-whatdone':'What was done / Issue','lbl-start':'Start','lbl-end':'End','lbl-dthrs':'DT hrs','lbl-partnum':'Part name / number','lbl-priority':'Priority','lbl-photo':'Photo (optional)','sheet-title':'Log Work','submit-btn':'Add to Log','pin-title':'Please choose your name'};
+  var LABELS_UK={'lbl-templates':'Шаблони','lbl-quickadd':'Швидке додавання','lbl-type':'Тип','lbl-asset':'Актив','lbl-whatdone':'Що зроблено / Проблема','lbl-start':'Початок','lbl-end':'Кінець','lbl-dthrs':'Простій','lbl-partnum':'Деталь / номер','lbl-priority':'Пріоритет','lbl-photo':'Фото (необов\'язково)','sheet-title':'Записати роботу','submit-btn':'Додати','pin-title':'Будь ласка, виберіть своє ім\'я'};
+  var UI=l==='uk'?LABELS_UK:LABELS_EN;
+  UI['pin-sub']=l==='uk'?'Виберіть своє ім\'я':'Select your name to continue';
   Object.keys(UI).forEach(function(id){var el=gid(id);if(el)el.textContent=UI[id];});
+  // Update placeholders
+  var PH={
+    'f-desc': l==='uk'?'Що зроблено / проблема...':'What was done / issue...',
+    'snote': l==='uk'?'Нотатка зміни...':'Shift note / product running...',
+    'asearch': l==='uk'?'Пошук активу...':'Search asset...',
+    'pm-search': l==='uk'?'Пошук ТО...':'Search PMs...',
+  };
+  Object.keys(PH).forEach(function(id){var el=gid(id);if(el)el.placeholder=PH[id];});
   // Update placeholders
   var PH={
     'f-desc': l==='uk'?'Що зроблено / проблема...':'What was done / issue...',

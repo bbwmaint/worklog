@@ -336,9 +336,15 @@ function showPage(id){
 function buildNames(){
   var list=gid('name-list');
   if(!list)return;
-  list.innerHTML=TECHS.map(function(t){
-    return '<div onclick="selName(\''+t+'\')" style="padding:14px 16px;background:#222;border:1.5px solid #333;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s" onmousedown="this.style.background=\'#333\'" onmouseup="this.style.background=\'#222\'">'+t+'</div>';
-  }).join('');
+  var h='';
+  for(var i=0;i<TECHS.length;i++){
+    h+='<div class="namebtn" style="padding:14px 16px;background:#222;border:1.5px solid #333;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer">'+TECHS[i]+'</div>';
+  }
+  list.innerHTML=h;
+  var btns=list.querySelectorAll('.namebtn');
+  for(var j=0;j<btns.length;j++){
+    btns[j].addEventListener('click',function(){selName(this.textContent);});
+  }
 }
 
 function onNameSelect(v){if(v)selName(v);}

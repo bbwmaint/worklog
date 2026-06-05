@@ -29,8 +29,10 @@
 
       <!-- STEP 1: DROPDOWN -->
       <div id="step-names">
-        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Please choose your name</div>
-        <div id="name-chips" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        <div style="font-size:14px;color:#888;margin-bottom:10px">Please choose your name</div>
+        <select id="name-select" size="1" style="width:100%;padding:14px 16px;font-size:17px;font-weight:600;background:#222;color:#fff;border:1.5px solid #555;border-radius:12px;outline:none;cursor:pointer">
+          <option value="">— Select your name —</option>
+        </select>
       </div>
 
       <!-- STEP 2: PIN PAD -->
@@ -255,7 +257,7 @@ var pbuf='', puser='', pstep='name', psfirst='';
 var lang = 'en';
 var TRANS = {
   en: {
-    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+T('No previous shift data')+'":"'+T('No previous shift data')+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+T('I have read this handover')+'":"'+T('I have read this handover')+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
+    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+'No previous shift data'+'":"'+'No previous shift data'+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+'I have read this handover'+'":"'+'I have read this handover'+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
     signin: 'Sign In', choosename: 'Please choose your name', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
     createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
     hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
@@ -265,13 +267,13 @@ var TRANS = {
     whatdone: 'What was done / Issue', start: 'Start', end: 'End', dthrs: 'DT hrs',
     partnumber: 'Part name / number', priority: 'Priority', photo: 'Photo (optional)',
     tapphoто: '\uD83D\uDCF7 Tap to add photo', photoadded: '\uD83D\uDCF7 Photo added',
-    nothing: T('Nothing logged yet'), tapplus: T('Tap + to log your first task'),
-    noshift: T('No entries this shift yet'), noprev: T(''+T('No previous shift data')+''),
+    nothing: 'Nothing logged yet', tapplus: 'Tap + to log your first task',
+    noshift: 'No entries this shift yet', noprev: 'No previous shift data',
     tasks: 'Tasks', issues: 'Issues', parts: 'Parts', dthrs2: 'DT hrs',
-    handover: 'Shift Handover', nourgent: T('No urgent issues handed over'),
-    ackbtn: T(''+T('I have read this handover')+''), savereading: T('Save Readings'),
-    manualsend: 'Open Outlook', monthly: T('Monthly Export'), month: 'Month', year: 'Year',
-    workcsv: T('Work Log CSV'), utilcsv: T('Utilities CSV'), recap: T('Monthly Recap Email'),
+    handover: 'Shift Handover', nourgent: 'No urgent issues handed over',
+    ackbtn: 'I have read this handover', savereading: 'Save Readings',
+    manualsend: 'Open Outlook', monthly: 'Monthly Export', month: 'Month', year: 'Year',
+    workcsv: 'Work Log CSV', utilcsv: 'Utilities CSV', recap: 'Monthly Recap Email',
     shiftreport: 'Send Shift Report?', sendnow: 'Send Now', skip: 'Skip',
     signout: 'Sign out?', back: '\u2190 Back',
   },
@@ -295,7 +297,7 @@ var TRANS = {
     workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
     shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
     signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
-    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+T('No previous shift data')+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+T('I have read this handover')+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+'No previous shift data'+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+'I have read this handover'+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
   }
 };
 
@@ -338,16 +340,16 @@ function showPage(id){
 
 // PIN
 function buildNames(){
-  var el=gid('name-chips');
-  if(!el)return;
-  el.innerHTML='';
+  var sel=gid('name-select');
+  if(!sel)return;
+  sel.innerHTML='<option value="">\u2014 Select your name \u2014</option>';
   for(var i=0;i<TECHS.length;i++){
-    var btn=document.createElement('div');
-    btn.textContent=TECHS[i];
-    btn.style.cssText='padding:10px 16px;border-radius:20px;border:1.5px solid #555;background:#222;color:#fff;font-size:15px;font-weight:600;cursor:pointer';
-    btn.addEventListener('click',(function(name){return function(){selName(name);};})(TECHS[i]));
-    el.appendChild(btn);
+    var opt=document.createElement('option');
+    opt.value=TECHS[i];
+    opt.textContent=TECHS[i];
+    sel.appendChild(opt);
   }
+  sel.onchange=function(){if(this.value)selName(this.value);};
 }
 
 function onNameSelect(v){if(v)selName(v);}
@@ -374,6 +376,7 @@ function showNames(){
   gid('pin-sub').textContent='Select your name to continue';
   pbuf=''; puser='';
   buildNames();
+  var sel=gid('name-select');if(sel)sel.value='';
 }
 
 function pk(d){
@@ -479,7 +482,7 @@ function showTab(name){
   if(name==='shift')renderShift();
   if(name==='prev')renderPrev();
   if(name==='util')renderUtil();
-  if(name==='more')renderMore();
+  if(name==='more'){try{renderMore();}catch(e){gid('pane-more').innerHTML='<div style="padding:20px;color:red;font-family:monospace;font-size:12px">ERROR: '+e.message+'<br>'+e.stack.replace(/</g,"&lt;").replace(/\n/g,"<br>")+'</div>';}}
 }
 
 // ASSET LIST
@@ -942,7 +945,7 @@ function renderPrev(){
   var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
   var prev=allE.filter(function(e){return e.date===pDate&&e.shift===pShift;});
   var el=gid('pane-prev');
-  if(!prev.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#555">'+T('No previous shift data')+'</div>';return;}
+  if(!prev.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#555">'+'No previous shift data'+'</div>';return;}
   var techs=[...new Set(prev.map(function(e){return e.who;}))].filter(Boolean);
   var dt=prev.reduce(function(a,e){return a+e.dt;},0).toFixed(1);
   var issues=prev.filter(function(e){return e.type==='issue'||e.type==='pending';});
@@ -955,7 +958,7 @@ function renderPrev(){
   if(urg.length){urg.forEach(function(e){html+='<div style="background:rgba(220,38,38,.15);border-radius:8px;padding:9px 11px;margin-bottom:6px;border-left:3px solid #ef4444"><div style="font-size:14px;font-weight:700;color:#ef4444">['+e.priority.toUpperCase()+'] '+(e.assetName||'?')+'</div><div style="font-size:13px;color:#fca5a5;margin-top:2px">'+(e.desc||'')+'</div></div>';});}
   else{html+='<div style="background:rgba(22,163,74,.15);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80">'+T('No urgent issues handed over')+'</div>';}
   var ackKey='ack_'+pDate+'_'+pShift,acked=localStorage.getItem(ackKey);
-  html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:T(''+T('I have read this handover')+''))+'</button>';
+  html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:T(''+'I have read this handover'+''))+'</button>';
   html+='</div></div>';
   html+=prev.slice().reverse().map(function(e){return card(e,false);}).join('');
   el.innerHTML=html;
@@ -1344,11 +1347,7 @@ function generateAndSendReport(){
   function section(title,color,headers,items,cols){
     return '<div style="margin-bottom:28px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:4px;height:22px;background:'+color+';border-radius:2px"></div><h3 style="margin:0;font-size:15px;font-weight:700;color:#111">'+title+'</h3><span style="font-size:13px;color:#999">('+items.length+')</span></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+headers.map(function(h){return '<th style="padding:9px 10px;text-align:left;background:#f8f8f8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid '+color+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'+rows(items,cols)+'</tbody></table></div>';
   }
-  var H='<!DOCTYPE html><html><head><meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<!-- v1780628076 --><title>BBW Shift Report</title><style>body{font-family:-apple-system,sans-serif;margin:0;padding:32px;color:#111}@media print{.noprint{display:none!important}}</style></head><body>';
+  var H='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BBW Shift Report</title><style>body{font-family:-apple-system,sans-serif;margin:0;padding:32px;color:#111}@media print{.noprint{display:none!important}}</style></head><body>';
   H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #111;margin-bottom:24px">';
   H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &bull; '+td()+'</div></div>';
   H+='<div style="text-align:right"><div style="font-size:13px;color:#666;margin-bottom:4px">Technicians</div><div style="font-size:14px;font-weight:600">'+(techs.join(', ')||'—')+'</div></div></div>';

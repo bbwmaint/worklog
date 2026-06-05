@@ -229,21 +229,21 @@ var SB="https://klrxecmasfrwowdhplfn.supabase.co";
 var SBKEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtscnhlY21hc2Zyd293ZGhwbGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1OTY3NjgsImV4cCI6MjA5NjE3Mjc2OH0.bav6VMyGrOeRgf1q0eMA2ZvnVmPdF64FTlBa7BPhO6o";
 
 var TMPLS=[
-  {id:'t1',name:'Boiler Water Check',asset:'Boiler',code:'BBWBR1',type:'pm',desc:'Boiler water level checked - within normal range, feed pump operating correctly'},
-  {id:'t2',name:'Boiler Inspection',asset:'Boiler',code:'BBWBR1',type:'pm',desc:'Full boiler inspection: pressure normal, burner operating, no leaks, safety valves OK'},
-  {id:'t3',name:'Morning Checks',asset:'Air',code:'',type:'pm',desc:'Morning checks: air compressor pressure OK, chiller temps normal, glycol level OK, no leaks'},
-  {id:'t4',name:'Wastewater PM',asset:'Wastewater PIT',code:'',type:'pm',desc:'Wastewater PM: pit level checked, pumps operating, no blockages, discharge normal'},
-  {id:'t5',name:'Videojet Cleaning',asset:'Videojets',code:'A349',type:'pm',desc:'Videojet gutter cleaned, printhead wiped with IPA, ink level checked, print quality verified'},
+  {id:'t1',name:'Boiler Water Check',nameUk:'Перевірка води котла',asset:'Boiler',code:'BBWBR1',type:'completed',desc:'Boiler water level checked - within normal range, feed pump operating correctly',descUk:'Рівень води котла перевірено — в нормі, насос живлення працює'},
+  {id:'t2',name:'Boiler Inspection',nameUk:'Огляд котла',asset:'Boiler',code:'BBWBR1',type:'completed',desc:'Full boiler inspection: pressure normal, burner operating, no leaks, safety valves OK',descUk:'Повний огляд котла: тиск норма, пальник працює, витоків немає, клапани OK'},
+  {id:'t3',name:'Morning Checks',nameUk:'Ранкові перевірки',asset:'Air',code:'',type:'completed',desc:'Morning checks: air compressor pressure OK, chiller temps normal, glycol level OK, no leaks',descUk:'Ранкові перевірки: компресор норма, температури чилера норма, рівень гліколю OK'},
+  {id:'t4',name:'Wastewater PM',nameUk:'ТО каналізації',asset:'Wastewater PIT',code:'',type:'completed',desc:'Wastewater PM: pit level checked, pumps operating, no blockages, discharge normal',descUk:'ТО каналізації: рівень ями перевірено, насоси працюють, скид нормальний'},
+  {id:'t5',name:'Videojet Cleaning',nameUk:'Очищення Videojet',asset:'Videojets',code:'A349',type:'completed',desc:'Videojet gutter cleaned, printhead wiped with IPA, ink level checked, print quality verified',descUk:'Жолоб Videojet очищено, головка протерта IPA, рівень чорнила перевірено'},
 ];
 var QTASKS=[
-  {label:'Lubrication check',type:'pm',desc:'Lubrication check completed'},
-  {label:'Filter replacement',type:'done',desc:'Filter replaced'},
-  {label:'Fault/alarm cleared',type:'done',desc:'Fault cleared'},
-  {label:'Leak detected',type:'issue',desc:'Leak detected - requires attention'},
-  {label:'CIP/Cleaning done',type:'pm',desc:'CIP/Cleaning completed'},
-  {label:'Part ordered',type:'part',desc:'Part ordered'},
-  {label:'Machine down',type:'issue',desc:'Machine down - investigation required'},
-  {label:'Startup check',type:'pm',desc:'Startup check completed - all OK'},
+  {label:'Lubrication check',labelUk:'Мастило',type:'assigned',desc:'Lubrication check - assigned',descUk:'Перевірка мастила — призначено'},
+  {label:'Filter replacement',labelUk:'Заміна фільтра',type:'completed',desc:'Filter replaced',descUk:'Фільтр замінено'},
+  {label:'Fault/alarm cleared',labelUk:'Сигнал усунуто',type:'completed',desc:'Fault cleared',descUk:'Несправність усунуто'},
+  {label:'Leak detected',labelUk:'Виявлено витік',type:'pending',desc:'Leak detected - requires attention',descUk:'Виявлено витік — потрібна увага'},
+  {label:'CIP/Cleaning done',labelUk:'CIP виконано',type:'completed',desc:'CIP/Cleaning completed',descUk:'CIP/Очищення виконано'},
+  {label:'Part ordered',labelUk:'Деталь замовлена',type:'parts',desc:'Part ordered - awaiting delivery',descUk:'Деталь замовлено — очікується доставка'},
+  {label:'Machine down',labelUk:'Машина стоїть',type:'pending',desc:'Machine down - investigation required',descUk:'Машина зупинена — потрібне розслідування'},
+  {label:'Startup check',labelUk:'Пуск OK',type:'completed',desc:'Startup check completed - all OK',descUk:'Пусковий огляд виконано — все OK'},
 ];
 
 var pmOverrides={}, user=null, ctype='', cprio='', photo='', selA=null, editId=null;
@@ -253,7 +253,7 @@ var pbuf='', puser='', pstep='name', psfirst='';
 var lang = 'en';
 var TRANS = {
   en: {
-    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Done', ongoing:'Ongoing', issue:'Issue', part:'Part Needed', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info',
+    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+T('No previous shift data')+'":"'+T('No previous shift data')+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+T('I have read this handover')+'":"'+T('I have read this handover')+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
     signin: 'Sign In', choosename: 'Please choose your name', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
     createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
     hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
@@ -263,13 +263,13 @@ var TRANS = {
     whatdone: 'What was done / Issue', start: 'Start', end: 'End', dthrs: 'DT hrs',
     partnumber: 'Part name / number', priority: 'Priority', photo: 'Photo (optional)',
     tapphoто: '\uD83D\uDCF7 Tap to add photo', photoadded: '\uD83D\uDCF7 Photo added',
-    nothing: 'Nothing logged yet', tapplus: 'Tap + to log your first task',
-    noshift: 'No entries this shift yet', noprev: 'No previous shift data',
+    nothing: T('Nothing logged yet'), tapplus: T('Tap + to log your first task'),
+    noshift: T('No entries this shift yet'), noprev: T(''+T('No previous shift data')+''),
     tasks: 'Tasks', issues: 'Issues', parts: 'Parts', dthrs2: 'DT hrs',
-    handover: 'Shift Handover', nourgent: 'No urgent issues handed over',
-    ackbtn: 'I have read this handover', savereading: 'Save Readings',
-    manualsend: 'Open Outlook', monthly: 'Monthly Export', month: 'Month', year: 'Year',
-    workcsv: 'Work Log CSV', utilcsv: 'Utilities CSV', recap: 'Monthly Recap Email',
+    handover: 'Shift Handover', nourgent: T('No urgent issues handed over'),
+    ackbtn: T(''+T('I have read this handover')+''), savereading: T('Save Readings'),
+    manualsend: 'Open Outlook', monthly: T('Monthly Export'), month: 'Month', year: 'Year',
+    workcsv: T('Work Log CSV'), utilcsv: T('Utilities CSV'), recap: T('Monthly Recap Email'),
     shiftreport: 'Send Shift Report?', sendnow: 'Send Now', skip: 'Skip',
     signout: 'Sign out?', back: '\u2190 Back',
   },
@@ -293,7 +293,7 @@ var TRANS = {
     workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
     shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
     signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
-    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Проблема', part: 'Деталь', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо'
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+T('No previous shift data')+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+T('I have read this handover')+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
   }
 };
 
@@ -498,12 +498,11 @@ function selA2(code,name){selA={c:code,n:name};gid('asearch').value=name;buildAL
 // TYPES
 function buildTypes(){
   var types=[
-    {id:'done',label:T('done')||'Done',color:'#16a34a',bg:'rgba(22,163,74,.15)'},
+    {id:'assigned',label:T('assigned')||'Assigned',color:'#2563eb',bg:'rgba(37,99,235,.15)'},
+    {id:'completed',label:T('completed')||'Completed',color:'#16a34a',bg:'rgba(22,163,74,.15)'},
     {id:'ongoing',label:T('ongoing')||'Ongoing',color:'#d97706',bg:'rgba(217,119,6,.15)'},
-    {id:'issue',label:T('issue')||'Issue',color:'#dc2626',bg:'rgba(220,38,38,.15)'},
-    {id:'pm',label:T('pmtype')||'PM Done',color:'#7c3aed',bg:'rgba(124,58,237,.15)'},
-    {id:'part',label:T('part')||'Part Needed',color:'#ea580c',bg:'rgba(234,88,12,.15)'},
-    {id:'note',label:T('note')||'Note',color:'#2563eb',bg:'rgba(37,99,235,.15)'},
+    {id:'parts',label:T('parts')||'Parts Requested',color:'#ea580c',bg:'rgba(234,88,12,.15)'},
+    {id:'pending',label:T('pending')||'Pending',color:'#dc2626',bg:'rgba(220,38,38,.15)'},
   ];
   gid('type-grid').innerHTML=types.map(function(t){
     return '<div id="tp-'+t.id+'" onclick="setType(\''+t.id+'\')" style="padding:12px 4px;border-radius:10px;border:1.5px solid #333;background:#222;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;text-align:center" data-color="'+t.color+'" data-bg="'+t.bg+'">'+t.label+'</div>';
@@ -517,7 +516,7 @@ function setType(type){
   });
   var el=gid('tp-'+type);
   if(el){el.style.borderColor=el.getAttribute('data-color');el.style.background=el.getAttribute('data-bg');el.style.color=el.getAttribute('data-color');}
-  gid('fg-part').style.display=type==='part'?'block':'none';
+  gid('fg-part').style.display=(type==='part'||type==='parts')?'block':'none';
 }
 
 // PRIORITIES
@@ -543,19 +542,22 @@ function setPrio(p){
 // TEMPLATES & QUICK
 function buildTemplates(){
   gid('tpl-grid').innerHTML=TMPLS.map(function(t){
-    return '<div onclick="applyTpl(\''+t.id+'\')" style="background:#222;border:1.5px solid #333;border-radius:9px;padding:10px 12px;cursor:pointer"><div style="font-size:13px;font-weight:600;color:#fff">'+t.name+'</div><div style="font-size:11px;color:#666;margin-top:2px;font-family:monospace">'+t.asset+'</div></div>';
+    var nm=lang==='uk'&&t.nameUk?t.nameUk:t.name;
+    return '<div onclick="applyTpl(\''+t.id+'\')" style="background:#222;border:1.5px solid #333;border-radius:9px;padding:10px 12px;cursor:pointer"><div style="font-size:13px;font-weight:600;color:#fff">'+nm+'</div><div style="font-size:11px;color:#666;margin-top:2px;font-family:monospace">'+t.asset+'</div></div>';
   }).join('');
 }
 function applyTpl(id){
   var t=TMPLS.find(function(x){return x.id===id;});if(!t)return;
   setType(t.type);
-  gid('f-desc').value=t.desc;
+  gid('f-desc').value=(lang==='uk'&&t.descUk?t.descUk:t.desc);
   if(t.code){selA2(t.code,t.asset);}
 }
 
 function buildQuick(){
   gid('quick-grid').innerHTML=QTASKS.map(function(q){
-    return '<div onclick="applyQ(\''+q.type+'\',\''+q.desc+'\')" style="padding:8px 14px;border-radius:20px;border:1.5px solid #333;background:#222;color:#ccc;font-size:13px;cursor:pointer">'+q.label+'</div>';
+    var lbl=lang==='uk'&&q.labelUk?q.labelUk:q.label;
+    var dsc=lang==='uk'&&q.descUk?q.descUk:q.desc;
+    return '<div onclick="applyQ(\''+q.type+'\',\''+dsc+'\')" style="padding:8px 14px;border-radius:20px;border:1.5px solid #333;background:#222;color:#ccc;font-size:13px;cursor:pointer">'+lbl+'</div>';
   }).join('');
 }
 function applyQ(type,desc){setType(type);gid('f-desc').value=desc;}
@@ -820,8 +822,12 @@ function checkShiftEnd(){
 function renderAll(){renderLog();renderShift();checkUBanner();}
 
 function card(e,mine){
-  var colors={done:'#16a34a',ongoing:'#d97706',issue:'#dc2626',pm:'#7c3aed',part:'#ea580c',note:'#2563eb'};
-  var labels={done:T('done'),ongoing:T('ongoing'),issue:T('issue'),pm:T('pmtype'),part:T('part'),note:T('note')};
+  var colors={assigned:'#2563eb',completed:'#16a34a',ongoing:'#d97706',parts:'#ea580c',pending:'#dc2626',
+    done:'#16a34a',pm:'#16a34a',issue:'#dc2626',part:'#ea580c',note:'#2563eb'};
+  var labels={assigned:T('assigned')||'Assigned',completed:T('completed')||'Completed',
+    ongoing:T('ongoing')||'Ongoing',parts:T('parts')||'Parts Requested',pending:T('pending')||'Pending',
+    done:T('completed')||'Completed',pm:T('completed')||'Completed',
+    issue:T('pending')||'Pending',part:T('parts')||'Parts Requested',note:'Note'};
   var c=colors[e.type]||'#666';
   var time=e.start?(e.start+(e.end?'-'+e.end:'')):'';
   var html='<div style="background:#1a1a1a;border-radius:12px;padding:13px 14px;margin-bottom:9px;border-left:4px solid '+c+';position:relative">';
@@ -894,14 +900,14 @@ function renderLog(){
       H+='<div style="background:#222;border-radius:8px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:8px">';
       H+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">'+pm.asset+'</div>';
       H+='<div style="font-size:11px;color:#888;margin-top:2px">'+pm.desc.slice(0,50)+'</div></div>';
-      H+='<button onclick="logPMByIdx('+pmIdx+')" style="padding:7px 12px;background:rgba(124,58,237,.2);color:#a78bfa;border:1px solid rgba(124,58,237,.3);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Log Done</button>';
+      H+='<button onclick="logPMByIdx('+pmIdx+')" style="padding:7px 12px;background:rgba(124,58,237,.2);color:#a78bfa;border:1px solid rgba(124,58,237,.3);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">'+T('Log Done')+'</button>';
       H+='</div>';
     });
     H+='</div>';
   }
 
   if(!mine.length&&!myPMs.length){
-    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:#555"><div style="font-size:40px;margin-bottom:10px">&#128203;</div><div style="font-size:16px;font-weight:600;color:#777">Nothing logged yet</div><div style="font-size:14px;margin-top:6px">Tap + to log your first task</div></div>';
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:#555"><div style="font-size:40px;margin-bottom:10px">&#128203;</div><div style="font-size:16px;font-weight:600;color:#777">'+T('Nothing logged yet')+'</div><div style="font-size:14px;margin-top:6px">'+T('Tap + to log your first task')+'</div></div>';
     if(myPMs.length)el.innerHTML=H;
     return;
   }
@@ -916,11 +922,11 @@ function renderShift(){
   var el=gid('pane-shift');
   var stats='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">';
   stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#fff">'+cur.length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Tasks</div></div>';
-  stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ef4444">'+cur.filter(function(e){return e.type==='issue';}).length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Issues</div></div>';
-  stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f97316">'+cur.filter(function(e){return e.type==='part';}).length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Parts</div></div>';
+  stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ef4444">'+cur.filter(function(e){return e.type==='issue'||e.type==='pending';}).length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Issues</div></div>';
+  stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f97316">'+cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Parts</div></div>';
   stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f59e0b">'+dt.toFixed(1)+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">DT hrs</div></div>';
   stats+='</div>';
-  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,false);}).join(''):'<div style="text-align:center;padding:30px;color:#555">No entries this shift yet</div>');
+  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,false);}).join(''):'<div style="text-align:center;padding:30px;color:#555">'+T('No entries this shift yet')+'</div>');
 }
 
 function renderPrev(){
@@ -928,20 +934,20 @@ function renderPrev(){
   var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
   var prev=allE.filter(function(e){return e.date===pDate&&e.shift===pShift;});
   var el=gid('pane-prev');
-  if(!prev.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#555">No previous shift data</div>';return;}
+  if(!prev.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#555">'+T('No previous shift data')+'</div>';return;}
   var techs=[...new Set(prev.map(function(e){return e.who;}))].filter(Boolean);
   var dt=prev.reduce(function(a,e){return a+e.dt;},0).toFixed(1);
-  var issues=prev.filter(function(e){return e.type==='issue';});
-  var urg=issues.filter(function(e){return e.priority==='urgent'||e.priority==='high';});
+  var issues=prev.filter(function(e){return e.type==='issue'||e.type==='pending';});
+  var urg=issues.filter(function(e){return e.priority==='urgent'||e.priority==='high'||e.type==='pending';});
   var html='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px">';
   html+='<div style="padding:13px 16px;border-bottom:1px solid #333;display:flex;align-items:center;justify-content:space-between">';
   html+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+pShift+' Shift Handover</div><div style="font-size:12px;color:#666;font-family:monospace;margin-top:2px">'+pDate+' &bull; '+(techs.join(', ')||'?')+' &bull; '+dt+'h DT</div></div></div>';
   html+='<div style="padding:13px 16px">';
-  html+='<div style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Issues for your shift</div>';
+  html+='<div style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Issues for your shift')+'</div>';
   if(urg.length){urg.forEach(function(e){html+='<div style="background:rgba(220,38,38,.15);border-radius:8px;padding:9px 11px;margin-bottom:6px;border-left:3px solid #ef4444"><div style="font-size:14px;font-weight:700;color:#ef4444">['+e.priority.toUpperCase()+'] '+(e.assetName||'?')+'</div><div style="font-size:13px;color:#fca5a5;margin-top:2px">'+(e.desc||'')+'</div></div>';});}
-  else{html+='<div style="background:rgba(22,163,74,.15);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80">No urgent issues handed over</div>';}
+  else{html+='<div style="background:rgba(22,163,74,.15);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80">'+T('No urgent issues handed over')+'</div>';}
   var ackKey='ack_'+pDate+'_'+pShift,acked=localStorage.getItem(ackKey);
-  html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:'I have read this handover')+'</button>';
+  html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:T(''+T('I have read this handover')+''))+'</button>';
   html+='</div></div>';
   html+=prev.slice().reverse().map(function(e){return card(e,false);}).join('');
   el.innerHTML=html;
@@ -951,7 +957,7 @@ function ack(key){localStorage.setItem(key,user+' at '+ntime());renderPrev();}
 function renderUtil(){
   var el=gid('pane-util');
   var today=utilLogs.find(function(r){return r.date===td();});
-  var banner=today?'<div style="background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80;margin-bottom:14px">Logged today by '+today.by+' at '+today.time+'</div>':'<div style="background:rgba(217,119,6,.15);border:1px solid rgba(217,119,6,.3);border-radius:10px;padding:10px 12px;font-size:13px;color:#fbbf24;margin-bottom:14px">No readings logged today yet</div>';
+  var banner=today?'<div style="background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80;margin-bottom:14px">Logged today by '+today.by+' at '+today.time+'</div>':'<div style="background:rgba(217,119,6,.15);border:1px solid rgba(217,119,6,.3);border-radius:10px;padding:10px 12px;font-size:13px;color:#fbbf24;margin-bottom:14px">'+T('No readings logged today yet')+'</div>';
   var fields=[['u-w3','Water 3" (m\u00B3)','0.000'],['u-w5','Water 5" (m\u00B3)','0.000'],['u-gas','Gas (ft\u00B3)','0.000'],['u-elec','Electricity (GWh)','0.0000'],['u-boil','Boiler Makeup (L)','0'],['u-past','Pasteurizer Makeup (L)','0.00'],['u-cool','Cooling Tower (L)','0.00'],['u-steam','Past. Steam (kg)','0']];
   var form='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
   fields.forEach(function(f){
@@ -959,10 +965,10 @@ function renderUtil(){
     form+='<div><div style="font-size:12px;color:#888;margin-bottom:5px">'+f[1]+'</div><input type="number" id="'+f[0]+'" value="'+val+'" placeholder="'+f[2]+'" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace"></div>';
   });
   form+='</div>';
-  form+='<button onclick="saveUtil()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px">Save Readings</button>';
+  form+='<button onclick="saveUtil()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px">'+T('Save Readings')+'</button>';
   form+='<div id="u-flash" style="display:none"></div>';
   // History table
-  var hist='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-top:14px"><div style="padding:12px 14px;border-bottom:1px solid #333;font-size:13px;font-weight:600;color:#aaa">Recent Readings</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;font-family:monospace"><thead><tr style="border-bottom:1px solid #333;color:#666;font-size:10px;text-transform:uppercase">';
+  var hist='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-top:14px"><div style="padding:12px 14px;border-bottom:1px solid #333;font-size:13px;font-weight:600;color:#aaa">'+T('Recent Readings')+'</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;font-family:monospace"><thead><tr style="border-bottom:1px solid #333;color:#666;font-size:10px;text-transform:uppercase">';
   ['Date','W3"','W5"','Gas','Elec','Boil','Past','CT','Steam','By'].forEach(function(h){hist+='<th style="padding:8px 6px;text-align:right;white-space:nowrap">'+h+'</th>';});
   hist+='</tr></thead><tbody>';
   if(!utilLogs.length)hist+='<tr><td colspan="10" style="text-align:center;padding:20px;color:#555">No readings yet</td></tr>';
@@ -1027,7 +1033,7 @@ function renderPM(){
   html+='</div>';
 
   if(!duePMs.length){
-    html+='<div style="text-align:center;padding:16px;color:#555;font-size:14px">No PMs scheduled for today</div>';
+    html+='<div style="text-align:center;padding:16px;color:#555;font-size:14px">'+T('No PMs scheduled for today')+'</div>';
   }else{
     duePMs.forEach(function(pm,_i){
       var pmIdx=PMS.indexOf(pm);
@@ -1131,11 +1137,11 @@ function renderMore(){
     var due=PMS.filter(isDue);
     H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
     H+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
-    H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">PMs Due Today</div>';
+    H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">'+T('PMs Due Today')+'</div>';
     H+='<span style="background:'+(due.length?'rgba(220,38,38,.2)':'rgba(22,163,74,.15)')+';color:'+(due.length?'#ef4444':'#4ade80')+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+due.length+' PMs</span>';
     H+='</div>';
     if(!due.length){
-      H+='<div style="text-align:center;padding:10px;color:#555;font-size:13px">No PMs scheduled for today</div>';
+      H+='<div style="text-align:center;padding:10px;color:#555;font-size:13px">'+T('No PMs scheduled for today')+'</div>';
     }else{
       due.forEach(function(pm){
         var pmIdx=PMS.indexOf(pm);
@@ -1166,14 +1172,14 @@ function renderMore(){
 
   // ── SEND REPORT ──
   H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
-  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Shift Report</div>';
+  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Shift Report')+'</div>';
   H+='<p style="font-size:13px;color:#888;margin-bottom:12px">Generate a full PDF report for this shift — all technicians.</p>';
-  H+='<button onclick="generateAndSendReport()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">Generate Shift Report PDF</button>';
+  H+='<button onclick="generateAndSendReport()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">'+T('Generate Shift Report PDF')+'</button>';
   H+='</div>';
 
   // ── MONTHLY EXPORT ──
   H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
-  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Monthly Export</div>';
+  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Monthly Export')+'</div>';
   H+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
   H+='<div><div style="font-size:12px;color:#888;margin-bottom:5px">Month</div>';
   H+='<select id="exp-m" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
@@ -1183,9 +1189,9 @@ function renderMore(){
   H+='<div><div style="font-size:12px;color:#888;margin-bottom:5px">Year</div>';
   H+='<input type="number" id="exp-y" value="2026" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none;font-family:monospace"></div>';
   H+='</div>';
-  H+='<button onclick="doExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Work Log CSV</button>';
-  H+='<button onclick="doUtilExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">Utilities CSV</button>';
-  H+='<button onclick="sendMonthlyRecap()" style="width:100%;padding:12px;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.3);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Monthly Recap Email</button>';
+  H+='<button onclick="doExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Work Log CSV')+'</button>';
+  H+='<button onclick="doUtilExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Utilities CSV')+'</button>';
+  H+='<button onclick="sendMonthlyRecap()" style="width:100%;padding:12px;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.3);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">'+T('Monthly Recap Email')+'</button>';
   H+='</div>';
 
   // ── ADMIN ──

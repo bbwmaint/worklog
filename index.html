@@ -25,8 +25,8 @@
 
       <!-- STEP 1: DROPDOWN -->
       <div id="step-names">
-        <div style="font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Please choose your name</div>
-        <div id="name-list" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto"></div>
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Please choose your name</div>
+        <div id="name-chips" style="display:flex;flex-wrap:wrap;gap:8px"></div>
       </div>
 
       <!-- STEP 2: PIN PAD -->
@@ -334,16 +334,15 @@ function showPage(id){
 
 // PIN
 function buildNames(){
-  var list=gid('name-list');
-  if(!list)return;
-  var h='';
+  var el=gid('name-chips');
+  if(!el)return;
+  el.innerHTML='';
   for(var i=0;i<TECHS.length;i++){
-    h+='<div class="namebtn" style="padding:14px 16px;background:#222;border:1.5px solid #333;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer">'+TECHS[i]+'</div>';
-  }
-  list.innerHTML=h;
-  var btns=list.querySelectorAll('.namebtn');
-  for(var j=0;j<btns.length;j++){
-    btns[j].addEventListener('click',function(){selName(this.textContent);});
+    var btn=document.createElement('div');
+    btn.textContent=TECHS[i];
+    btn.style.cssText='padding:10px 16px;border-radius:20px;border:1.5px solid #555;background:#222;color:#fff;font-size:15px;font-weight:600;cursor:pointer';
+    btn.addEventListener('click',(function(name){return function(){selName(name);};})(TECHS[i]));
+    el.appendChild(btn);
   }
 }
 

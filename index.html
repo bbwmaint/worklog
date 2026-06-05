@@ -1212,6 +1212,7 @@ function renderMore(){
   if(isAdmin){
     H+='<div style="background:#1a0a00;border:1.5px solid #7c2d12;border-radius:12px;padding:16px;margin-bottom:12px">';
     H+='<div style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Admin — Praful Only</div>';
+    H+='<div id="db-stats" style="background:#111;border-radius:9px;padding:12px 14px;margin-bottom:14px;font-family:monospace;font-size:12px;color:#888">Loading DB stats...</div>';
     H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">Reset Technician PINs</div>';
     H+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px">';
     TECHS.filter(function(t){return t!==ADMIN;}).forEach(function(t){
@@ -1229,8 +1230,9 @@ function renderMore(){
 
   el.innerHTML=H;
 
-  // Load saved EJS
+  // Load saved EJS and DB stats
   if(isAdmin){
+    setTimeout(function(){loadDBStats();},100);
     var s=localStorage.getItem('bbw_ejs_s'),t=localStorage.getItem('bbw_ejs_t'),p=localStorage.getItem('bbw_ejs_p');
     if(gid('ejs-s')&&s)gid('ejs-s').value=s;
     if(gid('ejs-t')&&t)gid('ejs-t').value=t;
@@ -1438,6 +1440,37 @@ function sendMonthlyRecap(){
   Object.entries(techs).sort(function(a,b){return b[1]-a[1];}).forEach(function(kv){b+='  '+kv[0]+': '+kv[1]+' entries\n';});
   var subj=encodeURIComponent('BBW Monthly Recap - '+mn[month]+' '+year);
   window.location.href='mailto:maintenance@brunswickbierworks.com?subject='+subj+'&body='+encodeURIComponent(b);
+}
+
+function loadDBStats(){
+  var el=gid('db-stats');
+  if(!el)return;
+  // Count rows in each table
+  Promise.all([
+    sbFetch('bbw_worklog?select=id').then(function(r){return r.json();}),
+    sbFetch('bbw_util_log?select=id').then(function(r){return r.json();}),
+    sbFetch('bbw_pm_overrides?select=id').then(function(r){return r.json();})
+  ]).then(function(results){
+    var wlCount=Array.isArray(results[0])?results[0].length:0;
+    var ulCount=Array.isArray(results[1])?results[1].length:0;
+    var pmCount=Array.isArray(results[2])?results[2].length:0;
+    var estKB=((wlCount*1.2)+(ulCount*0.3)+(pmCount*0.1)).toFixed(1);
+    var estMB=(estKB/1024).toFixed(3);
+    el.innerHTML=
+      '<div style="color:#fff;font-weight:700;margin-bottom:8px">Supabase Usage</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+      '<div>Work log entries:</div><div style="color:#60a5fa">'+wlCount+' rows</div>'+
+      '<div>Utility readings:</div><div style="color:#60a5fa">'+ulCount+' rows</div>'+
+      '<div>PM overrides:</div><div style="color:#60a5fa">'+pmCount+' rows</div>'+
+      '<div style="margin-top:6px">Est. storage:</div><div style="color:#4ade80;margin-top:6px">~'+estMB+' MB / 500 MB</div>'+
+      '</div>'+
+      '<div style="margin-top:10px;background:#222;border-radius:6px;height:6px;overflow:hidden">'+
+      '<div style="height:100%;background:#4ade80;border-radius:6px;width:'+Math.min(100,(estMB/500)*100).toFixed(2)+'%"></div>'+
+      '</div>'+
+      '<div style="color:#555;font-size:10px;margin-top:4px">Free tier limit: 500 MB</div>';
+  }).catch(function(){
+    el.innerHTML='<span style="color:#ef4444">Could not load stats — check connection</span>';
+  });
 }
 
 </script>

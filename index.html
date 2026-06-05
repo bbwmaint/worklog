@@ -673,6 +673,24 @@ function delEntry(id){
 }
 
 // RENDER
+
+function checkUBanner(){
+  var dayShift=isDay(),pShift=dayShift?'Night':'Day';
+  var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
+  var urg=allE.filter(function(e){return e.date===pDate&&e.shift===pShift&&e.type==='issue'&&(e.priority==='urgent'||e.priority==='high');});
+  var b=gid('ubanner');
+  if(urg.length){
+    b.style.display='block';
+    gid('ucnt').textContent=urg.length;
+    gid('urows').innerHTML=urg.slice(0,2).map(function(e){return '<div style="font-size:13px;color:#fca5a5;padding-left:16px">'+( e.assetName||'?')+': '+(e.desc||'')+'</div>';}).join('');
+  }else{b.style.display='none';}
+}
+
+function checkShiftEnd(){
+  var now=new Date(),h=now.getHours(),m=now.getMinutes();
+  if((h===7||h===19)&&m===0)showSendModal();
+}
+
 function renderAll(){renderLog();renderShift();checkUBanner();}
 
 function card(e,mine){

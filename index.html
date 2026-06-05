@@ -109,7 +109,6 @@
     <button onclick="showTab('shift')" id="tab-shift" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">This Shift</button>
     <button onclick="showTab('prev')" id="tab-prev" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Prev Shift</button>
     <button onclick="showTab('util')" id="tab-util" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Utilities</button>
-    <button onclick="showTab('pm')" id="tab-pm" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">PMs</button>
     <button onclick="showTab('more')" id="tab-more" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">More</button>
   </div>
 
@@ -119,7 +118,6 @@
     <div id="pane-shift" style="display:none"></div>
     <div id="pane-prev" style="display:none"></div>
     <div id="pane-util" style="display:none"></div>
-    <div id="pane-pm" style="display:none"></div>
     <div id="pane-more" style="display:none"></div>
   </div>
 
@@ -248,7 +246,7 @@ var QTASKS=[
   {label:'Startup check',type:'pm',desc:'Startup check completed - all OK'},
 ];
 
-var user=null, ctype='', cprio='', photo='', selA=null, editId=null;
+var pmOverrides={}, user=null, ctype='', cprio='', photo='', selA=null, editId=null;
 var entries=[], allE=[], utilLogs=[];
 var pbuf='', puser='', pstep='name', psfirst='';
 
@@ -379,6 +377,7 @@ function loginUser(name){
   try{gid('exp-m') && (gid('exp-m').value=new Date().getMonth());}catch(e){}
   try{loadFromSB();}catch(e){console.error('loadFromSB',e);}
   try{loadUtilFromSB();}catch(e){console.error('loadUtil',e);}
+  try{loadPMOverrides();}catch(e){console.error('loadPMOverrides',e);}
   try{renderAll();}catch(e){console.error('renderAll',e);}
   try{showPage('pg-app');}catch(e){console.error('showPage',e);}
   try{checkUBanner();}catch(e){console.error('checkUBanner',e);}
@@ -423,7 +422,6 @@ function showTab(name){
   if(name==='shift')renderShift();
   if(name==='prev')renderPrev();
   if(name==='util')renderUtil();
-  if(name==='pm')renderPM();
   if(name==='more')renderMore();
 }
 
@@ -674,6 +672,85 @@ function delEntry(id){
 
 // RENDER
 
+function loadPMOverrides(){
+  sbFetch('bbw_pm_overrides')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data))return;
+      pmOverrides={};
+      data.forEach(function(r){pmOverrides[r.pm_code]=r.assignee;});
+    })
+    .catch(function(){});
+}
+
+function getAssignee(pm){
+  return pmOverrides[pm.code]||pm.assignee||'Unassigned';
+}
+
+function savePMOverride(pmCode,assignee){
+  // Upsert into bbw_pm_overrides
+  sbFetch('bbw_pm_overrides?pm_code=eq.'+encodeURIComponent(pmCode),{method:'GET'})
+    .then(function(r){return r.json();})
+    .then(function(existing){
+      var body=JSON.stringify({pm_code:pmCode,assignee:assignee,updated_by:user,updated_at:new Date().toISOString()});
+      if(existing&&existing.length>0){
+        return sbFetch('bbw_pm_overrides?pm_code=eq.'+encodeURIComponent(pmCode),{method:'PATCH',body:body,headers:{'Prefer':'return=minimal'}});
+      }else{
+        return sbFetch('bbw_pm_overrides',{method:'POST',body:body});
+      }
+    })
+    .then(function(){
+      pmOverrides[pmCode]=assignee;
+      renderMore();
+      alert('Permanently reassigned to '+assignee);
+    })
+    .catch(function(e){alert('Failed to save: '+e.message);});
+}
+
+function showReassignModal(pmIdx){
+  var pm=PMS[pmIdx];if(!pm)return;
+  var current=getAssignee(pm);
+  var html='<div style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px" id="reassign-modal">';
+  html+='<div style="background:#1a1a1a;border-radius:16px;width:100%;max-width:340px;overflow:hidden">';
+  html+='<div style="padding:18px 20px;border-bottom:1px solid #333">';
+  html+='<div style="font-size:16px;font-weight:700;color:#fff">Reassign PM</div>';
+  html+='<div style="font-size:13px;color:#888;margin-top:3px">'+pm.asset+' — '+pm.desc.slice(0,40)+'...</div>';
+  html+='<div style="font-size:12px;color:#666;margin-top:3px;font-family:monospace">Currently: '+current+'</div>';
+  html+='</div>';
+  html+='<div style="padding:16px 20px">';
+  html+='<div style="font-size:12px;color:#888;margin-bottom:8px">Select technician</div>';
+  html+='<select id="reassign-tech" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:12px;font-size:15px;color:#fff;outline:none;margin-bottom:14px">';
+  TECHS.forEach(function(t){html+='<option value="'+t+'"'+(t===current?' selected':'')+'>'+t+'</option>';});
+  html+='</select>';
+  html+='<button onclick="doReassign('+pmIdx+',false)" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Today Only</button>';
+  if(user===ADMIN){
+    html+='<button onclick="doReassign('+pmIdx+',true)" style="width:100%;padding:12px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Permanent (Admin)</button>';
+  }
+  html+='<button onclick="document.getElementById(\'reassign-modal\').remove()" style="width:100%;padding:11px;background:#222;color:#aaa;border:1px solid #333;border-radius:9px;font-size:13px;cursor:pointer">Cancel</button>';
+  html+='</div></div></div>';
+  document.body.insertAdjacentHTML('beforeend',html);
+}
+
+function doReassign(pmIdx,permanent){
+  var pm=PMS[pmIdx];if(!pm)return;
+  var sel=gid('reassign-tech');
+  var tech=sel?sel.value:'';
+  if(!tech){alert('Select a technician');return;}
+  var modal=gid('reassign-modal');if(modal)modal.remove();
+  if(permanent){
+    savePMOverride(pm.code,tech);
+  }else{
+    // Today only - just log the PM with this tech
+    openSheet(null);
+    setTimeout(function(){
+      setType('pm');
+      gid('f-desc').value=pm.desc+' ('+pm.code+') — reassigned to '+tech;
+      var found=ASSETS.find(function(a){return a.n===pm.asset||a.n.indexOf(pm.asset)>=0;});
+      if(found)selA2(found.c,found.n);
+    },100);
+  }
+}
+
 function checkUBanner(){
   var dayShift=isDay(),pShift=dayShift?'Night':'Day';
   var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
@@ -846,7 +923,8 @@ function renderPM(){
   if(!duePMs.length){
     html+='<div style="text-align:center;padding:16px;color:#555;font-size:14px">No PMs scheduled for today</div>';
   }else{
-    duePMs.forEach(function(pm){
+    duePMs.forEach(function(pm,_i){
+      var pmIdx=PMS.indexOf(pm);
       var pcolor=pm.priority==='High'?'#ef4444':pm.priority==='Medium'?'#f59e0b':'#6b7280';
       html+='<div style="background:#222;border-radius:9px;padding:12px 14px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
       html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">';
@@ -901,16 +979,20 @@ function filterPMs(val){
   var el=gid('pm-list');if(el)el.innerHTML=renderPMList(filtered);
 }
 
-function logPMDone(code,asset,desc){
-  // Pre-fill the log sheet with this PM
+function logPMByIdx(idx){
+  var pm=PMS[idx];if(!pm)return;
   openSheet(null);
   setTimeout(function(){
     setType('pm');
-    gid('f-desc').value=desc+' ('+code+')';
-    // Find asset in ASSETS
-    var found=ASSETS.find(function(a){return a.n===asset||a.n.indexOf(asset)>=0;});
+    gid('f-desc').value=pm.desc+' ('+pm.code+')';
+    var found=ASSETS.find(function(a){return a.n===pm.asset||a.n.indexOf(pm.asset)>=0;});
     if(found)selA2(found.c,found.n);
   },100);
+}
+
+function logPMDone(code,asset,desc){
+  var idx=PMS.findIndex(function(p){return p.code===code;});
+  if(idx>=0)logPMByIdx(idx);
 }
 
 function renderMore(){
@@ -919,6 +1001,60 @@ function renderMore(){
   var month=new Date().getMonth();
 
   var html='';
+
+  // PMs DUE TODAY - visible to everyone
+  var today=new Date();
+  var dayOfWeek=today.toLocaleDateString('en-US',{weekday:'long'});
+  var dayOfMonth=today.getDate();
+  function isDueToday(pm){
+    var w=pm.freq.toLowerCase();
+    if(w.indexOf('every day')>=0)return true;
+    if(w.indexOf('every monday')>=0&&dayOfWeek==='Monday')return true;
+    if(w.indexOf('every tuesday')>=0&&dayOfWeek==='Tuesday')return true;
+    if(w.indexOf('every wednesday')>=0&&dayOfWeek==='Wednesday')return true;
+    if(w.indexOf('every thursday')>=0&&dayOfWeek==='Thursday')return true;
+    if(w.indexOf('every friday')>=0&&dayOfWeek==='Friday')return true;
+    if(w.indexOf('every saturday')>=0&&dayOfWeek==='Saturday')return true;
+    if(w.indexOf('every sunday')>=0&&dayOfWeek==='Sunday')return true;
+    var nth=w.match(/the (\d+)(st|nd|rd|th) day/);
+    if(nth&&parseInt(nth[1])===dayOfMonth)return true;
+    if(w.indexOf('every 4 days')>=0&&dayOfWeek==='Monday')return true;
+    return false;
+  }
+  var duePMs=PMS.filter(isDueToday);
+
+  html+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+  html+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">PMs Due Today</div>';
+  html+='<span style="background:'+(duePMs.length?'rgba(220,38,38,.2)':'rgba(22,163,74,.15)')+';color:'+(duePMs.length?'#ef4444':'#4ade80')+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+duePMs.length+' PMs</span>';
+  html+='</div>';
+  if(!duePMs.length){
+    html+='<div style="text-align:center;padding:10px;color:#555;font-size:13px">No PMs scheduled for today</div>';
+  }else{
+    duePMs.forEach(function(pm,_i){
+      var pmIdx=PMS.indexOf(pm);
+      var pcolor=pm.priority==='High'?'#ef4444':pm.priority==='Medium'?'#f59e0b':'#6b7280';
+      html+='<div style="background:#222;border-radius:9px;padding:11px 13px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
+      html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">';
+      html+='<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">'+pm.asset+'</div>';
+      html+='<div style="font-size:12px;color:#ccc;margin-top:2px">'+pm.desc+'</div>';
+      html+='<div style="font-size:10px;color:#666;font-family:monospace;margin-top:3px">'+pm.code+(pm.assignee?' &bull; '+pm.assignee:'')+(pm.hours?' &bull; est. '+pm.hours+'h':'')+'</div></div>';
+      html+='<span style="font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;background:'+pcolor+'22;color:'+pcolor+';white-space:nowrap;flex-shrink:0">'+pm.priority+'</span>';
+      html+='</div>';
+      var assignee=getAssignee(pm);
+      html+='<div style="display:flex;gap:7px;margin-top:8px">';
+      html+='<button onclick="logPMByIdx('+pmIdx+')" style="flex:1;padding:8px;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.3);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">&#10003; Done ('+assignee+')</button>';
+      html+='<button onclick="showReassignModal('+pmIdx+')" style="padding:8px 10px;background:#222;color:#888;border:1px solid #333;border-radius:7px;font-size:12px;cursor:pointer">&#8644; Reassign</button>';
+      html+='</div>';
+      html+='</div>';
+    });
+  }
+  // All PMs search
+  html+='<div style="margin-top:10px">';
+  html+='<input type="text" id="pm-search" oninput="filterPMs(this.value)" placeholder="Search all 156 PMs..." style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px 13px;font-size:14px;color:#fff;outline:none">';
+  html+='<div id="pm-list" style="margin-top:8px;max-height:300px;overflow-y:auto"></div>';
+  html+='</div>';
+  html+='</div>';
 
   // SEND REPORT - visible to everyone
   html+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
@@ -1033,9 +1169,11 @@ function setLang(l){
     else{ukBtn.style.background='#fff';ukBtn.style.color='#111';enBtn.style.background='none';enBtn.style.color='#666';}
   }
   // Update tab labels
-  var tabs={log:'mylog',shift:'shift',prev:'prev',util:'util',pm:'pm',more:'more'};
-  Object.keys(tabs).forEach(function(t){var el=gid('tab-'+t);if(el)el.textContent=TRANS[l][tabs[t]]||el.textContent;});
-  Object.keys(tabs).forEach(function(t){var el=gid('tab-'+t);if(el)el.textContent=TRANS[l][tabs[t]];});
+  var tabMap={log:'mylog',shift:'shift',prev:'prev',util:'util',more:'more'};
+  Object.keys(tabMap).forEach(function(t){
+    var el=gid('tab-'+t);
+    if(el)el.textContent=TRANS[l][tabMap[t]]||el.textContent;
+  });
   // Re-render current pane
   renderAll();
 }

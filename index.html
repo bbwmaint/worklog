@@ -1279,6 +1279,157 @@ function setLang(l){
 
 function T(key){return (TRANS[lang]&&TRANS[lang][key])||TRANS['en'][key]||key;}
 
+// ── MISSING FUNCTIONS ──
+
+function resetPin(name){
+  if(!confirm('Reset PIN for '+name+'?'))return;
+  localStorage.removeItem('pin_'+name);
+  alert('PIN reset for '+name);
+}
+
+function clearAll(){
+  if(!confirm('Delete ALL local data? Supabase data is kept.'))return;
+  entries=[];allE=[];utilLogs=[];
+  try{localStorage.removeItem('bbw_e');localStorage.removeItem('bbw_ae');localStorage.removeItem('bbw_util');}catch(e){}
+  renderAll();
+}
+
+function buildReport(){
+  var cur=allE.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  cur.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
+  var techs=[...new Set(cur.map(function(e){return e.who;}))].filter(Boolean);
+  var dt=cur.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+  var note=gid('snote')?gid('snote').value:'';
+  var SEP='='.repeat(50); var DIV='-'.repeat(30);
+  var b='BBW MAINTENANCE - SHIFT REPORT\n'+td()+' - '+(isDay()?'Day (07:00-19:00)':'Night (19:00-07:00)')+'\nTechnicians: '+(techs.join(', ')||'?')+'\nDowntime: '+dt+'h\n'+(note?'Note: '+note+'\n':'')+SEP+'\n\n';
+  var done=cur.filter(function(e){return e.type==='done'||e.type==='pm'||e.type==='completed';});
+  var ongoing=cur.filter(function(e){return e.type==='ongoing';});
+  var issues=cur.filter(function(e){return e.type==='issue'||e.type==='pending';});
+  var parts=cur.filter(function(e){return e.type==='part'||e.type==='parts';});
+  if(done.length){b+='COMPLETED\n'+DIV+'\n';done.forEach(function(e,i){b+=(i+1)+'. ['+(e.assetName||'?')+'] '+(e.desc||'?')+(e.start?' | '+e.start+(e.end?'-'+e.end:''):'')+'\n';});b+='\n';}
+  if(ongoing.length){b+='IN PROGRESS\n'+DIV+'\n';ongoing.forEach(function(e,i){b+=(i+1)+'. ['+(e.assetName||'?')+'] '+(e.desc||'?')+'\n';});b+='\n';}
+  if(issues.length){b+='OPEN ISSUES\n'+DIV+'\n';issues.forEach(function(e,i){b+=(i+1)+'. ['+(e.assetName||'?')+'] '+(e.desc||'?')+'\n';});b+='\n';}
+  if(parts.length){b+='PARTS TO ORDER\n'+DIV+'\n';parts.forEach(function(e,i){b+=(i+1)+'. '+(e.partName||e.desc||'?')+' x'+(e.partQty||1)+'\n';});b+='\n';}
+  b+='Sent from BBW Work Log\n';
+  return b;
+}
+
+function generateAndSendReport(){
+  var shiftEntries=allE.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  shiftEntries.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
+  var techs=[...new Set(shiftEntries.map(function(e){return e.who;}))].filter(Boolean);
+  var totalDT=shiftEntries.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+  var shiftLabel=isDay()?'Day Shift (07:00-19:00)':'Night Shift (19:00-07:00)';
+  var done=shiftEntries.filter(function(e){return e.type==='done'||e.type==='pm'||e.type==='completed';});
+  var ongoing=shiftEntries.filter(function(e){return e.type==='ongoing';});
+  var issues=shiftEntries.filter(function(e){return e.type==='issue'||e.type==='pending';});
+  var parts=shiftEntries.filter(function(e){return e.type==='part'||e.type==='parts';});
+  var notes=shiftEntries.filter(function(e){return e.type==='note';});
+  var W=window.open('','_blank','width=800,height=900');
+  if(!W){alert('Please allow popups to generate PDF');return;}
+  var logo=document.querySelector('img[src^="data:image"]');
+  var logoSrc=logo?logo.src:'';
+  function sanitize(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function rows(items,cols){
+    if(!items.length)return '<tr><td colspan="'+cols+'" style="padding:10px;color:#999;font-style:italic">None this shift</td></tr>';
+    return items.map(function(e){
+      if(cols===4){return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+(sanitize(e.assetName||'General'))+(e.assetCode?' <span style="color:#999;font-size:11px">('+e.assetCode+')</span>':'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+sanitize(e.desc||'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666;white-space:nowrap">'+(e.start?e.start+(e.end?'-'+e.end:''):'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666">'+sanitize(e.who||'')+'</td></tr>';}
+      return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+sanitize(e.assetName||'General')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+sanitize(e.desc||'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666">'+sanitize(e.who||'')+'</td></tr>';
+    }).join('');
+  }
+  function section(title,color,headers,items,cols){
+    return '<div style="margin-bottom:28px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:4px;height:22px;background:'+color+';border-radius:2px"></div><h3 style="margin:0;font-size:15px;font-weight:700;color:#111">'+title+'</h3><span style="font-size:13px;color:#999">('+items.length+')</span></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+headers.map(function(h){return '<th style="padding:9px 10px;text-align:left;background:#f8f8f8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid '+color+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'+rows(items,cols)+'</tbody></table></div>';
+  }
+  var H='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BBW Shift Report</title><style>body{font-family:-apple-system,sans-serif;margin:0;padding:32px;color:#111}@media print{.noprint{display:none!important}}</style></head><body>';
+  H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #111;margin-bottom:24px">';
+  H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &bull; '+td()+'</div></div>';
+  H+='<div style="text-align:right"><div style="font-size:13px;color:#666;margin-bottom:4px">Technicians</div><div style="font-size:14px;font-weight:600">'+(techs.join(', ')||'—')+'</div></div></div>';
+  H+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">';
+  H+='<div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800">'+shiftEntries.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Total Tasks</div></div>';
+  H+='<div style="background:#fef2f2;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#dc2626">'+issues.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Pending Issues</div></div>';
+  H+='<div style="background:#fff7ed;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ea580c">'+parts.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Parts Needed</div></div>';
+  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#d97706">'+totalDT+'h</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Downtime</div></div>';
+  H+='</div>';
+  H+=(issues.length?section('Pending Issues — Next Shift Must Action','#dc2626',['Asset','Description','Technician'],issues,3):'<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:28px;font-weight:600;color:#16a34a">&#10003; No pending issues — clean handover</div>');
+  H+=section('Work Completed This Shift','#16a34a',['Asset','Description','Time','Technician'],done,4);
+  if(ongoing.length)H+=section('In Progress — Continue Next Shift','#d97706',['Asset','Description','Time','Technician'],ongoing,4);
+  if(parts.length)H+=section('Parts to Order','#ea580c',['Part Name','Asset','Qty','Requested By'],parts,4);
+  if(notes.length)H+=section('Notes','#2563eb',['Asset','Note','Time','Technician'],notes,4);
+  H+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div><button onclick="window.print()" class="noprint" style="padding:10px 20px;background:#111;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Save as PDF</button></div>';
+  H+='</body></html>';
+  W.document.write(H);W.document.close();W.focus();
+}
+
+function manualSend(){generateAndSendReport();}
+
+function showSendModal(){
+  var cur=allE.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  var iss=cur.filter(function(e){return e.type==='issue'||e.type==='pending';}).length;
+  var pts=cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length;
+  var dt=cur.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+  gid('send-sub').textContent=td()+' - '+(isDay()?'Day':'Night')+' shift';
+  gid('send-stats').innerHTML='<div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#fff">'+cur.length+'</div><div style="font-size:10px;color:#666;font-family:monospace">entries</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#ef4444">'+iss+'</div><div style="font-size:10px;color:#666;font-family:monospace">pending</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f97316">'+pts+'</div><div style="font-size:10px;color:#666;font-family:monospace">parts</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f59e0b">'+dt+'</div><div style="font-size:10px;color:#666;font-family:monospace">DT hrs</div></div>';
+  var m=gid('send-modal');if(m)m.style.display='flex';
+}
+
+function confirmSend(send){
+  var m=gid('send-modal');if(m)m.style.display='none';
+  if(!send)return;
+  generateAndSendReport();
+}
+
+function saveEJS(){
+  var s=gid('ejs-s').value.trim(),t=gid('ejs-t').value.trim(),p=gid('ejs-p').value.trim();
+  if(!s||!t||!p){alert('All three fields required.');return;}
+  localStorage.setItem('bbw_ejs_s',s);localStorage.setItem('bbw_ejs_t',t);localStorage.setItem('bbw_ejs_p',p);
+  alert('Auto-send enabled.');
+}
+
+function testEJS(){
+  var s=gid('ejs-s')?gid('ejs-s').value:'',t=gid('ejs-t')?gid('ejs-t').value:'',p=gid('ejs-p')?gid('ejs-p').value:'';
+  if(!s||!t||!p){alert('Fill in all three fields first.');return;}
+  alert('Test send - check your email.');
+}
+
+function doExport(){
+  var month=parseInt(gid('exp-m').value),year=parseInt(gid('exp-y').value);
+  var filtered=allE.filter(function(e){var d=new Date(e.date);return d.getMonth()===month&&d.getFullYear()===year;});
+  if(!filtered.length){alert('No entries for this period.');return;}
+  var cols=['Date','Shift','Technician','Asset','Code','Type','Description','Start','End','DT hrs','Part','Qty','Priority'];
+  var rows=[cols.join(',')];
+  filtered.forEach(function(e){rows.push([e.date,e.shift,e.who||'','"'+(e.assetName||'')+'"',e.assetCode||'',e.type,'"'+((e.desc||'').replace(/"/g,'""'))+'"',e.start||'',e.end||'',e.dt||0,'"'+(e.partName||'')+'"',e.partQty||'',e.priority||''].join(','));});
+  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');
+  a.href=url;a.download='BBW_WorkLog_'+mn[month]+year+'.csv';a.click();URL.revokeObjectURL(url);
+}
+
+function doUtilExport(){
+  var month=parseInt(gid('exp-m').value),year=parseInt(gid('exp-y').value);
+  var filtered=utilLogs.filter(function(r){var d=new Date(r.date);return d.getMonth()===month&&d.getFullYear()===year;});
+  if(!filtered.length){alert('No utility data for this period.');return;}
+  var cols=['Date','W3(m3)','W5(m3)','Gas(ft3)','Elec(GWh)','Boiler(L)','Past(L)','CT(L)','Steam(kg)','By'];
+  var rows=[cols.join(',')];
+  filtered.forEach(function(r){rows.push([r.date,r.w3||'',r.w5||'',r.gas||'',r.elec||'',r.boil||'',r.past||'',r.cool||'',r.steam||'',r.by||''].join(','));});
+  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var blob=new Blob([rows.join('\n')],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);var a=document.createElement('a');
+  a.href=url;a.download='BBW_Utilities_'+mn[month]+year+'.csv';a.click();URL.revokeObjectURL(url);
+}
+
+function sendMonthlyRecap(){
+  var month=parseInt(gid('exp-m').value),year=parseInt(gid('exp-y').value);
+  var filtered=allE.filter(function(e){var d=new Date(e.date);return d.getMonth()===month&&d.getFullYear()===year;});
+  if(!filtered.length){alert('No entries for this period.');return;}
+  var mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var dt=filtered.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+  var techs={};filtered.forEach(function(e){if(e.who)techs[e.who]=(techs[e.who]||0)+1;});
+  var b='BBW MAINTENANCE - MONTHLY RECAP: '+mn[month]+' '+year+'\n'+'='.repeat(50)+'\nEntries: '+filtered.length+'\nDowntime: '+dt+'h\nIssues/Pending: '+filtered.filter(function(e){return e.type==='issue'||e.type==='pending';}).length+'\n\nTECHNICIANS\n'+'-'.repeat(30)+'\n';
+  Object.entries(techs).sort(function(a,b){return b[1]-a[1];}).forEach(function(kv){b+='  '+kv[0]+': '+kv[1]+' entries\n';});
+  var subj=encodeURIComponent('BBW Monthly Recap - '+mn[month]+' '+year);
+  window.location.href='mailto:maintenance@brunswickbierworks.com?subject='+subj+'&body='+encodeURIComponent(b);
+}
+
 </script>
 </body>
 </html>

@@ -161,21 +161,38 @@
     <textarea id="f-desc" rows="3" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;resize:none;font-family:inherit"></textarea>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-    <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-start">Start</div>
-      <input type="time" id="f-start" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
+  <div style="margin-bottom:6px">
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Troubleshooting Time</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-start">Start</div>
+        <input type="time" id="f-start" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
+      </div>
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-end">End</div>
+        <input type="time" id="f-end" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
+      </div>
     </div>
-    <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-end">End</div>
-      <input type="time" id="f-end" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
-    </div>
-    <div>
-      <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-dthrs">DT hrs</div>
-      <input type="number" id="f-dt" min="0" step="0.25" placeholder="0.0" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
-    </div>
+    <div id="dt-auto" style="display:none;background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:8px;padding:8px 12px;font-size:13px;color:#4ade80;margin-bottom:8px"></div>
   </div>
-  <div id="dt-auto" style="display:none;background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:8px;padding:8px 12px;font-size:13px;color:#4ade80;margin-bottom:10px"></div>
+  <div style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Machine Downtime</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-dthrs">DT hrs</div>
+        <input type="number" id="f-dt" min="0" step="0.25" placeholder="0.0" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
+      </div>
+      <div>
+        <div style="font-size:12px;color:#888;margin-bottom:5px">Machine Was Down?</div>
+        <select id="f-machinedown" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 10px;font-size:15px;color:#fff;outline:none">
+          <option value="">Not applicable</option>
+          <option value="yes">Yes — machine was down</option>
+          <option value="partial">Partial — reduced speed</option>
+        </select>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#666;margin-top:6px">Troubleshooting time above = time spent working on it. DT hrs = actual production loss.</div>
+  </div>
 
   <div id="fg-part" style="display:none;margin-bottom:14px">
     <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-partnum">Part name / number</div>
@@ -586,6 +603,7 @@ function openSheet(id){
   document.querySelectorAll('[id^="pp-"]').forEach(function(el){el.style.borderColor='#333';el.style.background='#222';el.style.color='#aaa';});
   gid('fg-part').style.display='none';
   gid('dt-auto').style.display='none';
+  if(gid('f-machinedown'))gid('f-machinedown').value='';
   gid('sheet-title').textContent=id?'Edit Entry':'Log Work';
   if(id){
     var e=entries.find(function(x){return x.id===id;})||allE.find(function(x){return x.id===id;});
@@ -594,6 +612,7 @@ function openSheet(id){
       if(e.assetCode)selA2(e.assetCode,e.assetName);
       gid('f-desc').value=e.desc||''; gid('f-start').value=e.start||''; gid('f-end').value=e.end||''; gid('f-dt').value=e.dt||'';
       if(e.partName){gid('f-pname').value=e.partName;gid('f-pqty').value=e.partQty||1;}
+      if(e.machineDown&&gid('f-machinedown'))gid('f-machinedown').value=e.machineDown;
       if(e.photo){photo=e.photo;gid('photo-prev').src=photo;gid('photo-prev').style.display='block';}
     }
   }
@@ -648,11 +667,24 @@ function submitEntry(){
         return (mins>=420&&mins<1140)?'Day':'Night';
       }
       return isDay()?'Day':'Night';
-    })(),type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
-  if(editId){var ei=entries.findIndex(function(x){return x.id===editId;});if(ei>=0)entries[ei]=entry;var ai=allE.findIndex(function(x){return x.id===editId;});if(ai>=0)allE[ai]=entry;}
-  else{entries.push(entry);allE.push(entry);}
+    })(),type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,machineDown:gid('f-machinedown')?gid('f-machinedown').value:'',partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
+  if(editId){
+    var ei=entries.findIndex(function(x){return x.id===editId;});if(ei>=0)entries[ei]=entry;
+    var ai=allE.findIndex(function(x){return x.id===editId;});if(ai>=0)allE[ai]=entry;
+    // Update in Supabase - find sbId
+    var orig=allE.find(function(x){return x.id===editId;});
+    if(orig&&orig.sbId){
+      var body=JSON.stringify({
+        type:entry.type,priority:entry.priority||null,
+        asset_name:entry.assetName||null,asset_code:entry.assetCode||null,
+        description:entry.desc||null,start_time:entry.start||null,end_time:entry.end||null,
+        downtime_hrs:entry.dt||0,part_name:entry.partName||null,part_qty:entry.partQty||null,
+        who:entry.who||null,shift_note:entry.shiftNote||null,machine_down:entry.machineDown||null
+      });
+      sbFetch('bbw_worklog?id=eq.'+orig.sbId,{method:'PATCH',body:body,headers:{'Prefer':'return=minimal'}});
+    }
+  }else{entries.push(entry);allE.push(entry);syncEntry(entry);}
   save();
-  syncEntry(entry);
   closeSheet();renderAll();checkUBanner();
 }
 
@@ -898,10 +930,12 @@ function card(e,mine){
   html+='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">';
   if(time)html+='<span style="font-size:11px;color:#666;font-family:monospace">'+time+'</span>';
   if(e.dt>0)html+='<span style="font-size:11px;color:#ef4444;font-family:monospace">'+e.dt+'h DT</span>';
+  if(e.machineDown==='yes')html+='<span style="font-size:10px;font-weight:700;background:rgba(220,38,38,.2);color:#ef4444;padding:2px 6px;border-radius:4px;font-family:monospace">MACHINE DOWN</span>';
+  if(e.machineDown==='partial')html+='<span style="font-size:10px;font-weight:700;background:rgba(234,88,12,.2);color:#f97316;padding:2px 6px;border-radius:4px;font-family:monospace">PARTIAL</span>';
   html+='<span style="font-size:11px;color:#666">'+e.who+'</span>';
   html+='</div>';
   if(e.photo)html+='<img src="'+e.photo+'" onclick="openLB(\''+e.photo+'\',\''+e.assetName+'\')" style="max-width:100%;max-height:90px;border-radius:7px;margin-top:8px;object-fit:cover;cursor:pointer" alt="">';
-  if(mine)html+='<div style="position:absolute;top:10px;right:10px;display:flex;gap:5px"><button onclick="openSheet('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(37,99,235,.2);color:#60a5fa;cursor:pointer;font-size:13px">&#9998;</button><button onclick="delEntry('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(220,38,38,.15);color:#ef4444;cursor:pointer;font-size:13px">&#10005;</button></div>';
+  if(mine||user===ADMIN)html+='<div style="position:absolute;top:10px;right:10px;display:flex;gap:5px"><button onclick="openSheet('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(37,99,235,.2);color:#60a5fa;cursor:pointer;font-size:13px">&#9998;</button><button onclick="delEntry('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(220,38,38,.15);color:#ef4444;cursor:pointer;font-size:13px">&#10005;</button></div>';
   html+='</div>';
   return html;
 }
@@ -983,7 +1017,7 @@ function renderShift(){
   stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f97316">'+cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Parts</div></div>';
   stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f59e0b">'+dt.toFixed(1)+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">DT hrs</div></div>';
   stats+='</div>';
-  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,false);}).join(''):'<div style="text-align:center;padding:30px;color:#555">'+T('No entries this shift yet')+'</div>');
+  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,e.who===user);}).join(''):'<div style="text-align:center;padding:30px;color:#555">'+T('No entries this shift yet')+'</div>');
 }
 
 function renderPrev(){
@@ -1006,7 +1040,7 @@ function renderPrev(){
   var ackKey='ack_'+pDate+'_'+pShift,acked=localStorage.getItem(ackKey);
   html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:T(''+'I have read this handover'+''))+'</button>';
   html+='</div></div>';
-  html+=prev.slice().reverse().map(function(e){return card(e,false);}).join('');
+  html+=prev.slice().reverse().map(function(e){return card(e,e.who===user);}).join('');
   el.innerHTML=html;
 }
 function ack(key){localStorage.setItem(key,user+' at '+ntime());renderPrev();}

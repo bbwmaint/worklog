@@ -160,6 +160,10 @@
     <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-whatdone">What was done / Issue</div>
     <textarea id="f-desc" rows="3" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;resize:none;font-family:inherit"></textarea>
   </div>
+  <div id="fg-assignedto" style="display:none;margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Reassign To (Admin Only)</div>
+    <select id="f-assignedto" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none"></select>
+  </div>
 
   <!-- TIME FIELDS -->
   <div style="background:#1e1e22;border-radius:10px;padding:12px;margin-bottom:14px">
@@ -647,6 +651,19 @@ function openSheet(id){
       if(e.photo){photo=e.photo;gid('photo-prev').src=photo;gid('photo-prev').style.display='block';}
     }
   }
+  // Assigned-to for admin
+  var fgAt=gid('fg-assignedto');
+  if(fgAt){
+    if(user===ADMIN){
+      fgAt.style.display='block';
+      var atSel=gid('f-assignedto');
+      if(atSel){
+        atSel.innerHTML=TECHS.map(function(t){return '<option value="'+t+'">'+t+'</option>';}).join('');
+        if(id){var eAt=allE.find(function(x){return x.id===id;});if(eAt)atSel.value=eAt.who||user;}
+        else{atSel.value=user;}
+      }
+    }else{fgAt.style.display='none';}
+  }
   var ov=gid('sheet-overlay');ov.style.display='flex';
 }
 function closeSheet(){gid('sheet-overlay').style.display='none';editId=null;}
@@ -704,7 +721,7 @@ function submitEntry(){
         return (mins>=420&&mins<1140)?'Day':'Night';
       }
       return isDay()?'Day':'Night';
-    })(),type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,machineDown:gid('f-machinedown')?gid('f-machinedown').value:'',coMins:parseInt(gid('f-co')?gid('f-co').value:0)||0,coType:gid('f-cotype')?gid('f-cotype').value:'',partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
+    })(),type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,machineDown:gid('f-machinedown')?gid('f-machinedown').value:'',coMins:parseInt(gid('f-co')?gid('f-co').value:0)||0,coType:gid('f-cotype')?gid('f-cotype').value:'',partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:(user===ADMIN&&gid('f-assignedto')&&gid('f-assignedto').value)?gid('f-assignedto').value:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
   if(editId){
     var ei=entries.findIndex(function(x){return x.id===editId;});if(ei>=0)entries[ei]=entry;
     var ai=allE.findIndex(function(x){return x.id===editId;});if(ai>=0)allE[ai]=entry;
@@ -769,13 +786,10 @@ function deleteFromSB(sbId){
 
 function loadFromSB(){
   var today=td();
-  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-2);
+  var yesterday=new Date();yesterday.setDate(yesterday.getDate()-3);
   var yd=yesterday.toISOString().split('T')[0];
   sbFetch('bbw_worklog?date=gte.'+yd+'&order=logged_at.asc')
-    .then(function(r){
-      console.log('BBW: Supabase response status:', r.status);
-      return r.json();
-    })
+    .then(function(r){return r.json();})
     .then(function(data){
       console.log('BBW: Got', Array.isArray(data)?data.length:'ERROR', 'entries from Supabase', data);
       if(!Array.isArray(data)){return;}
@@ -1105,16 +1119,16 @@ function renderUtil(){
   }
 
   var monRows=
-    fieldRow('w3','Water 3" (m\u00B3)','0.000')+
-    fieldRow('w5','Water 5" (m\u00B3)','0.000')+
+    fieldRow('w3','Water 3\" (m\u00B3)','0.000')+
+    fieldRow('w5','Water 5\" (m\u00B3)','0.000')+
     fieldRow('gas','Gas (ft\u00B3)','0.000')+
     fieldRow('elec','Electricity (GWh)','0.0000')+
+    fieldRow('boil','Boiler Makeup Water (L)','0')+
+    fieldRow('steam','Pasteurizer Steam (kg)','0')+
     fieldRow('past','Pasteurizer Makeup (L)','0.00')+
     fieldRow('cool','Cooling Tower (L)','0.00');
 
   var boilerRows=
-    fieldRow('boil','Boiler Makeup Water (L)','0')+
-    fieldRow('steam','Pasteurizer Steam (kg)','0')+
     fieldRow('bc1','Coil C1 (\u00B0C)','0')+
     fieldRow('bc2','Coil C2 (\u00B0C)','0')+
     fieldRow('bc3','Coil C3 (\u00B0C)','0')+

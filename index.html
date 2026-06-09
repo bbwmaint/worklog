@@ -668,6 +668,13 @@ function openSheet(id){
 }
 function closeSheet(){gid('sheet-overlay').style.display='none';editId=null;}
 
+function updateLevel(inp){
+  var max=parseFloat(inp.getAttribute('data-max'))||28;
+  var pct=Math.min(100,(parseFloat(inp.value)||0)/max*100);
+  var bar=gid('lvl-'+inp.id);
+  if(bar){bar.style.width=pct+'%';bar.style.background=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';}
+}
+
 function toggleDT(val){
   var wrap=gid('f-dt-wrap');
   if(wrap)wrap.style.display=(val==='yes'||val==='partial')?'block':'none';
@@ -1073,27 +1080,71 @@ function renderShift(){
 }
 
 function renderPrev(){
-  var dayShift=isDay(),pShift=dayShift?'Night':'Day';
-  var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
-  var prev=allE.filter(function(e){return e.date===pDate&&e.shift===pShift;});
   var el=gid('pane-prev');
-  if(!prev.length){el.innerHTML='<div style="text-align:center;padding:40px;color:#555">No previous shift data<br><span style="font-size:11px;color:#444">Looking for '+pShift+' shift on '+pDate+'</span></div>';return;}
-  var techs=[...new Set(prev.map(function(e){return e.who;}))].filter(Boolean);
-  var dt=prev.reduce(function(a,e){return a+e.dt;},0).toFixed(1);
-  var issues=prev.filter(function(e){return e.type==='issue'||e.type==='pending';});
-  var urg=issues.filter(function(e){return e.priority==='urgent'||e.priority==='high'||e.type==='pending';});
-  var html='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px">';
-  html+='<div style="padding:13px 16px;border-bottom:1px solid #333;display:flex;align-items:center;justify-content:space-between">';
-  html+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+pShift+' Shift Handover</div><div style="font-size:12px;color:#666;font-family:monospace;margin-top:2px">'+pDate+' &bull; '+(techs.join(', ')||'?')+' &bull; '+dt+'h DT</div></div></div>';
-  html+='<div style="padding:13px 16px">';
-  html+='<div style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Issues for your shift')+'</div>';
-  if(urg.length){urg.forEach(function(e){html+='<div style="background:rgba(220,38,38,.15);border-radius:8px;padding:9px 11px;margin-bottom:6px;border-left:3px solid #ef4444"><div style="font-size:14px;font-weight:700;color:#ef4444">['+e.priority.toUpperCase()+'] '+(e.assetName||'?')+'</div><div style="font-size:13px;color:#fca5a5;margin-top:2px">'+(e.desc||'')+'</div></div>';});}
-  else{html+='<div style="background:rgba(22,163,74,.15);border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80">'+T('No urgent issues handed over')+'</div>';}
-  var ackKey='ack_'+pDate+'_'+pShift,acked=localStorage.getItem(ackKey);
-  html+='<button onclick="ack(\''+ackKey+'\')" style="width:100%;padding:12px;background:'+(acked?'rgba(22,163,74,.2)':'rgba(22,163,74,.1)')+';color:#4ade80;border:1.5px solid rgba(22,163,74,.3);border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px">'+(acked?'Acknowledged - '+acked:T(''+'I have read this handover'+''))+'</button>';
-  html+='</div></div>';
-  html+=prev.slice().reverse().map(function(e){return card(e,e.who===user);}).join('');
-  el.innerHTML=html;
+  // Last 3 shifts, earliest first
+  var shifts=[];
+  var cur=new Date();
+  for(var s=0;s<3;s++){
+    var h=cur.getHours();
+    var sh=(h>=7&&h<19)?'Day':'Night';
+    var dt=cur.toISOString().split('T')[0];
+    shifts.unshift({date:dt,shift:sh});
+    if(sh==='Day'){cur.setHours(2,0,0);}
+    else{cur.setDate(cur.getDate()-1);cur.setHours(12,0,0);}
+  }
+  var H='';
+  var foundAny=false;
+  shifts.forEach(function(sv){
+    var prev=allE.filter(function(e){return e.date===sv.date&&e.shift===sv.shift;});
+    prev=prev.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
+    if(!prev.length){
+      H+='<div style="background:#111;border-radius:10px;padding:12px 16px;margin-bottom:10px;border-left:3px solid #333">';
+      H+='<div style="font-size:13px;font-weight:700;color:#555">'+sv.shift+' Shift — '+sv.date+'</div>';
+      H+='<div style="font-size:12px;color:#444;margin-top:4px">No entries logged</div></div>';
+      return;
+    }
+    foundAny=true;
+    var techs=[...new Set(prev.map(function(e){return e.who;}))].filter(Boolean);
+    var dtTotal=prev.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+    var urg=prev.filter(function(e){return (e.type==='issue'||e.type==='pending')&&(e.priority==='urgent'||e.priority==='high');});
+    var parts=prev.filter(function(e){return e.type==='part'||e.type==='parts';});
+    var ackKey='ack_'+sv.date+'_'+sv.shift;
+    var acked=localStorage.getItem(ackKey);
+    H+='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px">';
+    H+='<div style="padding:13px 16px;border-bottom:1px solid #333;display:flex;align-items:center;justify-content:space-between">';
+    H+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+sv.shift+' Shift — '+sv.date+'</div>';
+    H+='<div style="font-size:11px;color:#666;margin-top:2px">'+techs.join(', ')+'</div></div>';
+    H+='<div style="font-size:12px;color:#888">'+prev.length+' entries'+(parseFloat(dtTotal)>0?' &bull; '+dtTotal+'h DT':'')+'</div>';
+    H+='</div>';
+    H+='<div style="padding:12px 16px">';
+    if(urg.length){
+      H+='<div style="font-size:11px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Action Required</div>';
+      urg.forEach(function(e){
+        H+='<div style="background:rgba(220,38,38,.15);border-radius:8px;padding:10px 12px;margin-bottom:6px;border-left:3px solid #ef4444">';
+        H+='<div style="font-size:13px;font-weight:700;color:#fff">'+(e.assetName||'General')+'</div>';
+        H+='<div style="font-size:12px;color:#ccc;margin-top:2px">'+(e.desc||'')+'</div></div>';
+      });
+    } else {
+      H+='<div style="background:rgba(22,163,74,.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;font-weight:600;color:#4ade80">&#10003; No urgent issues</div>';
+    }
+    if(parts.length){
+      H+='<div style="font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin:8px 0 6px">Parts Needed</div>';
+      parts.forEach(function(e){H+='<div style="font-size:12px;color:#ccc;padding:3px 0">&bull; '+(e.partName||e.desc||'?')+(e.partQty?' x'+e.partQty:'')+'</div>';});
+    }
+    var btnBg=acked?'rgba(22,163,74,.15)':'#2563eb';
+    var btnColor=acked?'#4ade80':'#fff';
+    var btnBorder=acked?'1px solid rgba(22,163,74,.3)':'none';
+    var btnTxt=acked?'✓ Acked: '+acked:'Acknowledge Handover';
+    H+='<button class="ackbtn" data-key="'+ackKey+'" style="width:100%;padding:11px;background:'+btnBg+';color:'+btnColor+';border:'+btnBorder+';border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px">'+btnTxt+'</button>';
+    H+='</div>';
+    H+=prev.map(function(e){return card(e,e.who===user||user===ADMIN);}).join('');
+    H+='</div>';
+  });
+  if(!foundAny)H='<div style="text-align:center;padding:40px;color:#555">No previous shift data</div>';
+  el.innerHTML=H;
+  el.querySelectorAll('.ackbtn').forEach(function(b){
+    b.addEventListener('click',function(){ack(this.getAttribute('data-key'));});
+  });
 }
 function ack(key){localStorage.setItem(key,user+' at '+ntime());renderPrev();}
 
@@ -1104,11 +1155,25 @@ function renderUtil(){
     '<div style="background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;color:#4ade80;margin-bottom:14px">Logged today by '+today.by+' at '+today.time+'</div>':
     '<div style="background:rgba(217,119,6,.15);border:1px solid rgba(217,119,6,.3);border-radius:10px;padding:10px 12px;font-size:13px;color:#fbbf24;margin-bottom:14px">No readings logged today yet</div>';
 
-  function fieldRow(id, label, placeholder, val){
+  function fieldRow(id, label, placeholder){
     var v=today&&today[id]!=null?today[id]:'';
     return '<div><div style="font-size:12px;color:#888;margin-bottom:4px">'+label+'</div>'+
       '<input type="number" id="'+id+'" value="'+v+'" placeholder="'+placeholder+'" '+
       'style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace"></div>';
+  }
+
+  function fieldRowLevel(id, label, placeholder){
+    var v=today&&today[id]!=null?today[id]:'';
+    var pct=v?Math.min(100,(parseFloat(v)/28)*100):0;
+    var bc=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';
+    return '<div>'+
+      '<div style="font-size:12px;color:#888;margin-bottom:4px">'+label+' <span style="color:#555;font-size:10px">max 28\"</span></div>'+
+      '<input type="number" id="'+id+'" value="'+v+'" placeholder="'+placeholder+'" min="0" max="28" step="0.5" '+
+      'oninput="updateLevel(this)" data-max="28" '+
+      'style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace;margin-bottom:4px">'+
+      '<div style="height:5px;background:#333;border-radius:3px">'+
+      '<div id="lvl-'+id+'" style="height:100%;background:'+bc+';border-radius:3px;width:'+pct+'%"></div>'+
+      '</div></div>';
   }
 
   function section(title, color, rows){
@@ -1129,14 +1194,21 @@ function renderUtil(){
     fieldRow('cool','Cooling Tower (L)','0.00');
 
   var boilerRows=
-    fieldRow('bc1','Coil C1 (\u00B0C)','0')+
-    fieldRow('bc2','Coil C2 (\u00B0C)','0')+
-    fieldRow('bc3','Coil C3 (\u00B0C)','0')+
-    fieldRow('bc4','Coil C4 (\u00B0C)','0')+
-    fieldRow('bc5','Coil C5 (\u00B0C)','0')+
-    fieldRow('bc6','Coil C6 (\u00B0C)','0')+
-    fieldRow('bc7','Coil C7 (\u00B0C)','0')+
-    fieldRow('stack','Stack Temp (\u00B0C)','0');
+    fieldRow('bc1','Coil C1 (°C)','0')+
+    fieldRow('bc2','Coil C2 (°C)','0')+
+    fieldRow('bc3','Coil C3 (°C)','0')+
+    fieldRow('bc4','Coil C4 (°C)','0')+
+    fieldRow('bc5','Coil C5 (°C)','0')+
+    fieldRow('bc6','Coil C6 (°C)','0')+
+    fieldRow('bc7','Coil C7 (°C)','0')+
+    fieldRow('stack','Stack Temp (°C)','0')+
+    fieldRow('p_alk','P Alkalinity (ppm)','0')+
+    fieldRow('m_alk','M Alkalinity (ppm)','0')+
+    fieldRow('oh_alk','OH Alkalinity (ppm)','0')+
+    fieldRow('sulphate','Sulphate (ppm)','0')+
+    fieldRowLevel('amercor','Amercor Level (in)','0')+
+    fieldRowLevel('advplus','Advantage Plus Level (in)','0')+
+    fieldRowLevel('amersite','Amersite Level (in)','0');
 
   var chillerRows=
     fieldRow('chstart','Start Count','0')+
@@ -1181,7 +1253,7 @@ function renderUtil(){
 }
 
 function saveUtil(){
-  var keys=['w3','w5','gas','elec','boil','past','cool','steam','chstart','chproc','warmcell','bc1','bc2','bc3','bc4','bc5','bc6','bc7','stack'];
+  var keys=['w3','w5','gas','elec','boil','past','cool','steam','chstart','chproc','warmcell','bc1','bc2','bc3','bc4','bc5','bc6','bc7','stack','p_alk','m_alk','oh_alk','sulphate','amercor','advplus','amersite'];
   var rec={date:td(),time:ntime(),by:user||'?'};
   var any=false;
   keys.forEach(function(k){var el=gid(k);if(el&&el.value!==''){rec[k]=parseFloat(el.value);any=true;}else{rec[k]=null;}});
@@ -1672,12 +1744,36 @@ function doExport(){
 
 function doUtilExport(){
   var month=parseInt(gid('exp-m').value),year=parseInt(gid('exp-y').value);
+  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var filtered=utilLogs.filter(function(r){var d=new Date(r.date);return d.getMonth()===month&&d.getFullYear()===year;});
   if(!filtered.length){alert('No utility data for this period.');return;}
-  var cols=['Date','W3(m3)','W5(m3)','Gas(ft3)','Elec(GWh)','Boiler(L)','Past(L)','CT(L)','Steam(kg)','By'];
-  var rows=[cols.join(',')];
-  filtered.forEach(function(r){rows.push([r.date,r.w3||'',r.w5||'',r.gas||'',r.elec||'',r.boil||'',r.past||'',r.cool||'',r.steam||'',r.by||''].join(','));});
-  var mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var rows=[];
+  rows.push('BBW MAINTENANCE - UTILITY DASHBOARD');
+  rows.push(mn[month]+' '+year+' | Generated: '+new Date().toLocaleString('en-CA'));
+  rows.push('');
+  rows.push('MONITORING');
+  rows.push(['Date','W3" (m3)','W5" (m3)','Gas (ft3)','Elec (GWh)','Boiler Makeup (L)','Past. Steam (kg)','Past. Makeup (L)','Cooling Tower (L)','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.w3||'',r.w5||'',r.gas||'',r.elec||'',r.boil||'',r.steam||'',r.past||'',r.cool||'',r.by||''].join(','));});
+  rows.push('');
+  rows.push('BOILER READINGS');
+  rows.push(['Date','C1','C2','C3','C4','C5','C6','C7','Stack','P Alk','M Alk','OH Alk','Sulphate','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.bc1||'',r.bc2||'',r.bc3||'',r.bc4||'',r.bc5||'',r.bc6||'',r.bc7||'',r.stack||'',r.p_alk||'',r.m_alk||'',r.oh_alk||'',r.sulphate||'',r.by||''].join(','));});
+  rows.push('');
+  rows.push('CHEMICAL LEVELS (inches, max 28")');
+  rows.push(['Date','Amercor (in)','Advantage Plus (in)','Amersite (in)','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.amercor||'',r.advplus||'',r.amersite||'',r.by||''].join(','));});
+  rows.push('');
+  rows.push('CHILLER');
+  rows.push(['Date','Start Count','Process Temp (C)','Warmcell Temp (C)','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.chstart||'',r.chproc||'',r.warmcell||'',r.by||''].join(','));});
+  rows.push('');
+  rows.push('MONTHLY SUMMARY');
+  rows.push(['Metric','Days Logged','Total','Average/Day'].join(','));
+  function tot(k){return filtered.filter(function(r){return r[k]!=null;}).reduce(function(a,r){return a+parseFloat(r[k]||0);},0).toFixed(2);}
+  function avg(k){var v=filtered.filter(function(r){return r[k]!=null;});return v.length?(v.reduce(function(a,r){return a+parseFloat(r[k]||0);},0)/v.length).toFixed(2):'';}
+  [['Water 3" (m3)','w3'],['Water 5" (m3)','w5'],['Gas (ft3)','gas'],['Electricity (GWh)','elec']].forEach(function(m){
+    rows.push([m[0],filtered.length,tot(m[1]),avg(m[1])].join(','));
+  });
   var blob=new Blob([rows.join('\n')],{type:'text/csv'});
   var url=URL.createObjectURL(blob);var a=document.createElement('a');
   a.href=url;a.download='BBW_Utilities_'+mn[month]+year+'.csv';a.click();URL.revokeObjectURL(url);

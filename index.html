@@ -1088,7 +1088,7 @@ function renderPrev(){
     var h=cur.getHours();
     var sh=(h>=7&&h<19)?'Day':'Night';
     var dt=cur.toISOString().split('T')[0];
-    shifts.unshift({date:dt,shift:sh});
+    shifts.push({date:dt,shift:sh});
     if(sh==='Day'){cur.setHours(2,0,0);}
     else{cur.setDate(cur.getDate()-1);cur.setHours(12,0,0);}
   }
@@ -1167,12 +1167,17 @@ function renderUtil(){
     var pct=v?Math.min(100,(parseFloat(v)/28)*100):0;
     var bc=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';
     return '<div>'+
-      '<div style="font-size:12px;color:#888;margin-bottom:4px">'+label+' <span style="color:#555;font-size:10px">max 28\"</span></div>'+
-      '<input type="number" id="'+id+'" value="'+v+'" placeholder="'+placeholder+'" min="0" max="28" step="0.5" '+
+      '<div style="font-size:12px;color:#888;margin-bottom:4px">'+label+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      '<input type="number" id="'+id+'" value="'+v+'" placeholder="0" min="0" max="28" step="0.5" '+
       'oninput="updateLevel(this)" data-max="28" '+
-      'style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace;margin-bottom:4px">'+
-      '<div style="height:5px;background:#333;border-radius:3px">'+
-      '<div id="lvl-'+id+'" style="height:100%;background:'+bc+';border-radius:3px;width:'+pct+'%"></div>'+
+      'style="width:70px;background:#222;border:1px solid #333;border-radius:8px;padding:8px;font-size:14px;color:#fff;outline:none;font-family:monospace;flex-shrink:0">'+
+      '<div style="flex:1">'+
+      '<div style="height:8px;background:#333;border-radius:4px;overflow:hidden">'+
+      '<div id="lvl-'+id+'" style="height:100%;background:'+bc+';border-radius:4px;width:'+pct+'%;transition:width .3s"></div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-top:2px"><span>0"</span><span>28"</span></div>'+
+      '</div>'+
       '</div></div>';
   }
 
@@ -1616,15 +1621,12 @@ function generateAndSendReport(){
   // Build options based on current time
   var options=[];
   // Always offer today's day shift
-  options.push({label:'Today Day Shift ('+todayStr+' 07:00-19:00)',date:todayStr,shift:'Day'});
-  // If it's night shift time (after 19 or before 7), offer night options
-  if(h>=19){
+  // Always show all relevant options
+  if(h>=19||h<7){
     options.push({label:'Tonight Night Shift ('+todayStr+' 19:00-07:00)',date:todayStr,shift:'Night'});
   }
-  if(h<7){
-    options.push({label:'Last Night Shift ('+yesterdayStr+' 19:00-07:00)',date:yesterdayStr,shift:'Night'});
-  }
-  // Always offer yesterday day shift
+  options.push({label:'Today Day Shift ('+todayStr+' 07:00-19:00)',date:todayStr,shift:'Day'});
+  options.push({label:'Yesterday Night Shift ('+yesterdayStr+' 19:00-07:00)',date:yesterdayStr,shift:'Night'});
   options.push({label:'Yesterday Day Shift ('+yesterdayStr+' 07:00-19:00)',date:yesterdayStr,shift:'Day'});
 
   // Build modal

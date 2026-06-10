@@ -117,12 +117,12 @@
   <!-- TABS -->
   <div style="background:#1a1a1a;border-bottom:1px solid #333;display:flex;flex-shrink:0">
     <button onclick="showTab('log')" id="tab-log" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#2563eb;border:none;border-bottom:2px solid #2563eb;background:none;cursor:pointer">My Log</button>
-    <button onclick="showTab('shift')" id="tab-shift" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">This Shift</button>
-    <button onclick="showTab('prev')" id="tab-prev" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Prev Shift</button>
-    <button onclick="showTab('util')" id="tab-util" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Utilities</button>
-    <button onclick="showTab('schedule')" id="tab-schedule" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Schedule</button>
-    <button onclick="showTab('assets')" id="tab-assets" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Assets</button>
-    <button onclick="showTab('more')" id="tab-more" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">More</button>
+    <button onclick="showTab('shift')" id="tab-shift" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Shift</button>
+    <button onclick="showTab('prev')" id="tab-prev" style="flex:1;padding:10px 2px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap">Prev</button>
+    <button onclick="showTab('util')" id="tab-util" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Utilities</button>
+    <button onclick="showTab('schedule')" id="tab-schedule" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Schedule</button>
+    <button onclick="showTab('assets')" id="tab-assets" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Assets</button>
+    <button onclick="showTab('more')" id="tab-more" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">More</button>
   </div>
 
   <!-- CONTENT -->
@@ -377,7 +377,7 @@ var pbuf='', puser='', pstep='name', psfirst='';
 var lang = 'en';
 var TRANS = {
   en: {
-    mylog: 'My Log', shift: 'This Shift', prev: 'Prev Shift', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', assets:'Assets', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+'No previous shift data'+'":"'+'No previous shift data'+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+'I have read this handover'+'":"'+'I have read this handover'+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
+    mylog: 'My Log', shift: 'Shift', prev: 'Prev', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', assets:'Assets', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+'No previous shift data'+'":"'+'No previous shift data'+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+'I have read this handover'+'":"'+'I have read this handover'+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
     signin: 'Sign In', choosename: 'Please choose your name', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
     createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
     hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
@@ -570,6 +570,7 @@ function loginUser(name){
   try{gid('unm').textContent=name;}catch(e){console.error('unm',e);}
   try{gid('exp-m') && (gid('exp-m').value=new Date().getMonth());}catch(e){}
   try{loadFromSB();}catch(e){console.error('loadFromSB',e);}
+  try{loadSchedulesFromStorage();}catch(e){} // reload schedules on each login
   try{loadUtilFromSB();}catch(e){console.error('loadUtil',e);}
   try{loadPMOverrides();}catch(e){console.error('loadPMOverrides',e);}
   try{loadSchedulesFromStorage();}catch(e){}
@@ -2238,6 +2239,8 @@ if('serviceWorker' in navigator){
 
 function renderSchedule(){
   var el=gid('pane-schedule');if(!el)return;
+  // Reload from storage in case it was uploaded in this session
+  loadSchedulesFromStorage();
   var H='';
   H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
   H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Shift Schedule</div>';

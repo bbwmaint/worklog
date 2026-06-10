@@ -443,6 +443,20 @@ function ntime(){var n=new Date();return String(n.getHours()).padStart(2,'0')+':
   setInterval(updateClock,30000);
   setInterval(checkShiftEnd,60000);
   showPage('pg-pin');
+  // Keyboard support for PIN pad
+  document.addEventListener('keydown', function(e){
+    var pg = gid('pg-pin');
+    if(!pg || pg.style.display === 'none') return;
+    var pad = gid('step-pad');
+    if(pad && pad.style.display !== 'none'){
+      // PIN entry mode
+      if(e.key >= '0' && e.key <= '9'){pk(parseInt(e.key));}
+      else if(e.key === 'Backspace'){pdel();}
+      else if(e.key === 'Enter' && pbuf.length === 4){checkPin();}
+    } else {
+      // Name selection mode - nothing to do with keyboard
+    }
+  });
   // Apply saved language after DOM ready
   if(savedLang){lang=savedLang;setLang(savedLang);}
 })();
@@ -2195,7 +2209,7 @@ function renderSchedule(){
   var el=gid('pane-schedule');if(!el)return;
   var H='';
   H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
-  H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Who is On Shift</div>';
+  H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Shift Schedule</div>';
   if(!Object.keys(techSchedule).length){
     H+='<div style="color:#555;font-size:13px;font-style:italic">No schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
   }else{
@@ -2316,14 +2330,28 @@ function parseTechSchedule(input){
     try{
       var wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});
       var ws=wb.Sheets['Schedule']||wb.Sheets[wb.SheetNames[0]];
-      var data=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,dateNF:'yyyy-mm-dd'});
+      // Use raw:true to get Date objects from SheetJS
+      var data=XLSX.utils.sheet_to_json(ws,{header:1,raw:true});
       techSchedule={};
       var dates=data[0],day=data[1],night=data[2],comments=data[3];
       if(!dates)return;
       for(var c=1;c<dates.length;c++){
         if(!dates[c])continue;
-        var dt3=new Date(dates[c]);if(isNaN(dt3.getTime()))continue;
-        var ds=dt3.toISOString().split('T')[0];
+        var dt3=null;
+        var dv=dates[c];
+        if(dv instanceof Date){dt3=dv;}
+        else if(typeof dv==='number'){
+          // Excel serial date - convert
+          dt3=new Date((dv-25569)*86400*1000);
+        }else if(typeof dv==='string'){
+          dt3=new Date(dv);
+        }
+        if(!dt3||isNaN(dt3.getTime()))continue;
+        // Normalize to local date string to avoid UTC offset issues
+        var yr=dt3.getFullYear(),mo=dt3.getMonth(),dy=dt3.getDate();
+        // Handle UTC dates from SheetJS (add offset)
+        if(dt3.getUTCHours()===0&&dt3.getHours()!==0){yr=dt3.getUTCFullYear();mo=dt3.getUTCMonth();dy=dt3.getUTCDate();}
+        var ds=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(dy).padStart(2,'0');
         techSchedule[ds]={day:day&&day[c]?String(day[c]).trim():'',night:night&&night[c]?String(night[c]).trim():'',comment:comments&&comments[c]?String(comments[c]).trim():''};
       }
       try{localStorage.setItem('bbw_tech_sched',JSON.stringify(techSchedule));}catch(ex){}

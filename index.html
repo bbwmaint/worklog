@@ -422,8 +422,9 @@ var TRANS = {
 };
 
 function gid(id){return document.getElementById(id);}
-function td(){return new Date().toISOString().split('T')[0];}
+function td(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function isDay(){var h=new Date().getHours();return h>=7&&h<19;}
+function localDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function ntime(){var n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 
 // INIT - run immediately, no wait
@@ -442,6 +443,15 @@ function ntime(){var n=new Date();return String(n.getHours()).padStart(2,'0')+':
   updateClock();
   setInterval(updateClock,30000);
   setInterval(checkShiftEnd,60000);
+  // Mobile browsers freeze timers when backgrounded; refresh the moment the app
+  // returns to foreground so the shift clock + This Shift view don't show stale data.
+  function onForeground(){
+    try{updateClock();}catch(e){}
+    try{if(user){loadFromSB();}}catch(e){}
+  }
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)onForeground();});
+  window.addEventListener('focus',onForeground);
+  window.addEventListener('pageshow',onForeground);
   showPage('pg-pin');
   // Keyboard support for PIN pad
   document.addEventListener('keydown', function(e){
@@ -866,7 +876,7 @@ function submitEntry(){
         // the entry belongs to yesterday's date
         if(nowH<7&&mins>=19*60){
           var d=new Date();d.setDate(d.getDate()-1);
-          return d.toISOString().split('T')[0];
+          return localDateStr(d);
         }
       }
       return td();
@@ -954,7 +964,7 @@ function deleteFromSB(sbId){
 function loadFromSB(){
   var today=td();
   var yesterday=new Date();yesterday.setDate(yesterday.getDate()-3);
-  var yd=yesterday.toISOString().split('T')[0];
+  var yd=localDateStr(yesterday);
   sbFetch('bbw_worklog?date=gte.'+yd+'&order=logged_at.asc')
     .then(function(r){return r.json();})
     .then(function(data){
@@ -1121,7 +1131,7 @@ function doReassign(pmIdx,permanent){
 
 function checkUBanner(){
   var dayShift=isDay(),pShift=dayShift?'Night':'Day';
-  var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=d.toISOString().split('T')[0];}else{pDate=td();}
+  var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=localDateStr(d);}else{pDate=td();}
   var urg=allE.filter(function(e){return e.date===pDate&&e.shift===pShift&&e.type==='issue'&&(e.priority==='urgent'||e.priority==='high');});
   var b=gid('ubanner');
   if(urg.length){
@@ -1259,11 +1269,11 @@ function renderPrev(){
   var shifts=[];
   // Build last 3 completed shifts (not the current running one), latest first
   var now=new Date();
-  var todayStr=now.toISOString().split('T')[0];
+  var todayStr=localDateStr(now);
   var yest=new Date(now); yest.setDate(yest.getDate()-1);
-  var yesterStr=yest.toISOString().split('T')[0];
+  var yesterStr=localDateStr(yest);
   var d2=new Date(now); d2.setDate(d2.getDate()-2);
-  var d2Str=d2.toISOString().split('T')[0];
+  var d2Str=localDateStr(d2);
   var curDay=(now.getHours()>=7&&now.getHours()<19);
   // Latest first
   if(curDay){
@@ -1968,7 +1978,7 @@ function generateAndSendReport(){
   var h=now.getHours();
   var todayStr=td();
   var yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  var yesterdayStr=yesterday.toISOString().split('T')[0];
+  var yesterdayStr=localDateStr(yesterday);
 
   // Build options based on current time
   var options=[];
@@ -2072,7 +2082,7 @@ function pickShiftReport(date,shift){
 
   // Who is on next shift
   var tomorrow=new Date();if(!isDay())tomorrow.setDate(tomorrow.getDate()+1);
-  var tStr=tomorrow.toISOString().split('T')[0];
+  var tStr=localDateStr(tomorrow);
   var nextTechs=getTechsOnShift(tStr, isDay()?'Night':'Day');
   if(nextTechs){
     H+='<div style="margin-bottom:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px">';
@@ -2249,7 +2259,7 @@ function renderSchedule(){
   }else{
     for(var d=0;d<7;d++){
       var dt2=new Date();dt2.setDate(dt2.getDate()+d);
-      var ds=dt2.toISOString().split('T')[0];
+      var ds=localDateStr(dt2);
       var dayName=dt2.toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'});
       var sc=techSchedule[ds]||{};
       var isT=d===0;

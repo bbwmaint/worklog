@@ -1,14 +1,13 @@
 // BBW Work Log — Service Worker
-// Version bump this string to force cache update
-const CACHE = 'bbw-v1';
+// Bump CACHE to force all devices onto fresh code.
+const CACHE = 'bbw-v2';
 
-// Files to cache on install
 const PRECACHE = [
   './',
   './index.html',
 ];
 
-// Install — cache the app shell
+// Install — cache the app shell, activate immediately
 self.addEventListener('install', function(e){
   e.waitUntil(
     caches.open(CACHE).then(function(cache){
@@ -19,7 +18,7 @@ self.addEventListener('install', function(e){
   );
 });
 
-// Activate — clean up old caches
+// Activate — drop old caches, take control of open pages
 self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
@@ -33,35 +32,53 @@ self.addEventListener('activate', function(e){
   );
 });
 
-// Fetch — serve from cache, fall back to network
-// Supabase API calls always go to network (never cached)
+function isHTML(req){
+  return req.mode === 'navigate' ||
+         (req.headers.get('accept') || '').includes('text/html') ||
+         req.url.indexOf('index.html') !== -1 ||
+         req.url.replace(/[#?].*$/,'').endsWith('/');
+}
+
+// Fetch strategy:
+//  - Supabase / EmailJS: always network, never touched
+//  - App HTML: NETWORK-FIRST so new code lands the moment a device is online
+//             (falls back to cache only when offline)
+//  - Everything else (icons, libs): cache-first
 self.addEventListener('fetch', function(e){
   var url = e.request.url;
 
-  // Never intercept Supabase or external API calls
   if(url.includes('supabase.co') || url.includes('emailjs.com')){
-    e.respondWith(fetch(e.request));
-    return;
+    return; // let the browser handle it normally
   }
 
-  // For the app shell: cache-first, update in background
-  e.respondWith(
-    caches.match(e.request).then(function(cached){
-      var networkFetch = fetch(e.request).then(function(response){
-        // Update cache with fresh version
-        if(response && response.status === 200 && response.type === 'basic'){
-          var toCache = response.clone();
-          caches.open(CACHE).then(function(cache){
-            cache.put(e.request, toCache);
-          });
+  if(isHTML(e.request)){
+    e.respondWith(
+      fetch(e.request).then(function(response){
+        if(response && response.status === 200){
+          var copy = response.clone();
+          caches.open(CACHE).then(function(c){ c.put(e.request, copy); });
         }
         return response;
       }).catch(function(){
-        return cached; // offline fallback
-      });
+        return caches.match(e.request).then(function(c){
+          return c || caches.match('./index.html');
+        });
+      })
+    );
+    return;
+  }
 
-      // Return cached immediately, update in background
-      return cached || networkFetch;
+  // Static assets: cache-first, refresh in background
+  e.respondWith(
+    caches.match(e.request).then(function(cached){
+      var net = fetch(e.request).then(function(response){
+        if(response && response.status === 200 && response.type === 'basic'){
+          var copy = response.clone();
+          caches.open(CACHE).then(function(c){ c.put(e.request, copy); });
+        }
+        return response;
+      }).catch(function(){ return cached; });
+      return cached || net;
     })
   );
 });

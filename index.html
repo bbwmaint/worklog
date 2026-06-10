@@ -2300,9 +2300,8 @@ function parseProdSchedule(input){
     try{
       var wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});
       var ws=wb.Sheets['Packaging Schedule']||wb.Sheets[wb.SheetNames[0]];
-      // Get raw data with dates as Date objects
-      var dataRaw=XLSX.utils.sheet_to_json(ws,{header:1,raw:true});
-      // Get string data for text fields
+      // Both passes: raw:false gives string dates, raw:true gives serial/Date for start time
+      var dataRaw=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,cellDates:true});
       var dataStr=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,dateNF:'yyyy-mm-dd hh:mm'});
       var hdr=null,hIdx=0;
       for(var i=0;i<Math.min(5,dataStr.length);i++){
@@ -2317,15 +2316,18 @@ function parseProdSchedule(input){
         var sd=null;
         var sv=rowR[ci.start];
         if(sv instanceof Date){sd=sv;}
-        else if(typeof sv==='number'){sd=new Date((sv-25569)*86400*1000);}
+        else if(typeof sv==='number'&&sv>40000){
+          // Excel serial - convert to JS date (Excel epoch is 1900-01-01 with leap bug)
+          sd=new Date(Math.round((sv-25569)*86400*1000));
+        }else if(rowS&&rowS[ci.start]){sd=new Date(rowS[ci.start]);}
         else{sd=new Date(sv);}
         if(!sd||isNaN(sd.getTime()))continue;
         var fd=null;
         if(rowR[ci.finish]){
           var fv=rowR[ci.finish];
           if(fv instanceof Date){fd=fv;}
-          else if(typeof fv==='number'){fd=new Date((fv-25569)*86400*1000);}
-          else{fd=new Date(fv);}
+          else if(typeof fv==='number'&&fv>40000){fd=new Date(Math.round((fv-25569)*86400*1000));}
+          else if(rowS&&rowS[ci.finish]){fd=new Date(rowS[ci.finish]);}
         }
         scheduleRuns.push({product:rowS&&rowS[ci.product]?String(rowS[ci.product]):'',canSize:rowS&&rowS[ci.canSize]?String(rowS[ci.canSize]).trim():'',pkgFormat:rowS&&rowS[ci.pkgFormat]?String(rowS[ci.pkgFormat]).trim():'',startDt:sd,finishDt:fd,cleaning:rowS&&rowS[ci.cleaning]?String(rowS[ci.cleaning]):'None'});
       }

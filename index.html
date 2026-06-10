@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="BBW Maint">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <title>BBW Work Log</title>
 <style>
   body { -webkit-tap-highlight-color: transparent; }
@@ -119,6 +120,7 @@
     <button onclick="showTab('shift')" id="tab-shift" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">This Shift</button>
     <button onclick="showTab('prev')" id="tab-prev" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Prev Shift</button>
     <button onclick="showTab('util')" id="tab-util" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Utilities</button>
+    <button onclick="showTab('schedule')" id="tab-schedule" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Schedule</button>
     <button onclick="showTab('assets')" id="tab-assets" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">Assets</button>
     <button onclick="showTab('more')" id="tab-more" style="flex:1;padding:10px 2px;font-size:12px;font-weight:600;color:#666;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer">More</button>
   </div>
@@ -129,7 +131,8 @@
     <div id="pane-shift" style="display:none"></div>
     <div id="pane-prev" style="display:none"></div>
     <div id="pane-util" style="display:none"></div>
-    <div id="pane-assets" style="display:none"></div>
+    <div id="pane-schedule" style="display:none"></div>
+  <div id="pane-assets" style="display:none"></div>
   <div id="pane-more" style="display:none"></div>
   </div>
 
@@ -294,6 +297,65 @@ var TMPLS=[
   {id:'t4',name:'Wastewater PM',nameUk:'ТО каналізації',asset:'Wastewater PIT',code:'',type:'completed',desc:'Wastewater PM: pit level checked, pumps operating, no blockages, discharge normal',descUk:'ТО каналізації: рівень ями перевірено, насоси працюють, скид нормальний'},
   {id:'t5',name:'Videojet Cleaning',nameUk:'Очищення Videojet',asset:'Videojets',code:'A349',type:'completed',desc:'Videojet gutter cleaned, printhead wiped with IPA, ink level checked, print quality verified',descUk:'Жолоб Videojet очищено, головка протерта IPA, рівень чорнила перевірено'},
 ];
+
+var MDATA={
+  "DEPALLETIZER":[
+    {p:"5010 — Uneven tower / pallet issue",s:"Adjust the tower (one push). Press in protruding cans before releasing.",sev:"low"},
+    {p:"Sequence issue",s:"Needs sequence reboot — recurring, requires programming specialist.",sev:"monitor"}
+  ],
+  "ECI":[
+    {p:"Base reject",s:"Access can base reflection and edit parameters for each program.",sev:"urgent"},
+    {p:"Can mechanical parameters off",s:"Check default values. Center can on screen to reduce kick-outs.",sev:"info"}
+  ],
+  "FILLER":[
+    {p:"Cans exploding randomly (PC products)",s:"Check pressurization for this program — no issues with other products.",sev:"monitor"},
+    {p:"Infeed guide preset setups wrong",s:"Recalibrate preset screws for both sleek and standard cans.",sev:"monitor"},
+    {p:"Stainless steel track needs replacement",s:"Replace with plastic track — some products cause issues.",sev:"urgent"},
+    {p:"Infeed twisters need attention",s:"Regular cleaning required. Replace if beyond service life.",sev:"info"}
+  ],
+  "SEAMER":[
+    {p:"Lids stuck on chain / servo fault",s:"After seamer jams, clear all lids from under chain before restarting.",sev:"high"}
+  ],
+  "AIR RINSER":[
+    {p:"Motor side on top always dirty",s:"Weekly cleaning required.",sev:"monitor"}
+  ],
+  "VARIOPAC":[
+    {p:"Changeover adjustments not standardized",s:"Update mechanical parameters changed since overhaul.",sev:"high"},
+    {p:"Open flap on service side after flap closer",s:"Move guide in front of glue station back slightly.",sev:"info"},
+    {p:"Zevia tray issues (curved/brittle/missing crease)",s:"Straighten bent trays before loading. Brittleness from low storage moisture.",sev:"monitor"}
+  ],
+  "VIDEOJET":[
+    {p:"Gutter fault",s:"Periodic cleaning required. Clean before every production startup.",sev:"info"}
+  ],
+  "VIDEOJETS":[
+    {p:"Gutter fault",s:"Periodic cleaning required. Clean before every production startup.",sev:"info"}
+  ],
+  "PASTEURIZER":[
+    {p:"Sweeper in wrong position",s:"Monitor sweeper during operation — going past range causes mess.",sev:"info"},
+    {p:"Heat exchanger — excessive calcium buildup",s:"Increase boil-out frequency. Use recommended chemicals.",sev:"monitor"}
+  ],
+  "CSW":[
+    {p:"Sleeve length issue (short or long)",s:"Change setpoint when short or longer sleeves are present.",sev:"high"}
+  ],
+  "RA J MERIDIAN":[
+    {p:"Loader side open flap / carton forming issue",s:"Fabricate better flap-folding guide before flap closer.",sev:"monitor"},
+    {p:"Valve stuck",s:"Check and clean valve mechanism. Lubricate if needed.",sev:"monitor"}
+  ],
+  "PALLETIZER":[
+    {p:"Layers hitting pallet after changeover",s:"Monitor until 1 full pallet completes after every changeover.",sev:"monitor"},
+    {p:"Reset needed when downstream causes backup",s:"Programming issue — needs investigation.",sev:"info"},
+    {p:"Drive belt slipping",s:"Inspect belt tension and condition. Replace if worn.",sev:"high"}
+  ],
+  "CHECKMAT 1":[
+    {p:"Belt tracking off",s:"Adjust belt tension and tracking guides.",sev:"monitor"},
+    {p:"E-stop nuisance trip",s:"Check E-stop contacts and wiring. Clean contacts.",sev:"monitor"}
+  ],
+  "CHECKMAT 2":[
+    {p:"E-stop nuisance trip",s:"Check E-stop contacts and wiring. Clean contacts.",sev:"monitor"},
+    {p:"Sensor fault",s:"Clean and recalibrate sensor. Check mounting.",sev:"monitor"}
+  ]
+};
+
 var QTASKS=[
   {label:'Lubrication check',labelUk:'Мастило',type:'assigned',desc:'Lubrication check - assigned',descUk:'Перевірка мастила — призначено'},
   {label:'Filter replacement',labelUk:'Заміна фільтра',type:'completed',desc:'Filter replaced',descUk:'Фільтр замінено'},
@@ -304,6 +366,9 @@ var QTASKS=[
   {label:'Machine down',labelUk:'Машина стоїть',type:'pending',desc:'Machine down - investigation required',descUk:'Машина зупинена — потрібне розслідування'},
   {label:'Startup check',labelUk:'Пуск OK',type:'completed',desc:'Startup check completed - all OK',descUk:'Пусковий огляд виконано — все OK'},
 ];
+
+var scheduleRuns = [];
+var techSchedule = {};
 
 var pmOverrides={}, user=null, ctype='', cprio='', photo='', selA=null, editId=null;
 var entries=[], allE=[], utilLogs=[];
@@ -493,6 +558,7 @@ function loginUser(name){
   try{loadFromSB();}catch(e){console.error('loadFromSB',e);}
   try{loadUtilFromSB();}catch(e){console.error('loadUtil',e);}
   try{loadPMOverrides();}catch(e){console.error('loadPMOverrides',e);}
+  try{loadSchedulesFromStorage();}catch(e){}
   try{renderAll();}catch(e){console.error('renderAll',e);}
   try{showPage('pg-app');}catch(e){console.error('showPage',e);}
   try{checkUBanner();}catch(e){console.error('checkUBanner',e);}
@@ -526,7 +592,7 @@ function updateClock(){
 
 // TABS
 function showTab(name){
-  ['log','shift','prev','util','assets','more'].forEach(function(t){
+  ['log','shift','prev','util','assets','schedule','more'].forEach(function(t){
     gid('pane-'+t).style.display='none';
     var tb=gid('tab-'+t);
     tb.style.color='#666';tb.style.borderBottomColor='transparent';
@@ -538,6 +604,7 @@ function showTab(name){
   if(name==='prev')renderPrev();
   if(name==='util')renderUtil();
   if(name==='assets')renderAssets();
+  if(name==='schedule')renderSchedule();
   if(name==='more'){try{renderMore();}catch(e){gid('pane-more').innerHTML='<div style="padding:20px;color:red;font-family:monospace;font-size:12px">ERROR: '+e.message+'<br>'+e.stack.replace(/</g,"&lt;").replace(/\n/g,"<br>")+'</div>';}}
 }
 
@@ -560,7 +627,9 @@ function buildAList(filter){
   el.innerHTML=html||'<div style="padding:12px;text-align:center;color:#666">No assets found</div>';
 }
 function filterA(v){selA=null;buildAList(v);}
-function selA2(code,name){selA={c:code,n:name};gid('asearch').value=name;buildAList(name);}
+function selA2(code,name){selA={c:code,n:name};gid('asearch').value=name;buildAList(name);
+  updateQuickForAsset(name);
+}
 
 // TYPES
 function buildTypes(){
@@ -682,6 +751,65 @@ function updateLevel(inp){
   var pct=Math.min(100,(parseFloat(inp.value)||0)/max*100);
   var bar=gid('lvl-'+inp.id);
   if(bar){bar.style.width=pct+'%';bar.style.background=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';}
+}
+
+function updateQuickForAsset(assetName){
+  if(!assetName){buildQuick();return;}
+  // Find matching asset issues
+  var key=Object.keys(MDATA).find(function(k){
+    return assetName.toUpperCase().indexOf(k)>=0||k.indexOf(assetName.toUpperCase())>=0;
+  });
+  var issues=key?MDATA[key]:null;
+  var el=gid('quick-grid');
+  if(!el)return;
+  if(!issues||!issues.length){buildQuick();return;}
+
+  // Show asset-specific issues + standard quick adds
+  var sevColors={urgent:'#ef4444',high:'#f97316',monitor:'#f59e0b',info:'#2563eb'};
+  var issueChips=issues.map(function(item){
+    var col=sevColors[item.sev]||'#6b7280';
+    var btn=document.createElement('div');
+    btn.style.cssText='padding:8px 14px;border-radius:20px;border:1.5px solid '+col+';background:rgba('+hexToRgb(col)+',.1);color:#fff;font-size:13px;cursor:pointer;position:relative';
+    btn.innerHTML='<span style="color:'+col+';font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+item.sev+'</span> '+item.p;
+    btn.addEventListener('click',function(){
+      if(gid('f-desc'))gid('f-desc').value=item.p+(item.s?' — '+item.s:'');
+      // Set type based on severity
+      if(item.sev==='urgent'||item.sev==='high')setType('pending');
+      else setType('completed');
+      // Show solution hint
+      if(item.s){
+        var hint=gid('asset-hint');
+        if(hint){hint.textContent='Tip: '+item.s;hint.style.display='block';}
+      }
+    });
+    return btn;
+  });
+
+  el.innerHTML='<div style="font-size:10px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.06em;width:100%;margin-bottom:4px">Known issues for this asset</div>';
+  issueChips.forEach(function(c){el.appendChild(c);});
+
+  // Add separator + standard quick adds
+  var sep=document.createElement('div');
+  sep.style.cssText='width:100%;height:1px;background:#2a2a2a;margin:8px 0';
+  el.appendChild(sep);
+  var lbl=document.createElement('div');
+  lbl.style.cssText='font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;width:100%;margin-bottom:4px';
+  lbl.textContent='General';
+  el.appendChild(lbl);
+  QTASKS.forEach(function(q){
+    var btn=document.createElement('div');
+    var lbl2=lang==='uk'&&q.labelUk?q.labelUk:q.label;
+    var dsc=lang==='uk'&&q.descUk?q.descUk:q.desc;
+    btn.textContent=lbl2;
+    btn.style.cssText='padding:8px 14px;border-radius:20px;border:1.5px solid #333;background:#222;color:#ccc;font-size:13px;cursor:pointer';
+    btn.addEventListener('click',function(){applyQ(q.type,dsc);});
+    el.appendChild(btn);
+  });
+}
+
+function hexToRgb(hex){
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return r+','+g+','+b;
 }
 
 function toggleDT(val){
@@ -1099,6 +1227,7 @@ function renderLog(){
 function renderShift(){
   var cur=entries.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
   var dt=cur.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);
+  var dtMin=Math.round(dt*60);
   var el=gid('pane-shift');
   var stats='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">';
   stats+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 8px;text-align:center"><div style="font-size:26px;font-weight:800;color:#fff">'+cur.length+'</div><div style="font-size:11px;color:#666;font-family:monospace;margin-top:2px">Tasks</div></div>';
@@ -1635,6 +1764,24 @@ function renderMore(){
     H+='</div>';
   }
 
+  // ── UPLOAD SCHEDULES (admin) ──
+  if(isAdmin){
+    H+='<div style="background:#0a0a1a;border:1.5px solid #1e3a5f;border-radius:12px;padding:16px;margin-bottom:12px">';
+    H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Upload Schedules</div>';
+    H+='<div style="margin-bottom:12px">';
+    H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px">Production Schedule (L1_Schedule_New.xlsx)</div>';
+    H+='<div style="font-size:11px;color:#666;margin-bottom:8px">Updates run timeline &amp; changeover warnings</div>';
+    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#222;border:1.5px dashed #333;border-radius:9px;cursor:pointer;color:#888;font-size:13px" id="prod-upload-lbl">&#128193; Upload production schedule<input type="file" id="prod-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseProdSchedule(this)"></label>';
+    H+='<div id="prod-upload-status" style="font-size:12px;color:#4ade80;margin-top:6px;display:none"></div>';
+    H+='</div>';
+    H+='<div>';
+    H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px">Technician Schedule (Schedule.xlsx)</div>';
+    H+='<div style="font-size:11px;color:#666;margin-bottom:8px">Shows who is on shift each day</div>';
+    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#222;border:1.5px dashed #333;border-radius:9px;cursor:pointer;color:#888;font-size:13px" id="tech-upload-lbl">&#128193; Upload technician schedule<input type="file" id="tech-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseTechSchedule(this)"></label>';
+    H+='<div id="tech-upload-status" style="font-size:12px;color:#4ade80;margin-top:6px;display:none"></div>';
+    H+='</div></div>';
+  }
+
   // ── SEND REPORT ──
   H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
   H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Shift Report')+'</div>';
@@ -1732,7 +1879,7 @@ function setLang(l){
   buildTypes();
   buildPrios();
   // Update tab labels
-  var tabMap={log:'mylog',shift:'shift',prev:'prev',util:'util',assets:'assets',more:'more'};
+  var tabMap={log:'mylog',shift:'shift',prev:'prev',util:'util',assets:'assets',schedule:'schedule',more:'more'};
   Object.keys(tabMap).forEach(function(t){
     var el=gid('tab-'+t);
     if(el)el.textContent=TRANS[l][tabMap[t]]||el.textContent;
@@ -1848,7 +1995,9 @@ function pickShiftReport(date,shift){
   if(modal)modal.remove();
   var shiftEntries=allE.filter(function(e){return e.date===date&&e.shift===shift;});  shiftEntries.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
   var techs=[...new Set(shiftEntries.map(function(e){return e.who;}))].filter(Boolean);
-  var totalDT=shiftEntries.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
+  var totalDT=shiftEntries.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);
+  var totalDTmins=Math.round(totalDT*60);
+  var totalCOmins=shiftEntries.filter(function(e){return e.coMins>0;}).reduce(function(a,e){return a+(e.coMins||0);},0);
   var shiftLabel=isDay()?'Day Shift (07:00-19:00)':'Night Shift (19:00-07:00)';
   var done=shiftEntries.filter(function(e){return e.type==='done'||e.type==='pm'||e.type==='completed';});
   var ongoing=shiftEntries.filter(function(e){return e.type==='ongoing';});
@@ -1879,6 +2028,7 @@ function pickShiftReport(date,shift){
   H+='<div style="background:#fef2f2;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#dc2626">'+issues.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Pending Issues</div></div>';
   H+='<div style="background:#fff7ed;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ea580c">'+parts.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Parts Needed</div></div>';
   H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#d97706">'+totalDT+'h</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Downtime</div></div>';
+  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f59e0b">'+totalCOmins+'<span style="font-size:14px">min</span></div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Changeover</div></div>';
   H+='</div>';
   H+=(issues.length?section('Pending Issues — Next Shift Must Action','#dc2626',['Asset','Description','Technician'],issues,3):'<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:28px;font-weight:600;color:#16a34a">&#10003; No pending issues — clean handover</div>');
   H+=section('Work Completed This Shift','#16a34a',['Asset','Description','Time','Technician'],done,4);
@@ -2039,6 +2189,157 @@ if('serviceWorker' in navigator){
       .then(function(reg){console.log('SW registered');})
       .catch(function(e){console.log('SW failed:', e);});
   });
+}
+
+function renderSchedule(){
+  var el=gid('pane-schedule');if(!el)return;
+  var H='';
+  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Who is On Shift</div>';
+  if(!Object.keys(techSchedule).length){
+    H+='<div style="color:#555;font-size:13px;font-style:italic">No schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
+  }else{
+    for(var d=0;d<7;d++){
+      var dt2=new Date();dt2.setDate(dt2.getDate()+d);
+      var ds=dt2.toISOString().split('T')[0];
+      var dayName=dt2.toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'});
+      var sc=techSchedule[ds]||{};
+      var isT=d===0;
+      H+='<div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #222;gap:10px">';
+      H+='<div style="min-width:76px;font-size:12px;color:'+(isT?'#fff':'#888')+';font-weight:'+(isT?'700':'400')+'">'+dayName+'</div>';
+      H+='<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      H+='<div style="font-size:11px"><span style="color:#f59e0b">&#9728; </span><span style="color:#ccc">'+(sc.day||'\u2014')+'</span></div>';
+      H+='<div style="font-size:11px"><span style="color:#60a5fa">&#127769; </span><span style="color:#ccc">'+(sc.night||'\u2014')+'</span></div>';
+      H+='</div>';
+      if(sc.comment)H+='<div style="font-size:10px;color:#ef4444;font-style:italic">'+sc.comment+'</div>';
+      H+='</div>';
+    }
+  }
+  H+='</div>';
+  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="font-size:12px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Production Runs &#8212; Next 48h</div>';
+  if(!scheduleRuns.length){
+    H+='<div style="color:#555;font-size:13px;font-style:italic">No production schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
+  }else{
+    var now2=new Date();
+    var cut=new Date(now2.getTime()+48*3600000);
+    var runs=scheduleRuns.filter(function(r){return r.startDt&&r.startDt>=now2&&r.startDt<=cut;});
+    if(!runs.length){H+='<div style="color:#555;font-size:13px">No runs in next 48 hours.</div>';}
+    else{
+      var prev2=null;
+      runs.forEach(function(run){
+        var cos=[];
+        if(prev2){
+          if(prev2.canSize!==run.canSize)cos.push({type:'Can Format',from:prev2.canSize,to:run.canSize,color:'#ef4444'});
+          if(prev2.pkgFormat!==run.pkgFormat)cos.push({type:'Pkg Format',from:prev2.pkgFormat,to:run.pkgFormat,color:'#f59e0b'});
+          if(run.cleaning&&run.cleaning!=='None'&&run.cleaning!=='FLUSH')cos.push({type:'CIP: '+run.cleaning,from:'',to:'',color:'#a78bfa'});
+        }
+        if(cos.length){
+          H+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0">';
+          H+='<div style="flex:1;height:1px;background:#333"></div>';
+          H+='<div style="display:flex;flex-direction:column;gap:3px;align-items:center">';
+          cos.forEach(function(co){H+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:#222;color:'+co.color+'">&#9888; '+co.type+(co.from?' ('+co.from+' &#8594; '+co.to+')':'')+'</span>';});
+          H+='</div><div style="flex:1;height:1px;background:#333"></div></div>';
+        }
+        var rsh=(run.startDt.getHours()>=7&&run.startDt.getHours()<19)?'Day':'Night';
+        var psh=prev2?((prev2.startDt.getHours()>=7&&prev2.startDt.getHours()<19)?'Day':'Night'):null;
+        if(psh&&psh!==rsh){H+='<div style="text-align:center;padding:6px;font-size:11px;font-weight:700;color:'+(rsh==='Day'?'#f59e0b':'#60a5fa')+'">&#8212; '+(rsh==='Day'?'Day Shift 07:00':'Night Shift 19:00')+' &#8212;</div>';}
+        H+='<div style="background:#222;border-radius:9px;padding:10px 12px;margin-bottom:6px">';
+        H+='<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+        H+='<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#fff">'+String(run.product||'').slice(0,45)+'</div>';
+        H+='<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">';
+        H+='<span style="font-size:10px;padding:2px 7px;background:#333;color:#ccc;border-radius:4px">'+run.canSize+'</span>';
+        H+='<span style="font-size:10px;padding:2px 7px;background:#333;color:#ccc;border-radius:4px">'+run.pkgFormat+'</span>';
+        if(run.cleaning&&run.cleaning!=='None')H+='<span style="font-size:10px;padding:2px 7px;background:rgba(167,139,250,.2);color:#a78bfa;border-radius:4px">CIP</span>';
+        H+='</div></div>';
+        H+='<div style="text-align:right;flex-shrink:0;margin-left:8px">';
+        H+='<div style="font-size:12px;font-weight:600;color:#60a5fa">'+run.startDt.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})+'</div>';
+        H+='<div style="font-size:10px;color:#666">'+run.startDt.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</div>';
+        H+='</div></div></div>';
+        prev2=run;
+      });
+    }
+  }
+  H+='</div>';
+  el.innerHTML=H;
+}
+
+function getUpcomingChangeovers(hoursAhead){
+  var now3=new Date(),cut2=new Date(now3.getTime()+hoursAhead*3600000);
+  var rel=scheduleRuns.filter(function(r){return r.startDt&&r.startDt>=now3&&r.startDt<=cut2;});
+  var cos=[];
+  for(var i=1;i<rel.length;i++){
+    var p=rel[i-1],c=rel[i];
+    if(p.canSize!==c.canSize)cos.push({type:'Can Format CO',from:p.canSize,to:c.canSize,at:c.startDt,color:'#ef4444'});
+    if(p.pkgFormat!==c.pkgFormat)cos.push({type:'Pkg Format CO',from:p.pkgFormat,to:c.pkgFormat,at:c.startDt,color:'#f59e0b'});
+    if(c.cleaning&&c.cleaning!=='None'&&c.cleaning!=='FLUSH')cos.push({type:'CIP Required',from:c.cleaning,to:'',at:c.startDt,color:'#a78bfa'});
+  }
+  return cos;
+}
+
+function parseProdSchedule(input){
+  var file=input.files[0];if(!file)return;
+  var el=gid('prod-upload-status');
+  if(el){el.style.display='block';el.textContent='Reading...';}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});
+      var ws=wb.Sheets['Packaging Schedule']||wb.Sheets[wb.SheetNames[0]];
+      var data=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,dateNF:'yyyy-mm-dd hh:mm'});
+      var hdr=null,hIdx=0;
+      for(var i=0;i<Math.min(5,data.length);i++){
+        if(data[i]&&(data[i].indexOf('StartTime')>=0||data[i].indexOf('Start Time')>=0)){hdr=data[i];hIdx=i;break;}
+      }
+      if(!hdr){if(el){el.textContent='Header not found';el.style.color='#ef4444';}return;}
+      var ci={product:hdr.indexOf('Product'),canSize:hdr.indexOf('Can Size'),pkgFormat:hdr.indexOf('Pkg Format'),start:hdr.indexOf('StartTime'),finish:hdr.indexOf('Finish Time'),cleaning:hdr.indexOf('Cleaning before')};
+      scheduleRuns=[];
+      for(var r=hIdx+1;r<data.length;r++){
+        var row=data[r];if(!row||!row[ci.start])continue;
+        var sd=new Date(row[ci.start]);if(isNaN(sd.getTime()))continue;
+        scheduleRuns.push({product:row[ci.product]||'',canSize:String(row[ci.canSize]||'').trim(),pkgFormat:String(row[ci.pkgFormat]||'').trim(),startDt:sd,finishDt:row[ci.finish]?new Date(row[ci.finish]):null,cleaning:row[ci.cleaning]||'None'});
+      }
+      scheduleRuns.sort(function(a,b){return a.startDt-b.startDt;});
+      try{localStorage.setItem('bbw_prod_sched',JSON.stringify(scheduleRuns.map(function(r){return {product:r.product,canSize:r.canSize,pkgFormat:r.pkgFormat,start:r.startDt.toISOString(),finish:r.finishDt?r.finishDt.toISOString():null,cleaning:r.cleaning};})));}catch(ex){}
+      if(el){el.textContent='\u2713 Loaded '+scheduleRuns.length+' runs';el.style.color='#4ade80';}
+    }catch(err){if(el){el.textContent='Error: '+err.message;el.style.color='#ef4444';}}
+  };
+  reader.readAsBinaryString(file);
+}
+
+function parseTechSchedule(input){
+  var file=input.files[0];if(!file)return;
+  var el=gid('tech-upload-status');
+  if(el){el.style.display='block';el.textContent='Reading...';}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary',cellDates:true});
+      var ws=wb.Sheets['Schedule']||wb.Sheets[wb.SheetNames[0]];
+      var data=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,dateNF:'yyyy-mm-dd'});
+      techSchedule={};
+      var dates=data[0],day=data[1],night=data[2],comments=data[3];
+      if(!dates)return;
+      for(var c=1;c<dates.length;c++){
+        if(!dates[c])continue;
+        var dt3=new Date(dates[c]);if(isNaN(dt3.getTime()))continue;
+        var ds=dt3.toISOString().split('T')[0];
+        techSchedule[ds]={day:day&&day[c]?String(day[c]).trim():'',night:night&&night[c]?String(night[c]).trim():'',comment:comments&&comments[c]?String(comments[c]).trim():''};
+      }
+      try{localStorage.setItem('bbw_tech_sched',JSON.stringify(techSchedule));}catch(ex){}
+      if(el){el.textContent='\u2713 '+Object.keys(techSchedule).length+' days loaded';el.style.color='#4ade80';}
+    }catch(err){if(el){el.textContent='Error: '+err.message;el.style.color='#ef4444';}}
+  };
+  reader.readAsBinaryString(file);
+}
+
+function loadSchedulesFromStorage(){
+  try{
+    var ps=localStorage.getItem('bbw_prod_sched');
+    if(ps){var arr=JSON.parse(ps);scheduleRuns=arr.map(function(r){return {product:r.product,canSize:r.canSize,pkgFormat:r.pkgFormat,startDt:new Date(r.start),finishDt:r.finish?new Date(r.finish):null,cleaning:r.cleaning};});}
+    var ts=localStorage.getItem('bbw_tech_sched');
+    if(ts)techSchedule=JSON.parse(ts);
+  }catch(e){}
 }
 
 </script>

@@ -2332,6 +2332,18 @@ function parseProdSchedule(input){
         scheduleRuns.push({product:rowS&&rowS[ci.product]?String(rowS[ci.product]):'',canSize:rowS&&rowS[ci.canSize]?String(rowS[ci.canSize]).trim():'',pkgFormat:rowS&&rowS[ci.pkgFormat]?String(rowS[ci.pkgFormat]).trim():'',startDt:sd,finishDt:fd,cleaning:rowS&&rowS[ci.cleaning]?String(rowS[ci.cleaning]):'None'});
       }
       scheduleRuns.sort(function(a,b){return a.startDt-b.startDt;});
+      console.log('BBW Schedule: total rows processed:', scheduleRuns.length);
+      if(scheduleRuns.length>0){
+        console.log('First run startDt:', scheduleRuns[0].startDt, 'type:', typeof scheduleRuns[0].startDt, 'instanceof Date:', scheduleRuns[0].startDt instanceof Date);
+        console.log('First run start ISO:', scheduleRuns[0].startDt instanceof Date ? scheduleRuns[0].startDt.toISOString() : scheduleRuns[0].startDt);
+        console.log('Now:', new Date().toISOString());
+        console.log('First > now?', scheduleRuns[0].startDt > new Date());
+      }
+      // Also log what raw row 3 col start index looks like
+      if(dataRaw[hIdx+1]){
+        var testRow=dataRaw[hIdx+1];
+        console.log('Raw row sample - start col value:', testRow[ci.start], 'type:', typeof testRow[ci.start]);
+      }
       try{localStorage.setItem('bbw_prod_sched',JSON.stringify(scheduleRuns.map(function(r){return {product:r.product,canSize:r.canSize,pkgFormat:r.pkgFormat,start:r.startDt.toISOString(),finish:r.finishDt?r.finishDt.toISOString():null,cleaning:r.cleaning};})));}catch(ex){}
       if(el){el.textContent='\u2713 Loaded '+scheduleRuns.length+' runs';el.style.color='#4ade80';}
     }catch(err){if(el){el.textContent='Error: '+err.message;el.style.color='#ef4444';}}

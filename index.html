@@ -1017,7 +1017,7 @@ function syncUtil(rec){
         chiller_start:rec.chstart||null,chiller_proc:rec.chproc||null,
         warmcell:rec.warmcell||null,
         bc1:rec.bc1||null,bc2:rec.bc2||null,bc3:rec.bc3||null,bc4:rec.bc4||null,
-        bc5:rec.bc5||null,bc6:rec.bc6||null,bc7:rec.bc7||null,stack:rec.stack||null});
+        bc5:rec.bc5||null,bc6:rec.bc6||null,bc7:rec.bc7||null,bc8:rec.bc8||null,stack:rec.stack||null,ch_glycol:rec.ch_glycol||null});
       if(existing&&existing.length>0){
         return sbFetch('bbw_util_log?date=eq.'+rec.date,{method:'PATCH',body:body,headers:{'Prefer':'return=minimal'}});
       }else{
@@ -1032,7 +1032,7 @@ function loadUtilFromSB(){
     .then(function(r){return r.json();})
     .then(function(data){
       if(!Array.isArray(data))return;
-      utilLogs=data.map(function(r){return {date:r.date,time:r.time,by:r.by_who,w3:r.w3,w5:r.w5,gas:r.gas,elec:r.elec,boil:r.boil,past:r.past,cool:r.cool,steam:r.steam};});
+      utilLogs=data.map(function(r){return {date:r.date,time:r.time,by:r.by_who,w3:r.w3,w5:r.w5,gas:r.gas,elec:r.elec,boil:r.boil,past:r.past,cool:r.cool,steam:r.steam,bc1:r.bc1,bc2:r.bc2,bc3:r.bc3,bc4:r.bc4,bc5:r.bc5,bc6:r.bc6,bc7:r.bc7,bc8:r.bc8,stack:r.stack,chstart:r.chiller_start,chproc:r.chiller_proc,warmcell:r.warmcell,ch_glycol:r.ch_glycol};});
       try{localStorage.setItem('bbw_util',JSON.stringify(utilLogs));}catch(e){}
     })
     .catch(function(){});
@@ -1552,6 +1552,7 @@ function renderUtil(){
     fieldRow('bc5','Coil C5 (°C)','0')+
     fieldRow('bc6','Coil C6 (°C)','0')+
     fieldRow('bc7','Coil C7 (°C)','0')+
+    fieldRow('bc8','Coil C8 (°C)','0')+
     fieldRow('stack','Stack Temp (°C)','0')+
     fieldRow('p_alk','P Alkalinity (ppm)','0')+
     fieldRow('m_alk','M Alkalinity (ppm)','0')+
@@ -1565,6 +1566,7 @@ function renderUtil(){
     fieldRow('chstart','Start Count','0')+
     fieldRow('chproc','Process Temp (°C)','0.0')+
     fieldRow('warmcell','Warmcell Temp (°C)','0.0')+
+    fieldRowLevel('ch_glycol','Glycol Level (%)','0.0')+
     fieldRow('ch_ph','pH','0.0')+
     fieldRow('ch_purity','Purity (%)','0.0');
 
@@ -1583,17 +1585,17 @@ function renderUtil(){
   H+='<div style="padding:12px 14px;border-bottom:1px solid #333;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">Recent Readings</div>';
   H+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px;font-family:monospace">';
   H+='<thead><tr style="border-bottom:1px solid #333;color:#666;font-size:10px">';
-  ['Date','W3"','W5"','Gas','Elec','Past','CT','Boil','Steam','C1','C2','C3','C4','C5','C6','C7','Stack','ChStart','ChProc','Warmcell','By'].forEach(function(h){
+  ['Date','W3"','W5"','Gas','Elec','Past','CT','Boil','Steam','C1','C2','C3','C4','C5','C6','C7','C8','Stack','ChStart','ChProc','Warmcell','Glycol%','By'].forEach(function(h){
     H+='<th style="padding:7px 6px;text-align:right;white-space:nowrap">'+h+'</th>';
   });
   H+='</tr></thead><tbody>';
   if(!utilLogs.length){
-    H+='<tr><td colspan="21" style="text-align:center;padding:20px;color:#555">No readings yet</td></tr>';
+    H+='<tr><td colspan="23" style="text-align:center;padding:20px;color:#555">No readings yet</td></tr>';
   }else{
     utilLogs.slice(0,20).forEach(function(r){
       H+='<tr style="border-bottom:1px solid #222">';
       H+='<td style="padding:6px;color:#aaa;text-align:left;white-space:nowrap">'+r.date+'</td>';
-      [r.w3,r.w5,r.gas,r.elec,r.past,r.cool,r.boil,r.steam,r.bc1,r.bc2,r.bc3,r.bc4,r.bc5,r.bc6,r.bc7,r.stack,r.chstart,r.chproc,r.warmcell].forEach(function(v){
+      [r.w3,r.w5,r.gas,r.elec,r.past,r.cool,r.boil,r.steam,r.bc1,r.bc2,r.bc3,r.bc4,r.bc5,r.bc6,r.bc7,r.bc8,r.stack,r.chstart,r.chproc,r.warmcell,r.ch_glycol].forEach(function(v){
         H+='<td style="padding:6px;color:#ccc;text-align:right">'+(v!=null?v:'')+'</td>';
       });
       H+='<td style="padding:6px;color:#666;text-align:right">'+r.by+'</td>';
@@ -1606,7 +1608,7 @@ function renderUtil(){
 }
 
 function saveUtil(){
-  var keys=['w3','w5','gas','elec','boil','past','cool','steam','chstart','chproc','warmcell','bc1','bc2','bc3','bc4','bc5','bc6','bc7','stack','p_alk','m_alk','oh_alk','sulphate','amercor','advplus','amersite','ch_ph','ch_purity'];
+  var keys=['w3','w5','gas','elec','boil','past','cool','steam','chstart','chproc','warmcell','bc1','bc2','bc3','bc4','bc5','bc6','bc7','bc8','stack','p_alk','m_alk','oh_alk','sulphate','amercor','advplus','amersite','ch_glycol','ch_ph','ch_purity'];
   var rec={date:td(),time:ntime(),by:user||'?'};
   var any=false;
   keys.forEach(function(k){var el=gid(k);if(el&&el.value!==''){rec[k]=parseFloat(el.value);any=true;}else{rec[k]=null;}});
@@ -2027,7 +2029,7 @@ function pickShiftReport(date,shift){
   var totalDT=shiftEntries.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);
   var totalDTmins=Math.round(totalDT*60);
   var totalCOmins=shiftEntries.filter(function(e){return e.coMins>0;}).reduce(function(a,e){return a+(e.coMins||0);},0);
-  var shiftLabel=isDay()?'Day Shift (07:00-19:00)':'Night Shift (19:00-07:00)';
+  var shiftLabel=shift==='Day'?'Day Shift (07:00-19:00)':'Night Shift (19:00-07:00)';
   var done=shiftEntries.filter(function(e){return e.type==='done'||e.type==='pm'||e.type==='completed';});
   var ongoing=shiftEntries.filter(function(e){return e.type==='ongoing';});
   var issues=shiftEntries.filter(function(e){return e.type==='issue'||e.type==='pending';});
@@ -2050,7 +2052,7 @@ function pickShiftReport(date,shift){
   }
   var H='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BBW Shift Report</title><style>body{font-family:-apple-system,sans-serif;margin:0;padding:32px;color:#111}@media print{.noprint{display:none!important}}</style></head><body>';
   H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #111;margin-bottom:24px">';
-  H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &bull; '+td()+'</div></div>';
+  H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &bull; '+date+'</div></div>';
   H+='<div style="text-align:right"><div style="font-size:13px;color:#666;margin-bottom:4px">Technicians</div><div style="font-size:14px;font-weight:600">'+(techs.join(', ')||'—')+'</div></div></div>';
   H+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">';
   H+='<div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800">'+shiftEntries.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Total Tasks</div></div>';
@@ -2095,7 +2097,23 @@ function pickShiftReport(date,shift){
     H+='</div>';
   }
 
-  H+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center"><div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div><button onclick="window.print()" class="noprint" style="padding:10px 20px;background:#111;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Save as PDF</button></div>';
+  // ── Build plain-text body for Outlook email ──
+  var mailSubj='BBW Shift Report - '+date+' '+shift+' Shift';
+  var ml=[];
+  ml.push('BBW MAINTENANCE - SHIFT HANDOVER REPORT');
+  ml.push(date+' - '+shift+' Shift');
+  ml.push('Technicians: '+(techs.join(', ')||'-'));
+  ml.push('');
+  ml.push('SUMMARY: '+shiftEntries.length+' tasks | '+issues.length+' pending | '+parts.length+' parts | '+totalDT+'h downtime | '+totalCOmins+'min changeover');
+  ml.push('');
+  if(issues.length){ml.push('PENDING ISSUES (next shift must action):');issues.forEach(function(e){ml.push(' - '+(e.assetName||'General')+': '+(e.desc||'')+' ['+(e.who||'')+']');});ml.push('');}
+  if(done.length){ml.push('COMPLETED ('+done.length+'):');done.forEach(function(e){ml.push(' - '+(e.assetName||'General')+': '+(e.desc||'')+(e.start?' ('+e.start+(e.end?'-'+e.end:'')+')':'')+' ['+(e.who||'')+']');});ml.push('');}
+  if(ongoing.length){ml.push('IN PROGRESS - continue next shift ('+ongoing.length+'):');ongoing.forEach(function(e){ml.push(' - '+(e.assetName||'General')+': '+(e.desc||'')+' ['+(e.who||'')+']');});ml.push('');}
+  if(parts.length){ml.push('PARTS TO ORDER ('+parts.length+'):');parts.forEach(function(e){ml.push(' - '+(e.partName||'')+' x'+(e.partQty||'1')+' ('+(e.assetName||'')+') ['+(e.who||'')+']');});ml.push('');}
+  ml.push('Generated '+new Date().toLocaleString('en-CA'));
+  var mailHref='mailto:maintenance@brunswickbierworks.com?subject='+encodeURIComponent(mailSubj)+'&body='+encodeURIComponent(ml.join('\n'));
+
+  H+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div><div class="noprint" style="display:flex;gap:10px"><a href="'+mailHref+'" style="padding:10px 20px;background:#0078d4;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;display:inline-block">&#9993; Send to Outlook</a><button onclick="window.print()" style="padding:10px 20px;background:#111;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">&#11015; Download PDF</button></div></div>';
   H+='</body></html>';
   W.document.write(H);W.document.close();W.focus();
 }
@@ -2158,16 +2176,16 @@ function doUtilExport(){
   filtered.forEach(function(r){rows.push([r.date,r.w3||'',r.w5||'',r.gas||'',r.elec||'',r.boil||'',r.steam||'',r.past||'',r.cool||'',r.by||''].join(','));});
   rows.push('');
   rows.push('BOILER READINGS');
-  rows.push(['Date','C1','C2','C3','C4','C5','C6','C7','Stack','P Alk','M Alk','OH Alk','Sulphate','By'].join(','));
-  filtered.forEach(function(r){rows.push([r.date,r.bc1||'',r.bc2||'',r.bc3||'',r.bc4||'',r.bc5||'',r.bc6||'',r.bc7||'',r.stack||'',r.p_alk||'',r.m_alk||'',r.oh_alk||'',r.sulphate||'',r.by||''].join(','));});
+  rows.push(['Date','C1','C2','C3','C4','C5','C6','C7','C8','Stack','P Alk','M Alk','OH Alk','Sulphate','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.bc1||'',r.bc2||'',r.bc3||'',r.bc4||'',r.bc5||'',r.bc6||'',r.bc7||'',r.bc8||'',r.stack||'',r.p_alk||'',r.m_alk||'',r.oh_alk||'',r.sulphate||'',r.by||''].join(','));});
   rows.push('');
   rows.push('CHEMICAL LEVELS (inches, max 28")');
   rows.push(['Date','Amercor (in)','Advantage Plus (in)','Amersite (in)','By'].join(','));
   filtered.forEach(function(r){rows.push([r.date,r.amercor||'',r.advplus||'',r.amersite||'',r.by||''].join(','));});
   rows.push('');
   rows.push('CHILLER');
-  rows.push(['Date','Start Count','Process Temp (C)','Warmcell Temp (C)','By'].join(','));
-  filtered.forEach(function(r){rows.push([r.date,r.chstart||'',r.chproc||'',r.warmcell||'',r.by||''].join(','));});
+  rows.push(['Date','Start Count','Process Temp (C)','Warmcell Temp (C)','Glycol Level (%)','By'].join(','));
+  filtered.forEach(function(r){rows.push([r.date,r.chstart||'',r.chproc||'',r.warmcell||'',r.ch_glycol||'',r.by||''].join(','));});
   rows.push('');
   rows.push('MONTHLY SUMMARY');
   rows.push(['Metric','Days Logged','Total','Average/Day'].join(','));

@@ -377,7 +377,7 @@ var pbuf='', puser='', pstep='name', psfirst='';
 var lang = 'en';
 var TRANS = {
   en: {
-    mylog: 'My Log', shift: 'Shift', prev: 'Prev', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', assets:'Assets', schedule:'Schedule', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+'No previous shift data'+'":"'+'No previous shift data'+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+'I have read this handover'+'":"'+'I have read this handover'+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
+    mylog: 'My Log', shift: 'Shift', prev: 'Prev', util: 'Utilities', more: 'More', pm: 'PMs', pmtype:'PM Done', assets:'Assets', schedule:'Schedule', Edit:'Edit', Delete:'Delete', done:'Completed', ongoing:'Ongoing', issue:'Pending', part:'Parts Requested', note:'Note', urgent:'Urgent', high:'High', monitor:'Monitor', info:'Info', assigned:'Assigned', completed:'Completed', parts:'Parts Requested', pending:'Pending',"My Log":"My Log","This Shift":"This Shift","Prev Shift":"Prev Shift","Utilities":"Utilities","More":"More","Tasks":"Tasks","Issues":"Issues","Parts":"Parts","DT hrs":"DT hrs","'+'No previous shift data'+'":"'+'No previous shift data'+'","Issues for your shift":"Issues for your shift","No urgent issues handed over":"No urgent issues handed over","Completed":"Completed","Parts to order":"Parts to order","'+'I have read this handover'+'":"'+'I have read this handover'+'","Nothing logged yet":"Nothing logged yet","Tap + to log your first task":"Tap + to log your first task","No entries this shift yet":"No entries this shift yet","PMs Due Today":"PMs Due Today","Log Done":"Log Done","No readings logged today yet":"No readings logged today yet","Save Readings":"Save Readings","Recent Readings":"Recent Readings","Once per day":"Once per day","Shift Report":"Shift Report","Monthly Export":"Monthly Export","Generate Shift Report PDF":"Generate Shift Report PDF","Work Log CSV":"Work Log CSV","Utilities CSV":"Utilities CSV","Monthly Recap Email":"Monthly Recap Email","Admin — Praful Only":"Admin — Praful Only","Reset Technician PINs":"Reset Technician PINs","Auto-Send (EmailJS)":"Auto-Send (EmailJS)","Save & Enable Auto-Send":"Save & Enable Auto-Send","Test Send Now":"Test Send Now","No PMs scheduled for today":"No PMs scheduled for today",
     signin: 'Sign In', choosename: 'Please choose your name', selectname: 'Select your name', enterpin: 'Enter your 4-digit PIN',
     createpin: 'Choose a 4-digit PIN', confirmpin: 'Confirm your PIN',
     hello: 'Hello, ', welcome: 'Welcome, ', enterpin2: 'Enter your PIN', createpin2: 'Create your PIN',
@@ -417,7 +417,7 @@ var TRANS = {
     workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
     shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
     signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
-    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+'No previous shift data'+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+'I have read this handover'+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує', Edit:'Редагувати', Delete:'Видалити',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+'No previous shift data'+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+'I have read this handover'+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
   }
 };
 
@@ -425,6 +425,18 @@ function gid(id){return document.getElementById(id);}
 function td(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function isDay(){var h=new Date().getHours();return h>=7&&h<19;}
 function localDateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// Anchor date of the shift happening RIGHT NOW. A night shift spans midnight,
+// so its anchor is the evening date it started; the 00:00-06:59 morning portion
+// anchors to the previous day.
+function shiftAnchor(){var now=new Date(),d=new Date(now);if(now.getHours()<7)d.setDate(d.getDate()-1);return localDateStr(d);}
+// Anchor date for a new entry given its start time (minutes since midnight).
+function entryAnchor(startMins){
+  var now=new Date(),nowH=now.getHours(),d=new Date(now);
+  if(startMins==null){if(nowH<7)d.setDate(d.getDate()-1);return localDateStr(d);}
+  if(startMins<420){d.setDate(d.getDate()-1);return localDateStr(d);}      // 00:00-06:59 night morning -> prev evening
+  if(startMins>=1140){if(nowH<7)d.setDate(d.getDate()-1);return localDateStr(d);} // 19:00-23:59 night evening
+  return localDateStr(d);                                                   // 07:00-18:59 day
+}
 function ntime(){var n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
 
 // INIT - run immediately, no wait
@@ -870,16 +882,9 @@ function submitEntry(){
       if(st){
         var h=parseInt(st.split(':')[0]);
         var m=parseInt(st.split(':')[1]||0);
-        var mins=h*60+m;
-        var nowH=new Date().getHours();
-        // If current time is early morning (0-7) and start was last night (19-23)
-        // the entry belongs to yesterday's date
-        if(nowH<7&&mins>=19*60){
-          var d=new Date();d.setDate(d.getDate()-1);
-          return localDateStr(d);
-        }
+        return entryAnchor(h*60+m);
       }
-      return td();
+      return entryAnchor(null);
     })(),
     shift:(function(){
       var st=gid('f-start').value;
@@ -1131,7 +1136,8 @@ function doReassign(pmIdx,permanent){
 
 function checkUBanner(){
   var dayShift=isDay(),pShift=dayShift?'Night':'Day';
-  var pDate;if(dayShift){var d=new Date();d.setDate(d.getDate()-1);pDate=localDateStr(d);}else{pDate=td();}
+  var _A=shiftAnchor();
+  var pDate;{var _p=_A.split('-');var _d=new Date(+_p[0],+_p[1]-1,+_p[2]);if(dayShift)_d.setDate(_d.getDate()-1);pDate=localDateStr(_d);}
   var urg=allE.filter(function(e){return e.date===pDate&&e.shift===pShift&&e.type==='issue'&&(e.priority==='urgent'||e.priority==='high');});
   var b=gid('ubanner');
   if(urg.length){
@@ -1175,9 +1181,11 @@ function card(e,mine){
   if(e.machineDown==='partial')html+='<span style="font-size:10px;font-weight:700;background:rgba(234,88,12,.2);color:#f97316;padding:2px 6px;border-radius:4px;font-family:monospace">PARTIAL</span>';
   if(e.coMins>0)html+='<span style="font-size:10px;font-weight:700;background:rgba(245,158,11,.15);color:#f59e0b;padding:2px 6px;border-radius:4px;font-family:monospace">CO: '+e.coMins+'min</span>';
   html+='<span style="font-size:11px;color:#666">'+e.who+'</span>';
+  if(mine||user===ADMIN)html+='<div style="margin-left:auto;display:flex;gap:6px">'+
+    '<button onclick="openSheet('+e.id+')" style="display:flex;align-items:center;gap:4px;height:28px;padding:0 10px;border-radius:7px;border:1px solid rgba(96,165,250,.35);background:rgba(37,99,235,.18);color:#60a5fa;cursor:pointer;font-size:12px;font-weight:600">&#9998; '+T('Edit')+'</button>'+
+    '<button onclick="delEntry('+e.id+')" style="display:flex;align-items:center;gap:4px;height:28px;padding:0 10px;border-radius:7px;border:1px solid rgba(239,68,68,.35);background:rgba(220,38,38,.15);color:#ef4444;cursor:pointer;font-size:12px;font-weight:600">&#10005; '+T('Delete')+'</button></div>';
   html+='</div>';
   if(e.photo)html+='<img src="'+e.photo+'" onclick="openLB(\''+e.photo+'\',\''+e.assetName+'\')" style="max-width:100%;max-height:90px;border-radius:7px;margin-top:8px;object-fit:cover;cursor:pointer" alt="">';
-  if(mine||user===ADMIN)html+='<div style="position:absolute;top:10px;right:10px;display:flex;gap:5px"><button onclick="openSheet('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(37,99,235,.2);color:#60a5fa;cursor:pointer;font-size:13px">&#9998;</button><button onclick="delEntry('+e.id+')" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(220,38,38,.15);color:#ef4444;cursor:pointer;font-size:13px">&#10005;</button></div>';
   html+='</div>';
   return html;
 }
@@ -1250,7 +1258,7 @@ function renderLog(){
 }
 
 function renderShift(){
-  var cur=entries.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  var cur=entries.filter(function(e){return e.date===shiftAnchor()&&e.shift===(isDay()?'Day':'Night');});
   var dt=cur.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);
   var dtMin=Math.round(dt*60);
   var el=gid('pane-shift');
@@ -1265,27 +1273,23 @@ function renderShift(){
 
 function renderPrev(){
   var el=gid('pane-prev');
-  // Last 3 shifts, earliest first
+  // Last 3 shifts, latest first, derived from the CURRENT shift's anchor date.
   var shifts=[];
-  // Build last 3 completed shifts (not the current running one), latest first
   var now=new Date();
-  var todayStr=localDateStr(now);
-  var yest=new Date(now); yest.setDate(yest.getDate()-1);
-  var yesterStr=localDateStr(yest);
-  var d2=new Date(now); d2.setDate(d2.getDate()-2);
-  var d2Str=localDateStr(d2);
+  // A = anchor date of the shift running right now (handles night spanning midnight)
+  var A=shiftAnchor();
+  function addDays(ds,n){var p=ds.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return localDateStr(d);}
   var curDay=(now.getHours()>=7&&now.getHours()<19);
-  // Latest first
   if(curDay){
-    // Currently Day shift — prev shifts are: yesterday Night, yesterday Day, day-before Night
-    shifts.push({date:yesterStr, shift:'Night'});
-    shifts.push({date:yesterStr, shift:'Day'});
-    shifts.push({date:d2Str,     shift:'Night'});
+    // Current = (A, Day). Previous shifts, latest first:
+    shifts.push({date:addDays(A,-1), shift:'Night'});
+    shifts.push({date:addDays(A,-1), shift:'Day'});
+    shifts.push({date:addDays(A,-2), shift:'Night'});
   } else {
-    // Currently Night shift — prev shifts are: today Day, yesterday Night, yesterday Day
-    shifts.push({date:todayStr,  shift:'Day'});
-    shifts.push({date:yesterStr, shift:'Night'});
-    shifts.push({date:yesterStr, shift:'Day'});
+    // Current = (A, Night). Previous shifts, latest first:
+    shifts.push({date:A,             shift:'Day'});
+    shifts.push({date:addDays(A,-1), shift:'Night'});
+    shifts.push({date:addDays(A,-1), shift:'Day'});
   }
   var H='';
   var foundAny=false;
@@ -1953,7 +1957,7 @@ function clearAll(){
 }
 
 function buildReport(){
-  var cur=allE.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  var cur=allE.filter(function(e){return e.date===shiftAnchor()&&e.shift===(isDay()?'Day':'Night');});
   cur.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
   var techs=[...new Set(cur.map(function(e){return e.who;}))].filter(Boolean);
   var dt=cur.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
@@ -2099,7 +2103,7 @@ function pickShiftReport(date,shift){
 function manualSend(){generateAndSendReport();}
 
 function showSendModal(){
-  var cur=allE.filter(function(e){return e.date===td()&&e.shift===(isDay()?'Day':'Night');});
+  var cur=allE.filter(function(e){return e.date===shiftAnchor()&&e.shift===(isDay()?'Day':'Night');});
   var iss=cur.filter(function(e){return e.type==='issue'||e.type==='pending';}).length;
   var pts=cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length;
   var dt=cur.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);

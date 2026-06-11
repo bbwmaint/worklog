@@ -10,6 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <title>BBW Work Log</title>
 <style>
   body { -webkit-tap-highlight-color: transparent; }
@@ -419,7 +421,7 @@ var TRANS = {
     workcsv: 'CSV \u0436\u0443\u0440\u043d\u0430\u043b\u0443', utilcsv: 'CSV \u043a\u043e\u043c\u0443\u043d\u0430\u043b\u044c\u043d\u0438\u0445', recap: '\u041c\u0456\u0441\u044f\u0447\u043d\u0438\u0439 \u0437\u0432\u0456\u0442 Email',
     shiftreport: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438 \u0437\u0432\u0456\u0442?', sendnow: '\u041d\u0430\u0434\u0456\u0441\u043b\u0430\u0442\u0438', skip: '\u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438',
     signout: '\u0412\u0438\u0439\u0442\u0438?', back: '\u2190 \u041d\u0430\u0437\u0430\u0434',
-    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує', Edit:'Редагувати', Delete:'Видалити',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+'No previous shift data'+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+'I have read this handover'+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні"
+    pm: 'ТО', pmtype: 'ПТО', done: 'Виконано', ongoing: 'Триває', issue: 'Очікує', part: 'Деталі', note: 'Нотатка', urgent: 'Терміново', high: 'Високий', monitor: 'Стежити', info: 'Інфо', assigned: 'Призначено', completed: 'Виконано', parts: 'Деталі замовлено', pending: 'Очікує', Edit:'Редагувати', Delete:'Видалити',"My Log":"Журнал","This Shift":"Зміна","Prev Shift":"Попередня","Utilities":"Комунальні","More":"Більше","Tasks":"Завдання","Issues":"Проблеми","Parts":"Деталі","DT hrs":"Простій","'+'No previous shift data'+'":"Немає даних попередньої зміни","Issues for your shift":"Проблеми для вашої зміни","No urgent issues handed over":"Немає термінових проблем","Completed":"Виконано","Parts to order":"Деталі для замовлення","'+'I have read this handover'+'":"Я прочитав цю передачу","Nothing logged yet":"Нічого не записано","Tap + to log your first task":"Натисніть + щоб додати запис","No entries this shift yet":"Немає записів цієї зміни","PMs Due Today":"ТО на сьогодні","Log Done":"Виконано","No readings logged today yet":"Показники ще не введено сьогодні","Save Readings":"Зберегти показники","Recent Readings":"Останні показники","Once per day":"Раз на день","Shift Report":"Звіт зміни","Monthly Export":"Місячний звіт","Generate Shift Report PDF":"Генерувати PDF звіт","Work Log CSV":"Журнал CSV","Utilities CSV":"Комунальні CSV","Monthly Recap Email":"Місячний звіт Email","Admin — Praful Only":"Адмін — тільки Praful","Reset Technician PINs":"Скидання PIN","Auto-Send (EmailJS)":"Авто-відправка (EmailJS)","Save & Enable Auto-Send":"Зберегти та увімкнути","Test Send Now":"Тестовий відправ","No PMs scheduled for today":"Немає ТО на сьогодні","Summary":"Підсумок","Send to Outlook (PDF attached)":"Надіслати в Outlook (PDF)","Download PDF":"Завантажити PDF","View":"Переглянути","Cancel":"Скасувати"
   }
 };
 
@@ -2028,9 +2030,204 @@ function generateAndSendReport(){
   }
 }
 
+// ─────────── REPORT ENGINE (PDF + smart summary + send) ───────────
+function computeShiftReport(date,shift){
+  var se=allE.filter(function(e){return e.date===date&&e.shift===shift;});
+  se.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
+  var techs=[...new Set(se.map(function(e){return e.who;}))].filter(Boolean);
+  var dtEvents=se.filter(function(e){return (e.machineDown==='yes'||e.machineDown==='partial')&&(e.dt||0)>0;});
+  var totalDT=dtEvents.reduce(function(a,e){return a+(e.dt||0);},0);
+  var coEvents=se.filter(function(e){return (e.coMins||0)>0;});
+  var totalCO=coEvents.reduce(function(a,e){return a+(e.coMins||0);},0);
+  var coTypes=[...new Set(coEvents.map(function(e){return e.coType;}).filter(Boolean))];
+  return {date:date,shift:shift,se:se,techs:techs,
+    dtEvents:dtEvents,totalDT:totalDT,coEvents:coEvents,totalCO:totalCO,coTypes:coTypes,
+    done:se.filter(function(e){return e.type==='done'||e.type==='pm'||e.type==='completed';}),
+    ongoing:se.filter(function(e){return e.type==='ongoing';}),
+    issues:se.filter(function(e){return e.type==='issue'||e.type==='pending';}),
+    parts:se.filter(function(e){return e.type==='part'||e.type==='parts';})};
+}
+// Short, human summary lines — the gist of the shift at a glance.
+function reportSummaryLines(R){
+  var L=[];
+  L.push(R.se.length+' task'+(R.se.length===1?'':'s')+' logged'+(R.techs.length?' by '+R.techs.join(', '):'')+'.');
+  if(R.totalDT>0){
+    var worst=R.dtEvents.slice().sort(function(a,b){return (b.dt||0)-(a.dt||0);})[0];
+    L.push('Downtime: '+R.totalDT.toFixed(1)+' h across '+R.dtEvents.length+' event'+(R.dtEvents.length===1?'':'s')+(worst&&worst.assetName?' (worst: '+worst.assetName+' '+(worst.dt||0).toFixed(1)+'h)':'')+'.');
+  } else { L.push('No machine downtime recorded. \u2713'); }
+  if(R.totalCO>0){ L.push('Changeovers: '+R.coEvents.length+' totalling '+R.totalCO+' min'+(R.coTypes.length?' ('+R.coTypes.join(', ')+')':'')+'.'); }
+  else { L.push('No changeovers this shift.'); }
+  if(R.issues.length){ L.push('\u26A0 '+R.issues.length+' open issue'+(R.issues.length===1?'':'s')+' handed to next shift'+(R.issues.length?': '+R.issues.slice(0,3).map(function(e){return (e.assetName||'?')+(e.issue?' ('+e.issue+')':'');}).join('; ')+(R.issues.length>3?'…':''):'')+'.'); }
+  else { L.push('Clean handover \u2014 no pending issues. \u2713'); }
+  if(R.parts.length){ L.push(R.parts.length+' part'+(R.parts.length===1?'':'s')+' awaiting order.'); }
+  return L;
+}
+function reportFileName(R){return 'BBW_Shift_Report_'+R.date+'_'+R.shift+'.pdf';}
+
+// Build a real PDF (jsPDF + autotable) and return the Blob.
+function buildReportPDF(R){
+  function pdfSafe(s){return String(s==null?'':s).replace(/\u26A0/g,'!').replace(/\u2713/g,'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/\u2014/g,'-').replace(/\u2026/g,'...').replace(/[\u2192]/g,'->');}
+  var JS=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+  var doc=new JS({unit:'pt',format:'letter'});
+  var W=doc.internal.pageSize.getWidth(), M=40, y=0;
+  // Header
+  doc.setFillColor(17,17,17); doc.rect(0,0,W,6,'F');
+  y=44;
+  doc.setTextColor(17,17,17); doc.setFont('helvetica','bold'); doc.setFontSize(17);
+  doc.text('BRUNSWICK BIERWORKS', M, y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(120,120,120);
+  doc.text('Maintenance Shift Handover Report', M, y+15);
+  var shiftLabel=(R.shift==='Day'?'Day Shift  07:00–19:00':'Night Shift  19:00–07:00');
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(17,17,17);
+  doc.text(shiftLabel, W-M, y, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(120,120,120);
+  doc.text(R.date, W-M, y+15, {align:'right'});
+  y+=30;
+  doc.setDrawColor(17,17,17); doc.setLineWidth(1.2); doc.line(M,y,W-M,y);
+  y+=20;
+  // KPI tiles
+  var tiles=[['Tasks',String(R.se.length),[245,245,247],[17,17,17]],
+             ['Pending',String(R.issues.length),[254,242,242],[220,38,38]],
+             ['Parts',String(R.parts.length),[255,247,237],[234,88,12]],
+             ['Downtime',R.totalDT.toFixed(1)+'h',[255,251,235],[217,119,6]],
+             ['Changeover',R.totalCO+'m',[255,251,235],[245,158,11]]];
+  var gap=10, tw=(W-2*M-gap*(tiles.length-1))/tiles.length, th=46;
+  tiles.forEach(function(t,i){
+    var x=M+i*(tw+gap);
+    doc.setFillColor(t[2][0],t[2][1],t[2][2]); doc.roundedRect(x,y,tw,th,6,6,'F');
+    doc.setTextColor(t[3][0],t[3][1],t[3][2]); doc.setFont('helvetica','bold'); doc.setFontSize(17);
+    doc.text(t[1], x+tw/2, y+22, {align:'center'});
+    doc.setTextColor(110,110,110); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.text(t[0].toUpperCase(), x+tw/2, y+36, {align:'center'});
+  });
+  y+=th+18;
+  // Smart summary box
+  var lines=reportSummaryLines(R);
+  doc.setFillColor(247,247,249); doc.roundedRect(M,y,W-2*M,18+lines.length*14,8,8,'F');
+  doc.setTextColor(17,17,17); doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+  doc.text('SHIFT SUMMARY', M+14, y+16);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(60,60,60);
+  lines.forEach(function(l,i){ doc.text('\u2022 '+pdfSafe(l), M+14, y+32+i*14, {maxWidth:W-2*M-28}); });
+  y+=18+lines.length*14+18;
+  // Tables
+  function tbl(title,color,head,body){
+    if(!body.length)return;
+    doc.autoTable({startY:y,head:[head],body:body,margin:{left:M,right:M},
+      styles:{fontSize:9,cellPadding:5,overflow:'linebreak',valign:'top'},
+      headStyles:{fillColor:color,textColor:255,fontStyle:'bold',fontSize:8.5},
+      alternateRowStyles:{fillColor:[250,250,250]},
+      didDrawPage:function(){},
+      willDrawPage:function(){},
+      tableLineColor:[230,230,230],
+      didParseCell:function(){},
+      bodyStyles:{textColor:[40,40,40]},
+      columnStyles:title.indexOf('Parts')>=0?{}:{0:{fontStyle:'bold',cellWidth:120}},
+      didDrawCell:function(){},
+      showHead:'everyPage',
+      tableWidth:'auto',
+      pageBreak:'auto',
+      rowPageBreak:'avoid',
+      headCallback:function(){},
+      margin:{left:M,right:M,top:40},
+      // section title via a custom hook before table:
+    });
+    y=doc.lastAutoTable.finalY+8;
+  }
+  function sectTitle(t,c,n){
+    if(y>doc.internal.pageSize.getHeight()-90){doc.addPage();y=44;}
+    doc.setFillColor(c[0],c[1],c[2]); doc.roundedRect(M,y,4,14,2,2,'F');
+    doc.setTextColor(17,17,17); doc.setFont('helvetica','bold'); doc.setFontSize(11.5);
+    doc.text(t+'  ('+n+')', M+12, y+11);
+    y+=20;
+  }
+  function descCell(e){var s=(e.issue?e.issue:''); if(e.desc){s+=(s?'\n':'')+e.desc;} return pdfSafe(s)||'-';}
+  if(R.issues.length){ sectTitle('Pending Issues — Next Shift Must Action',[220,38,38],R.issues.length);
+    tbl('Issues',[220,38,38],['Asset','Issue / Description','By'],R.issues.map(function(e){return [e.assetName||'General',descCell(e),e.who||''];})); }
+  else { if(y>doc.internal.pageSize.getHeight()-90){doc.addPage();y=44;}
+    doc.setFillColor(240,253,244); doc.roundedRect(M,y,W-2*M,26,6,6,'F');
+    doc.setTextColor(22,163,74); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.text('No pending issues - clean handover', M+14, y+17); y+=38; }
+  sectTitle('Work Completed',[22,163,74],R.done.length);
+  if(R.done.length) tbl('Completed',[22,163,74],['Asset','Issue / Description','Time','By'],R.done.map(function(e){return [e.assetName||'General',descCell(e),(e.start?e.start+(e.end?'-'+e.end:''):''),e.who||''];}));
+  else { doc.setTextColor(150,150,150); doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.text('None this shift.',M,y+4); y+=18; }
+  if(R.ongoing.length){ sectTitle('In Progress — Continue Next Shift',[217,119,6],R.ongoing.length);
+    tbl('Ongoing',[217,119,6],['Asset','Issue / Description','Time','By'],R.ongoing.map(function(e){return [e.assetName||'General',descCell(e),(e.start?e.start+(e.end?'-'+e.end:''):''),e.who||''];})); }
+  if(R.parts.length){ sectTitle('Parts to Order',[234,88,12],R.parts.length);
+    tbl('Parts',[234,88,12],['Part','Asset','Qty','By'],R.parts.map(function(e){return [e.partName||e.issue||'—',e.assetName||'',e.partQty||'1',e.who||''];})); }
+  // Footer on every page
+  var pages=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pages;p++){ doc.setPage(p);
+    doc.setTextColor(160,160,160); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.text('Generated '+new Date().toLocaleString('en-CA'),M,doc.internal.pageSize.getHeight()-18);
+    doc.text('Page '+p+' of '+pages,W-M,doc.internal.pageSize.getHeight()-18,{align:'right'});
+  }
+  return doc.output('blob');
+}
+function downloadBlob(blob,name){
+  var url=URL.createObjectURL(blob); var a=document.createElement('a');
+  a.href=url; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1500);
+}
+// Email body: short summary; recipient + subject prefilled where possible.
+function reportEmailBody(R){
+  return ['BBW Maintenance — Shift Report','',R.date+'  •  '+R.shift+' Shift','Technicians: '+(R.techs.join(', ')||'—'),'','SUMMARY']
+    .concat(reportSummaryLines(R).map(function(l){return '• '+l;}))
+    .concat(['','Full report attached (PDF).']).join('\n');
+}
+async function sendReportToOutlook(date,shift){
+  var R=computeShiftReport(date,shift);
+  var blob,fname=reportFileName(R);
+  try{ blob=buildReportPDF(R); }catch(err){ alert('PDF build failed: '+err.message); return; }
+  var subject='BBW Shift Report — '+R.date+' '+R.shift+' Shift';
+  var body=reportEmailBody(R);
+  var file=new File([blob],fname,{type:'application/pdf'});
+  // Preferred: native share sheet WITH the PDF attached (pick Outlook).
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:subject,text:'To: '+MAILTO+'\n\n'+body}); return; }
+    catch(err){ if(err&&err.name==='AbortError')return; }
+  }
+  // Fallback (desktop / unsupported): download PDF + open Outlook with summary prefilled.
+  downloadBlob(blob,fname);
+  window.location.href='mailto:'+MAILTO+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body+'\n\n(PDF "'+fname+'" was downloaded — please attach it.)');
+}
+function downloadReportPDF(date,shift){
+  var R=computeShiftReport(date,shift);
+  try{ downloadBlob(buildReportPDF(R),reportFileName(R)); }
+  catch(err){ alert('PDF build failed: '+err.message); }
+}
+function viewReportPDF(date,shift){
+  var R=computeShiftReport(date,shift);
+  try{ var url=URL.createObjectURL(buildReportPDF(R)); window.open(url,'_blank'); }
+  catch(err){ openReportHTML(date,shift); }
+}
+// Action sheet shown after a shift period is picked.
 function pickShiftReport(date,shift){
+  var modal=document.getElementById('shift-pick-modal'); if(modal)modal.remove();
+  var R=computeShiftReport(date,shift);
+  var lines=reportSummaryLines(R);
+  var shiftLabel=(shift==='Day'?'Day Shift':'Night Shift');
+  var H='<div id="report-act-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:520;display:flex;align-items:center;justify-content:center;padding:18px" onclick="if(event.target===this)this.remove()">';
+  H+='<div style="background:#181818;border-radius:18px;width:100%;max-width:400px;overflow:hidden;border:1px solid #2a2a2a">';
+  H+='<div style="padding:18px 20px;border-bottom:1px solid #2a2a2a"><div style="font-size:17px;font-weight:800;color:#fff">'+shiftLabel+' Report</div><div style="font-size:13px;color:#888;margin-top:2px">'+date+'</div></div>';
+  H+='<div style="padding:16px 20px;max-height:42vh;overflow-y:auto"><div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Summary')+'</div>';
+  H+=lines.map(function(l){return '<div style="font-size:13.5px;color:#ddd;line-height:1.5;margin-bottom:7px;display:flex;gap:8px"><span style="color:#3b82f6">•</span><span>'+l.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span></div>';}).join('');
+  H+='</div>';
+  H+='<div style="padding:14px 20px 20px;display:flex;flex-direction:column;gap:9px;border-top:1px solid #2a2a2a">';
+  H+='<button onclick="sendReportToOutlook(\''+date+'\',\''+shift+'\')" style="width:100%;padding:14px;background:#0078d4;color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer">&#9993;&#65039; '+T('Send to Outlook (PDF attached)')+'</button>';
+  H+='<div style="display:flex;gap:9px">';
+  H+='<button onclick="downloadReportPDF(\''+date+'\',\''+shift+'\')" style="flex:1;padding:12px;background:#262626;color:#fff;border:1px solid #3a3a3a;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">&#11015; '+T('Download PDF')+'</button>';
+  H+='<button onclick="viewReportPDF(\''+date+'\',\''+shift+'\')" style="flex:1;padding:12px;background:#262626;color:#fff;border:1px solid #3a3a3a;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">&#128065; '+T('View')+'</button>';
+  H+='</div>';
+  H+='<button onclick="document.getElementById(\'report-act-modal\').remove()" style="width:100%;padding:10px;background:none;color:#888;border:none;font-size:14px;cursor:pointer">'+T('Cancel')+'</button>';
+  H+='</div></div></div>';
+  var d=document.createElement('div'); d.innerHTML=H; document.body.appendChild(d.firstChild);
+}
+
+function openReportHTML(date,shift){
   var modal=document.getElementById('shift-pick-modal');
   if(modal)modal.remove();
+  var rmodal=document.getElementById('report-act-modal');
+  if(rmodal)rmodal.remove();
   var shiftEntries=allE.filter(function(e){return e.date===date&&e.shift===shift;});  shiftEntries.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
   var techs=[...new Set(shiftEntries.map(function(e){return e.who;}))].filter(Boolean);
   var totalDT=shiftEntries.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);

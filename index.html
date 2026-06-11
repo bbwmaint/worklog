@@ -785,6 +785,7 @@ function openSheet(id){
     if(e){
       setType(e.type); if(e.priority)setPrio(e.priority);
       if(e.assetCode)selA2(e.assetCode,e.assetName);
+      else if(e.assetName){selA={c:'',n:e.assetName};gid('asearch').value=e.assetName;}
       if(gid('f-issue'))gid('f-issue').value=e.issue||''; gid('f-desc').value=e.desc||''; gid('f-start').value=e.start||''; gid('f-end').value=e.end||''; gid('f-dt').value=e.dt||'';
       if(e.partName){gid('f-pname').value=e.partName;gid('f-pqty').value=e.partQty||1;}
       if(e.machineDown&&gid('f-machinedown')){gid('f-machinedown').value=e.machineDown;toggleDT(e.machineDown);}
@@ -923,7 +924,7 @@ function submitEntry(){
         return (mins>=420&&mins<1140)?'Day':'Night';
       }
       return isDay()?'Day':'Night';
-    })(),type:ctype,priority:cprio,assetName:selA?selA.n:'',assetCode:selA?selA.c:'',issue:gid('f-issue')?gid('f-issue').value.trim():'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,machineDown:gid('f-machinedown')?gid('f-machinedown').value:'',coMins:parseInt(gid('f-co')?gid('f-co').value:0)||0,coType:gid('f-cotype')?gid('f-cotype').value:'',partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:(user===ADMIN&&gid('f-assignedto')&&gid('f-assignedto').value)?gid('f-assignedto').value:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
+    })(),type:ctype,priority:cprio,assetName:(selA?selA.n:(gid('asearch')?gid('asearch').value.trim():'')),assetCode:(selA?selA.c:''),issue:gid('f-issue')?gid('f-issue').value.trim():'',desc:gid('f-desc').value.trim(),start:gid('f-start').value,end:gid('f-end').value,dt:parseFloat(gid('f-dt').value)||0,machineDown:gid('f-machinedown')?gid('f-machinedown').value:'',coMins:parseInt(gid('f-co')?gid('f-co').value:0)||0,coType:gid('f-cotype')?gid('f-cotype').value:'',partName:gid('f-pname').value.trim(),partQty:gid('f-pqty').value||'1',photo:photo,who:(user===ADMIN&&gid('f-assignedto')&&gid('f-assignedto').value)?gid('f-assignedto').value:user,loggedAt:new Date().toISOString(),shiftNote:gid('snote').value};
   if(editId){
     // Find the original BEFORE overwriting, so we keep its Supabase link.
     var orig=allE.find(function(x){return x.id===editId;})||entries.find(function(x){return x.id===editId;});

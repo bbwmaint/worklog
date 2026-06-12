@@ -859,7 +859,7 @@ function updateLevel(inp){
   var max=parseFloat(inp.getAttribute('data-max'))||28;
   var pct=Math.min(100,(parseFloat(inp.value)||0)/max*100);
   var bar=gid('lvl-'+inp.id);
-  if(bar){bar.style.width=pct+'%';bar.style.background=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';}
+  if(bar){bar.style.width=pct+'%';bar.style.background=pct<15?'#f87171':pct<40?'#fbbf24':'#34d399';}
 }
 
 function updateQuickForAsset(assetName){
@@ -1659,21 +1659,21 @@ function renderUtil(){
       'style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace"></div>';
   }
 
-  function fieldRowLevel(id, label, placeholder){
+  function fieldRowLevel(id, label, placeholder, max, unit){
+    max=max||28; unit=unit||'"';
     var v=today&&today[id]!=null?today[id]:'';
-    var pct=v?Math.min(100,(parseFloat(v)/28)*100):0;
-    var bc=pct>85?'#ef4444':pct>60?'#f59e0b':'#4ade80';
+    var pct=v!==''?Math.min(100,(parseFloat(v)/max)*100):0;
+    var bc=pct<15?'#f87171':pct<40?'#fbbf24':'#34d399';  // full=green, low=amber, empty=red
     return '<div>'+
-      '<div style="font-size:12px;color:#888;margin-bottom:4px">'+label+'</div>'+
+      '<div style="font-size:12px;color:var(--text-2);margin-bottom:4px">'+label+'</div>'+
       '<div style="display:flex;align-items:center;gap:8px">'+
-      '<input type="number" id="'+id+'" value="'+v+'" placeholder="0" min="0" max="28" step="0.5" '+
-      'oninput="updateLevel(this)" data-max="28" '+
-      'style="width:70px;background:#222;border:1px solid #333;border-radius:8px;padding:8px;font-size:14px;color:#fff;outline:none;font-family:monospace;flex-shrink:0">'+
-      '<div style="flex:1">'+
-      '<div style="height:8px;background:#333;border-radius:4px;overflow:hidden">'+
-      '<div id="lvl-'+id+'" style="height:100%;background:'+bc+';border-radius:4px;width:'+pct+'%;transition:width .3s"></div>'+
+      '<input type="number" id="'+id+'" value="'+v+'" placeholder="0" min="0" max="'+max+'" step="0.5" '+
+      'oninput="updateLevel(this)" data-max="'+max+'" '+
+      'style="width:70px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:14px;color:var(--text);outline:none;font-family:monospace;flex-shrink:0"><div style="flex:1">'+
+      '<div style="height:8px;background:var(--surface-3);border-radius:4px;overflow:hidden">'+
+      '<div id="lvl-'+id+'" style="height:100%;background:'+bc+';border-radius:4px;width:'+pct+'%;transition:width .3s,background .3s"></div>'+
       '</div>'+
-      '<div style="display:flex;justify-content:space-between;font-size:9px;color:#555;margin-top:2px"><span>0"</span><span>28"</span></div>'+
+      '<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-3);margin-top:2px"><span>0'+unit+'</span><span>'+max+unit+'</span></div>'+
       '</div>'+
       '</div></div>';
   }
@@ -1717,7 +1717,7 @@ function renderUtil(){
     fieldRow('chstart','Start Count','0')+
     fieldRow('chproc','Process Temp (°C)','0.0')+
     fieldRow('warmcell','Warmcell Temp (°C)','0.0')+
-    fieldRowLevel('ch_glycol','Glycol Level (%)','0.0')+
+    fieldRowLevel('ch_glycol','Glycol Level (%)','0.0',100,'%')+
     fieldRow('ch_ph','pH','0.0')+
     fieldRow('ch_purity','Purity (%)','0.0');
 

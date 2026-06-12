@@ -14,8 +14,45 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <title>BBW Work Log</title>
 <style>
-  body { -webkit-tap-highlight-color: transparent; }
+  :root{
+    --bg:#0a0a0b; --surface:#141416; --surface-2:#1b1b1e; --surface-3:#26262b;
+    --border:rgba(255,255,255,.08); --border-2:rgba(255,255,255,.14);
+    --text:#fafafa; --text-2:#9b9ba3; --text-3:#5f5f67;
+    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#9b9ba3;
+    --radius:14px; --radius-sm:10px;
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  body{ background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
   input, select, textarea, button { -webkit-appearance: none; }
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:99px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::selection{background:rgba(255,255,255,.18)}
+  .lbl{font-size:10.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3)}
+  /* Tabs */
+  .tab{flex:1;padding:13px 2px;font-size:12.5px;font-weight:600;color:var(--text-3);border:none;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative;transition:color .15s}
+  .tab .uline{position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:transparent;border-radius:2px;transition:background .15s}
+  .tab.active{color:#fff}
+  .tab.active .uline{background:#fff}
+  /* Cards */
+  .lc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;position:relative;overflow:hidden}
+  .lc:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--text-3)}
+  .lc.s-done:before{background:var(--ok)} .lc.s-issue:before{background:var(--bad)} .lc.s-ongoing:before{background:var(--warn)} .lc.s-part:before{background:var(--info)}
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:7px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border-2);color:var(--text-2);white-space:nowrap}
+  .chip .d{width:6px;height:6px;border-radius:50%;background:var(--text-3)}
+  .chip.done{color:var(--ok)} .chip.done .d{background:var(--ok)}
+  .chip.issue{color:var(--bad)} .chip.issue .d{background:var(--bad)}
+  .chip.ongoing{color:var(--warn)} .chip.ongoing .d{background:var(--warn)}
+  /* Buttons */
+  .btn-primary{background:#fff;color:#000;border:none;border-radius:var(--radius-sm);font-weight:700;cursor:pointer}
+  .btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);font-weight:600;cursor:pointer}
+  /* FAB */
+  .fab{background:#fff;color:#000;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  /* KPI */
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px 8px;text-align:center}
+  .kpi .n{font-size:23px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-top:3px}
+  .tnum{font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body style="margin:0;padding:0;font-family:-apple-system,sans-serif;background:#111;color:#fff">
@@ -943,9 +980,10 @@ function submitEntry(){
         asset_name:entry.assetName||null,asset_code:entry.assetCode||null,
         issue:entry.issue||null,description:entry.desc||null,start_time:entry.start||null,end_time:entry.end||null,
         downtime_hrs:entry.dt||0,part_name:entry.partName||null,part_qty:entry.partQty||null,
-        who:entry.who||null,shift_note:entry.shiftNote||null,machine_down:entry.machineDown||null,co_mins:entry.coMins||0,co_type:entry.coType||null
+        who:entry.who||null,shift_note:entry.shiftNote||null
       });
       sbFetch('bbw_worklog?id=eq.'+entry.sbId,{method:'PATCH',body:body,headers:{'Prefer':'return=minimal'}})
+        .then(function(r){if(!r.ok)console.warn('Edit sync failed',r.status);})
         .catch(function(err){console.warn('Edit sync failed',err);});
     } else {
       // Entry was never synced to Supabase yet — create it now instead of leaving it orphaned.
@@ -2244,12 +2282,12 @@ async function sendReportToOutlook(date,shift){
   var R=computeShiftReport(date,shift);
   var blob,fname=reportFileName(R);
   try{ blob=buildReportPDF(R); }catch(err){ alert('PDF build failed: '+err.message); return; }
-  var subject='BBW Shift Report — '+R.date+' '+R.shift+' Shift';
-  var body=reportEmailBody(R);
+  var subject=R.date+' \u2014 BBW '+R.shift+' Shift Report';
+  var body=subject+'\n\n'+'Technicians: '+(R.techs.join(', ')||'\u2014')+'\n\nSUMMARY\n'+reportSummaryLines(R).map(function(l){return '\u2022 '+l;}).join('\n')+'\n\nFull report attached (PDF).';
   var file=new File([blob],fname,{type:'application/pdf'});
   // Preferred: native share sheet WITH the PDF attached (pick Outlook).
   if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{ await navigator.share({files:[file],title:subject,text:'To: '+MAILTO+'\n\n'+body}); return; }
+    try{ await navigator.share({files:[file],title:subject,text:body}); return; }
     catch(err){ if(err&&err.name==='AbortError')return; }
   }
   // Fallback (desktop / unsupported): download PDF + open Outlook with summary prefilled.

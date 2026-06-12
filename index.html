@@ -981,6 +981,7 @@ function submitEntry(){
         issue:entry.issue||null,description:entry.desc||null,start_time:entry.start||null,end_time:entry.end||null,
         downtime_hrs:entry.dt||0,part_name:entry.partName||null,part_qty:entry.partQty||null,
         who:entry.who||null,shift_note:entry.shiftNote||null,
+        machine_down:entry.machineDown||null,
         co_mins:entry.coMins||0,co_type:entry.coType||null
       };
       sbFetch('bbw_worklog?id=eq.'+entry.sbId,{method:'PATCH',body:JSON.stringify(pfull),headers:{'Prefer':'return=minimal'}})
@@ -1053,6 +1054,7 @@ function syncEntry(e){
     issue:e.issue||null,description:e.desc||null,start_time:e.start||null,end_time:e.end||null,
     downtime_hrs:e.dt||0,part_name:e.partName||null,part_qty:e.partQty||null,
     who:e.who||null,shift_note:e.shiftNote||null,
+    machine_down:e.machineDown||null,
     co_mins:e.coMins||0,co_type:e.coType||null,
     logged_at:e.loggedAt||new Date().toISOString()
   };
@@ -1299,7 +1301,7 @@ function card(e,mine){
   html+='<div class="tnum" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:11px;font-size:11.5px;color:var(--text-3)">';
   if(time)html+='<span>'+time+'</span>';
   if((e.priority==='urgent'||e.priority==='high'))html+='<span style="color:var(--bad);font-weight:700;letter-spacing:.04em">'+e.priority.toUpperCase()+'</span>';
-  if(e.machineDown==='yes'&&e.dt>0)html+='<span style="color:var(--bad)">'+e.dt+'h DT</span>';
+  if(e.dt>0)html+='<span style="color:var(--bad)">'+e.dt+'h DT</span>';
   if(e.machineDown==='yes')html+='<span style="color:var(--bad);font-weight:700;letter-spacing:.04em">MACHINE DOWN</span>';
   if(e.machineDown==='partial')html+='<span style="color:var(--warn);font-weight:700;letter-spacing:.04em">PARTIAL</span>';
   if(e.coMins>0)html+='<span style="color:var(--warn)">CO '+e.coMins+'min</span>';

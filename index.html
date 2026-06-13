@@ -15,7 +15,7 @@
 <title>BBW Work Log</title>
 <style>
   :root{
-    --bg:#0a0a0b; --surface:#141416; --surface-2:#1b1b1e; --surface-3:#26262b;
+    --bg:#0a0a0b; --surface:#141416; --surface-2:var(--surface-2); --surface-3:#26262b;
     --border:rgba(255,255,255,.08); --border-2:rgba(255,255,255,.14);
     --text:#fafafa; --text-2:#9b9ba3; --text-3:#5f5f67;
     --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#9b9ba3;
@@ -55,56 +55,56 @@
   .tnum{font-variant-numeric:tabular-nums}
 </style>
 </head>
-<body style="margin:0;padding:0;font-family:-apple-system,sans-serif;background:#111;color:#fff">
+<body style="margin:0;padding:0;font-family:-apple-system,sans-serif;background:var(--bg);color:#fff">
 
-<div id="pg-pin" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#111;padding:24px 20px">
+<div id="pg-pin" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px 20px">
 
   <!-- LOGO -->
   <img src="data:image/webp;base64,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" style="height:40px;margin-bottom:36px;display:block" alt="BBW">
 
   <!-- CARD -->
-  <div style="background:#1a1a1a;border-radius:18px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+  <div style="background:var(--surface);border-radius:18px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)">
 
     <!-- HEADER -->
     <div style="padding:22px 24px 18px;border-bottom:1px solid #2a2a2a">
       <div style="font-size:22px;font-weight:700;color:#fff" id="pin-title">Please choose your name</div>
       <div id="pin-role" style="display:none;margin-top:8px"></div>
-      <div style="font-size:14px;color:#888;margin-top:4px" id="pin-sub">Select your name to continue</div>
+      <div style="font-size:14px;color:var(--text-2);margin-top:4px" id="pin-sub">Select your name to continue</div>
     </div>
 
     <div style="padding:22px 24px">
 
       <!-- STEP 1: DROPDOWN -->
       <div id="step-names">
-        <div style="font-size:14px;color:#888;margin-bottom:10px">Please choose your name</div>
-        <select id="name-select" size="1" style="width:100%;padding:14px 16px;font-size:17px;font-weight:600;background:#222;color:#fff;border:1.5px solid #555;border-radius:12px;outline:none;cursor:pointer">
+        <div style="font-size:14px;color:var(--text-2);margin-bottom:10px">Please choose your name</div>
+        <select id="name-select" size="1" style="width:100%;padding:14px 16px;font-size:17px;font-weight:600;background:var(--surface-2);color:#fff;border:1.5px solid var(--text-3);border-radius:12px;outline:none;cursor:pointer">
           <option value="">— Select your name —</option>
         </select>
       </div>
 
       <!-- STEP 2: PIN PAD -->
       <div id="step-pad" style="display:none">
-        <div style="text-align:center;font-size:14px;color:#888;margin-bottom:16px" id="pin-msg">Enter your 4-digit PIN</div>
+        <div style="text-align:center;font-size:14px;color:var(--text-2);margin-bottom:16px" id="pin-msg">Enter your 4-digit PIN</div>
         <div style="display:flex;justify-content:center;gap:14px;margin-bottom:6px">
-          <div id="d0" style="width:16px;height:16px;border-radius:50%;background:#333;border:2px solid #555;transition:all .2s"></div>
-          <div id="d1" style="width:16px;height:16px;border-radius:50%;background:#333;border:2px solid #555;transition:all .2s"></div>
-          <div id="d2" style="width:16px;height:16px;border-radius:50%;background:#333;border:2px solid #555;transition:all .2s"></div>
-          <div id="d3" style="width:16px;height:16px;border-radius:50%;background:#333;border:2px solid #555;transition:all .2s"></div>
+          <div id="d0" style="width:16px;height:16px;border-radius:50%;background:var(--surface-3);border:2px solid var(--text-3);transition:all .2s"></div>
+          <div id="d1" style="width:16px;height:16px;border-radius:50%;background:var(--surface-3);border:2px solid var(--text-3);transition:all .2s"></div>
+          <div id="d2" style="width:16px;height:16px;border-radius:50%;background:var(--surface-3);border:2px solid var(--text-3);transition:all .2s"></div>
+          <div id="d3" style="width:16px;height:16px;border-radius:50%;background:var(--surface-3);border:2px solid var(--text-3);transition:all .2s"></div>
         </div>
         <div style="text-align:center;color:#ef4444;font-size:13px;min-height:20px;margin-bottom:14px;font-weight:600" id="pin-err"></div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-          <div onclick="pk(1)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">1</div>
-          <div onclick="pk(2)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">2</div>
-          <div onclick="pk(3)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">3</div>
-          <div onclick="pk(4)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">4</div>
-          <div onclick="pk(5)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">5</div>
-          <div onclick="pk(6)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">6</div>
-          <div onclick="pk(7)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">7</div>
-          <div onclick="pk(8)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">8</div>
-          <div onclick="pk(9)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">9</div>
+          <div onclick="pk(1)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">1</div>
+          <div onclick="pk(2)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">2</div>
+          <div onclick="pk(3)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">3</div>
+          <div onclick="pk(4)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">4</div>
+          <div onclick="pk(5)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">5</div>
+          <div onclick="pk(6)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">6</div>
+          <div onclick="pk(7)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">7</div>
+          <div onclick="pk(8)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">8</div>
+          <div onclick="pk(9)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">9</div>
           <div style="padding:18px"></div>
-          <div onclick="pk(0)" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">0</div>
-          <div onclick="pdel()" style="padding:18px;background:#252525;border-radius:11px;text-align:center;font-size:22px;color:#888;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#333'" onmouseup="this.style.background='#252525'">&#9003;</div>
+          <div onclick="pk(0)" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:24px;font-weight:600;color:#fff;cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">0</div>
+          <div onclick="pdel()" style="padding:18px;background:var(--surface-3);border-radius:11px;text-align:center;font-size:22px;color:var(--text-2);cursor:pointer;transition:background .12s;-webkit-tap-highlight-color:transparent" onmousedown="this.style.background='#30303a'" onmouseup="this.style.background='var(--surface-3)'">&#9003;</div>
         </div>
       </div>
 
@@ -112,11 +112,11 @@
 
     <!-- FOOTER -->
     <div style="padding:14px 24px;border-top:1px solid #2a2a2a;text-align:center">
-      <button id="pin-back" onclick="showNames()" style="display:none;font-size:13px;color:#888;cursor:pointer;border:none;background:none;padding:4px 8px">&#8592; Back</button>
+      <button id="pin-back" onclick="showNames()" style="display:none;font-size:13px;color:var(--text-2);cursor:pointer;border:none;background:none;padding:4px 8px">&#8592; Back</button>
     </div>
   </div>
 
-  <div style="margin-top:20px;font-size:12px;color:#444;font-family:monospace">BBW Maintenance &bull; Krones Line 1</div>
+  <div style="margin-top:20px;font-size:12px;color:var(--border-2);font-family:monospace">BBW Maintenance &bull; Krones Line 1</div>
 </div>
 
 <div id="pg-app" style="display:none;flex-direction:column;height:100vh;background:var(--bg);overflow:hidden">
@@ -129,23 +129,23 @@
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
       <div style="font-size:12px;color:var(--text-3)" id="tlbl" class="tnum">--:--</div>
       <div id="uchip" style="display:flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;background:var(--surface-2);border:1px solid var(--border);border-radius:20px;cursor:pointer">
-        <div id="uav" style="width:24px;height:24px;border-radius:50%;background:#2563eb;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">?</div>
+        <div id="uav" style="width:24px;height:24px;border-radius:50%;background:#fff;color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center">?</div>
         <div id="unm" style="font-size:12px;font-weight:600;color:#fff">-</div>
       </div>
     </div>
-    <div style="display:flex;background:#2a2a2a;border:1px solid #444;border-radius:7px;padding:2px">
+    <div style="display:flex;background:#2a2a2a;border:1px solid var(--border-2);border-radius:7px;padding:2px">
       <button id="lb-en" onclick="setLang('en')" style="padding:5px 11px;font-size:12px;font-weight:600;border:none;border-radius:5px;background:#fff;color:#111;cursor:pointer">EN</button>
-      <button id="lb-uk" onclick="setLang('uk')" style="padding:5px 11px;font-size:12px;font-weight:600;border:none;border-radius:5px;background:none;color:#666;cursor:pointer">УК</button>
+      <button id="lb-uk" onclick="setLang('uk')" style="padding:5px 11px;font-size:12px;font-weight:600;border:none;border-radius:5px;background:none;color:var(--text-3);cursor:pointer">УК</button>
     </div>
   </div>
 
   <!-- SHIFT BAR -->
-  <div style="background:#1a1a1a;border-bottom:1px solid #333;padding:7px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-    <div style="width:80px;height:4px;background:#333;border-radius:2px;overflow:hidden;flex-shrink:0">
+  <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:7px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <div style="width:80px;height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden;flex-shrink:0">
       <div id="spf" style="height:100%;background:#fff;border-radius:2px;width:0%"></div>
     </div>
     <div id="sleft" style="font-size:11px;color:#aaa;font-family:monospace;white-space:nowrap">12h left</div>
-    <input type="text" id="snote" placeholder="Shift note / product running..." style="flex:1;background:#222;border:1px solid #333;border-radius:7px;padding:6px 10px;font-size:13px;color:#fff;outline:none">
+    <input type="text" id="snote" placeholder="Shift note / product running..." style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:13px;color:#fff;outline:none">
   </div>
 
   <!-- URGENT BANNER -->
@@ -155,7 +155,7 @@
   </div>
 
   <!-- TABS -->
-  <div style="background:#1a1a1a;border-bottom:1px solid #333;display:flex;flex-shrink:0">
+  <div style="background:var(--surface);border-bottom:1px solid var(--border);display:flex;flex-shrink:0">
     <button onclick="showTab('log')" id="tab-log" style="flex:1;padding:12px 2px;font-size:12.5px;font-weight:600;color:#fff;border:none;border-bottom:2px solid #fff;background:none;cursor:pointer">My Log</button>
     <button onclick="showTab('shift')" id="tab-shift" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Shift</button>
     <button onclick="showTab('prev')" id="tab-prev" style="flex:1;padding:10px 2px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap">Prev</button>
@@ -166,7 +166,7 @@
   </div>
 
   <!-- CONTENT -->
-  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#111;padding:12px" id="content">
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);padding:12px" id="content">
     <div id="pane-log"></div>
     <div id="pane-shift" style="display:none"></div>
     <div id="pane-prev" style="display:none"></div>
@@ -182,40 +182,40 @@
 </div>
 
 <div id="sheet-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:flex-end;justify-content:center">
-<div style="background:#1a1a1a;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:20px 16px 40px">
-  <div style="width:36px;height:4px;background:#444;border-radius:2px;margin:0 auto 18px"></div>
+<div style="background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;padding:20px 16px 40px">
+  <div style="width:36px;height:4px;background:var(--border-2);border-radius:2px;margin:0 auto 18px"></div>
   <div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:16px" id="sheet-title">Log Work</div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-templates">Templates</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-templates">Templates</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="tpl-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-quickadd">Quick Add</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-quickadd">Quick Add</div>
     <div style="display:flex;flex-wrap:wrap;gap:7px" id="quick-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-type">Type</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-type">Type</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="type-grid"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-asset">Asset</div>
-    <input type="text" id="asearch" placeholder="Search asset..." oninput="filterA(this.value)" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
-    <div id="alist" style="max-height:180px;overflow-y:auto;border:1px solid #333;border-radius:9px;background:#111"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-asset">Asset</div>
+    <input type="text" id="asearch" placeholder="Search asset..." oninput="filterA(this.value)" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
+    <div id="alist" style="max-height:180px;overflow-y:auto;border:1px solid var(--border);border-radius:9px;background:var(--bg)"></div>
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-issue">Issue</div>
-    <input type="text" id="f-issue" placeholder="Short summary — e.g. Loader jam" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:12px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-whatdone">Description / Work done</div>
-    <textarea id="f-desc" rows="3" placeholder="Details, root cause, what was done to fix it..." style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;resize:none;font-family:inherit"></textarea>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-issue">Issue</div>
+    <input type="text" id="f-issue" placeholder="Short summary — e.g. Loader jam" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:12px">
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px" id="lbl-whatdone">Description / Work done</div>
+    <textarea id="f-desc" rows="3" placeholder="Details, root cause, what was done to fix it..." style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;resize:none;font-family:inherit"></textarea>
   </div>
   <div id="fg-assignedto" style="display:none;margin-bottom:14px">
     <div style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Reassign To (Admin Only)</div>
-    <select id="f-assignedto" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none"></select>
+    <select id="f-assignedto" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none"></select>
   </div>
 
   <!-- TIME FIELDS -->
@@ -225,12 +225,12 @@
     <div style="font-size:11px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Working / Troubleshooting Time</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
       <div>
-        <div style="font-size:12px;color:#888;margin-bottom:4px">Start</div>
-        <input type="time" id="f-start" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none">
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">Start</div>
+        <input type="time" id="f-start" oninput="calcDT()" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none">
       </div>
       <div>
-        <div style="font-size:12px;color:#888;margin-bottom:4px">End</div>
-        <input type="time" id="f-end" oninput="calcDT()" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none">
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">End</div>
+        <input type="time" id="f-end" oninput="calcDT()" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none">
       </div>
     </div>
     <div id="dt-auto" style="display:none;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);border-radius:7px;padding:7px 10px;font-size:12px;color:#60a5fa;margin-bottom:10px"></div>
@@ -240,12 +240,12 @@
       <div style="font-size:11px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Changeover Time</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div>
-          <div style="font-size:12px;color:#888;margin-bottom:4px">Duration (minutes)</div>
-          <input type="number" id="f-co" min="0" step="1" placeholder="0" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">Duration (minutes)</div>
+          <input type="number" id="f-co" min="0" step="1" placeholder="0" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
         </div>
         <div>
-          <div style="font-size:12px;color:#888;margin-bottom:4px">Changeover Type</div>
-          <select id="f-cotype" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">Changeover Type</div>
+          <select id="f-cotype" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">
             <option value="">N/A</option>
             <option value="product">Product changeover</option>
             <option value="format">Format change</option>
@@ -261,16 +261,16 @@
       <div style="font-size:11px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Machine Downtime</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div>
-          <div style="font-size:12px;color:#888;margin-bottom:4px">Machine Status</div>
-          <select id="f-machinedown" onchange="toggleDT(this.value)" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:4px">Machine Status</div>
+          <select id="f-machinedown" onchange="toggleDT(this.value)" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">
             <option value="">Running — no downtime</option>
             <option value="yes">Machine was DOWN</option>
             <option value="partial">Partial — reduced speed</option>
           </select>
         </div>
         <div id="f-dt-wrap" style="display:none">
-          <div style="font-size:12px;color:#888;margin-bottom:4px" id="lbl-dthrs">DT hrs</div>
-          <input type="number" id="f-dt" min="0" step="0.25" placeholder="0.0" style="width:100%;background:#222;border:1px solid #444;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
+          <div style="font-size:12px;color:var(--text-2);margin-bottom:4px" id="lbl-dthrs">DT hrs</div>
+          <input type="number" id="f-dt" min="0" step="0.25" placeholder="0.0" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace">
         </div>
       </div>
     </div>
@@ -278,13 +278,13 @@
   </div>
 
   <div id="fg-part" style="display:none;margin-bottom:14px">
-    <div style="font-size:12px;color:#888;margin-bottom:5px" id="lbl-partnum">Part name / number</div>
-    <input type="text" id="f-pname" placeholder="e.g. Bearing SKF-6205" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
-    <input type="number" id="f-pqty" placeholder="Qty" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;font-family:monospace">
+    <div style="font-size:12px;color:var(--text-2);margin-bottom:5px" id="lbl-partnum">Part name / number</div>
+    <input type="text" id="f-pname" placeholder="e.g. Bearing SKF-6205" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;margin-bottom:8px">
+    <input type="number" id="f-pqty" placeholder="Qty" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:16px;color:#fff;outline:none;font-family:monospace">
   </div>
 
   <div style="margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-priority">Priority</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="lbl-priority">Priority</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px" id="prio-grid"></div>
   </div>
 
@@ -308,15 +308,15 @@
 </div>
 
 <div id="send-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:16px">
-<div style="background:#1a1a1a;border-radius:18px;width:100%;max-width:380px;overflow:hidden">
-  <div style="padding:18px 20px 14px;border-bottom:1px solid #333">
+<div style="background:var(--surface);border-radius:18px;width:100%;max-width:380px;overflow:hidden">
+  <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border)">
     <div style="font-size:18px;font-weight:700;color:#fff">&#9200; Send Shift Report?</div>
-    <div style="font-size:13px;color:#888;margin-top:4px" id="send-sub"></div>
+    <div style="font-size:13px;color:var(--text-2);margin-top:4px" id="send-sub"></div>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);padding:14px 16px;gap:8px;border-bottom:1px solid #333" id="send-stats"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);padding:14px 16px;gap:8px;border-bottom:1px solid var(--border)" id="send-stats"></div>
   <div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
-    <button onclick="confirmSend(true)" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">&#128231; Send Now</button>
-    <button onclick="confirmSend(false)" style="width:100%;padding:12px;background:#222;color:#aaa;border:1px solid #333;border-radius:10px;font-size:14px;cursor:pointer">Skip</button>
+    <button onclick="confirmSend(true)" style="width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">&#128231; Send Now</button>
+    <button onclick="confirmSend(false)" style="width:100%;padding:12px;background:var(--surface-2);color:#aaa;border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer">Skip</button>
   </div>
 </div>
 </div>
@@ -619,8 +619,8 @@ function pdel(){
 function updDots(){
   for(var i=0;i<4;i++){
     var d=gid('d'+i);
-    d.style.background=i<pbuf.length?'#2563eb':'#333';
-    d.style.borderColor=i<pbuf.length?'#2563eb':'#555';
+    d.style.background=i<pbuf.length?'#fff':'var(--surface-3)';
+    d.style.borderColor=i<pbuf.length?'#fff':'var(--text-3)';
   }
 }
 
@@ -721,15 +721,15 @@ function buildAList(filter){
   Object.keys(GROUPS).forEach(function(grp){
     var items=ASSETS.filter(function(a){return GROUPS[grp].indexOf(a.n)>=0&&(!filter||a.n.toLowerCase().indexOf(lower)>=0||a.c.toLowerCase().indexOf(lower)>=0);});
     if(!items.length)return;
-    html+='<div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;padding:6px 10px 3px;border-top:1px solid #222">'+grp+'</div>';
+    html+='<div style="font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;padding:6px 10px 3px;border-top:1px solid var(--surface-2)">'+grp+'</div>';
     items.forEach(function(a){
       var sel=selA&&selA.c===a.c;
       html+='<div onclick="selA2(\''+a.c+'\',\''+a.n.replace(/'/g,'&#39;')+'\')" style="padding:11px 10px;font-size:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;'+(sel?'background:rgba(37,99,235,.2);color:#60a5fa;':'')+'">';
       html+='<span style="color:'+(sel?'#60a5fa':'#fff')+'">'+a.n+'</span>';
-      html+='<span style="font-size:11px;color:#666;font-family:monospace">'+a.c+'</span></div>';
+      html+='<span style="font-size:11px;color:var(--text-3);font-family:monospace">'+a.c+'</span></div>';
     });
   });
-  el.innerHTML=html||'<div style="padding:12px;text-align:center;color:#666">No assets found</div>';
+  el.innerHTML=html||'<div style="padding:12px;text-align:center;color:var(--text-3)">No assets found</div>';
 }
 function filterA(v){selA=null;buildAList(v);}
 function selA2(code,name){selA={c:code,n:name};gid('asearch').value=name;buildAList(name);
@@ -739,21 +739,21 @@ function selA2(code,name){selA={c:code,n:name};gid('asearch').value=name;buildAL
 // TYPES
 function buildTypes(){
   var types=[
-    {id:'assigned',label:T('assigned')||'Assigned',color:'#2563eb',bg:'rgba(37,99,235,.15)'},
+    {id:'assigned',label:T('assigned')||'Assigned',color:'#d4d4d8',bg:'rgba(255,255,255,.08)'},
     {id:'completed',label:T('completed')||'Completed',color:'#16a34a',bg:'rgba(22,163,74,.15)'},
     {id:'ongoing',label:T('ongoing')||'Ongoing',color:'#d97706',bg:'rgba(217,119,6,.15)'},
     {id:'parts',label:T('parts')||'Parts Requested',color:'#ea580c',bg:'rgba(234,88,12,.15)'},
     {id:'pending',label:T('pending')||'Pending',color:'#dc2626',bg:'rgba(220,38,38,.15)'},
   ];
   gid('type-grid').innerHTML=types.map(function(t){
-    return '<div id="tp-'+t.id+'" onclick="setType(\''+t.id+'\')" style="padding:12px 4px;border-radius:10px;border:1.5px solid #333;background:#222;color:#aaa;font-size:13px;font-weight:600;cursor:pointer;text-align:center" data-color="'+t.color+'" data-bg="'+t.bg+'">'+t.label+'</div>';
+    return '<div id="tp-'+t.id+'" onclick="setType(\''+t.id+'\')" style="padding:12px 4px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface-2);color:#aaa;font-size:13px;font-weight:600;cursor:pointer;text-align:center" data-color="'+t.color+'" data-bg="'+t.bg+'">'+t.label+'</div>';
   }).join('');
 }
 
 function setType(type){
   ctype=type;
   document.querySelectorAll('[id^="tp-"]').forEach(function(el){
-    el.style.borderColor='#333';el.style.background='#222';el.style.color='#aaa';
+    el.style.borderColor='var(--border)';el.style.background='var(--surface-2)';el.style.color='#aaa';
   });
   var el=gid('tp-'+type);
   if(el){el.style.borderColor=el.getAttribute('data-color');el.style.background=el.getAttribute('data-bg');el.style.color=el.getAttribute('data-color');}
@@ -766,16 +766,16 @@ function buildPrios(){
     {id:'urgent',label:T('urgent')||'Urgent',color:'#dc2626',bg:'rgba(220,38,38,.15)'},
     {id:'high',label:T('high')||'High',color:'#ea580c',bg:'rgba(234,88,12,.15)'},
     {id:'monitor',label:T('monitor')||'Monitor',color:'#d97706',bg:'rgba(217,119,6,.15)'},
-    {id:'info',label:T('info')||'Info',color:'#2563eb',bg:'rgba(37,99,235,.15)'},
+    {id:'info',label:T('info')||'Info',color:'#d4d4d8',bg:'rgba(255,255,255,.08)'},
   ];
   gid('prio-grid').innerHTML=prios.map(function(p){
-    return '<div id="pp-'+p.id+'" onclick="setPrio(\''+p.id+'\')" style="padding:9px 4px;border-radius:9px;border:1.5px solid #333;background:#222;color:#aaa;font-size:12px;font-weight:600;cursor:pointer;text-align:center" data-color="'+p.color+'" data-bg="'+p.bg+'">'+p.label+'</div>';
+    return '<div id="pp-'+p.id+'" onclick="setPrio(\''+p.id+'\')" style="padding:9px 4px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface-2);color:#aaa;font-size:12px;font-weight:600;cursor:pointer;text-align:center" data-color="'+p.color+'" data-bg="'+p.bg+'">'+p.label+'</div>';
   }).join('');
 }
 
 function setPrio(p){
   cprio=p;
-  document.querySelectorAll('[id^="pp-"]').forEach(function(el){el.style.borderColor='#333';el.style.background='#222';el.style.color='#aaa';});
+  document.querySelectorAll('[id^="pp-"]').forEach(function(el){el.style.borderColor='var(--border)';el.style.background='var(--surface-2)';el.style.color='#aaa';});
   var el=gid('pp-'+p);
   if(el){el.style.borderColor=el.getAttribute('data-color');el.style.background=el.getAttribute('data-bg');el.style.color=el.getAttribute('data-color');}
 }
@@ -784,7 +784,7 @@ function setPrio(p){
 function buildTemplates(){
   gid('tpl-grid').innerHTML=TMPLS.map(function(t){
     var nm=lang==='uk'&&t.nameUk?t.nameUk:t.name;
-    return '<div onclick="applyTpl(\''+t.id+'\')" style="background:#222;border:1.5px solid #333;border-radius:9px;padding:10px 12px;cursor:pointer"><div style="font-size:13px;font-weight:600;color:#fff">'+nm+'</div><div style="font-size:11px;color:#666;margin-top:2px;font-family:monospace">'+t.asset+'</div></div>';
+    return '<div onclick="applyTpl(\''+t.id+'\')" style="background:var(--surface-2);border:1.5px solid var(--border);border-radius:9px;padding:10px 12px;cursor:pointer"><div style="font-size:13px;font-weight:600;color:#fff">'+nm+'</div><div style="font-size:11px;color:var(--text-3);margin-top:2px;font-family:monospace">'+t.asset+'</div></div>';
   }).join('');
 }
 function applyTpl(id){
@@ -799,7 +799,7 @@ function buildQuick(){
   gid('quick-grid').innerHTML=QTASKS.map(function(q){
     var lbl=lang==='uk'&&q.labelUk?q.labelUk:q.label;
     var dsc=lang==='uk'&&q.descUk?q.descUk:q.desc;
-    return '<div onclick="applyQ(\''+q.type+'\',\''+dsc+'\')" style="padding:8px 14px;border-radius:20px;border:1.5px solid #333;background:#222;color:#ccc;font-size:13px;cursor:pointer">'+lbl+'</div>';
+    return '<div onclick="applyQ(\''+q.type+'\',\''+dsc+'\')" style="padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface-2);color:#ccc;font-size:13px;cursor:pointer">'+lbl+'</div>';
   }).join('');
 }
 function applyQ(type,desc){setType(type);gid('f-desc').value=desc;}
@@ -815,8 +815,8 @@ function openSheet(id){
   gid('photo-lbl').textContent='\uD83D\uDCF7 No photo yet';
   if(gid('photo-in'))gid('photo-in').value='';
   if(gid('photo-lib'))gid('photo-lib').value='';
-  document.querySelectorAll('[id^="tp-"]').forEach(function(el){el.style.borderColor='#333';el.style.background='#222';el.style.color='#aaa';});
-  document.querySelectorAll('[id^="pp-"]').forEach(function(el){el.style.borderColor='#333';el.style.background='#222';el.style.color='#aaa';});
+  document.querySelectorAll('[id^="tp-"]').forEach(function(el){el.style.borderColor='var(--border)';el.style.background='var(--surface-2)';el.style.color='#aaa';});
+  document.querySelectorAll('[id^="pp-"]').forEach(function(el){el.style.borderColor='var(--border)';el.style.background='var(--surface-2)';el.style.color='#aaa';});
   gid('fg-part').style.display='none';
   gid('dt-auto').style.display='none';
   if(gid('f-machinedown')){gid('f-machinedown').value='';toggleDT('');}
@@ -874,7 +874,7 @@ function updateQuickForAsset(assetName){
   if(!issues||!issues.length){buildQuick();return;}
 
   // Show asset-specific issues + standard quick adds
-  var sevColors={urgent:'#ef4444',high:'#f97316',monitor:'#f59e0b',info:'#2563eb'};
+  var sevColors={urgent:'#ef4444',high:'#f97316',monitor:'#f59e0b',info:'#9b9ba3'};
   var issueChips=issues.map(function(item){
     var col=sevColors[item.sev]||'#6b7280';
     var btn=document.createElement('div');
@@ -903,7 +903,7 @@ function updateQuickForAsset(assetName){
   sep.style.cssText='width:100%;height:1px;background:#2a2a2a;margin:8px 0';
   el.appendChild(sep);
   var lbl=document.createElement('div');
-  lbl.style.cssText='font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;width:100%;margin-bottom:4px';
+  lbl.style.cssText='font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;width:100%;margin-bottom:4px';
   lbl.textContent='General';
   el.appendChild(lbl);
   QTASKS.forEach(function(q){
@@ -911,7 +911,7 @@ function updateQuickForAsset(assetName){
     var lbl2=lang==='uk'&&q.labelUk?q.labelUk:q.label;
     var dsc=lang==='uk'&&q.descUk?q.descUk:q.desc;
     btn.textContent=lbl2;
-    btn.style.cssText='padding:8px 14px;border-radius:20px;border:1.5px solid #333;background:#222;color:#ccc;font-size:13px;cursor:pointer';
+    btn.style.cssText='padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface-2);color:#ccc;font-size:13px;cursor:pointer';
     btn.addEventListener('click',function(){applyQ(q.type,dsc);});
     el.appendChild(btn);
   });
@@ -1244,22 +1244,22 @@ function showReassignModal(pmIdx){
   var pm=PMS[pmIdx];if(!pm)return;
   var current=getAssignee(pm);
   var html='<div style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px" id="reassign-modal">';
-  html+='<div style="background:#1a1a1a;border-radius:16px;width:100%;max-width:340px;overflow:hidden">';
-  html+='<div style="padding:18px 20px;border-bottom:1px solid #333">';
+  html+='<div style="background:var(--surface);border-radius:16px;width:100%;max-width:340px;overflow:hidden">';
+  html+='<div style="padding:18px 20px;border-bottom:1px solid var(--border)">';
   html+='<div style="font-size:16px;font-weight:700;color:#fff">Reassign PM</div>';
-  html+='<div style="font-size:13px;color:#888;margin-top:3px">'+pm.asset+' — '+pm.desc.slice(0,40)+'...</div>';
-  html+='<div style="font-size:12px;color:#666;margin-top:3px;font-family:monospace">Currently: '+current+'</div>';
+  html+='<div style="font-size:13px;color:var(--text-2);margin-top:3px">'+pm.asset+' — '+pm.desc.slice(0,40)+'...</div>';
+  html+='<div style="font-size:12px;color:var(--text-3);margin-top:3px;font-family:monospace">Currently: '+current+'</div>';
   html+='</div>';
   html+='<div style="padding:16px 20px">';
-  html+='<div style="font-size:12px;color:#888;margin-bottom:8px">Select technician</div>';
-  html+='<select id="reassign-tech" style="width:100%;background:#222;border:1px solid #444;border-radius:9px;padding:12px;font-size:15px;color:#fff;outline:none;margin-bottom:14px">';
+  html+='<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">Select technician</div>';
+  html+='<select id="reassign-tech" style="width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:9px;padding:12px;font-size:15px;color:#fff;outline:none;margin-bottom:14px">';
   TECHS.forEach(function(t){html+='<option value="'+t+'"'+(t===current?' selected':'')+'>'+t+'</option>';});
   html+='</select>';
-  html+='<button onclick="doReassign('+pmIdx+',false)" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Today Only</button>';
+  html+='<button onclick="doReassign('+pmIdx+',false)" style="width:100%;padding:12px;background:#fff;color:#000;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Today Only</button>';
   if(user===ADMIN){
     html+='<button onclick="doReassign('+pmIdx+',true)" style="width:100%;padding:12px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Permanent (Admin)</button>';
   }
-  html+='<button onclick="document.getElementById(\'reassign-modal\').remove()" style="width:100%;padding:11px;background:#222;color:#aaa;border:1px solid #333;border-radius:9px;font-size:13px;cursor:pointer">Cancel</button>';
+  html+='<button onclick="document.getElementById(\'reassign-modal\').remove()" style="width:100%;padding:11px;background:var(--surface-2);color:#aaa;border:1px solid var(--border);border-radius:9px;font-size:13px;cursor:pointer">Cancel</button>';
   html+='</div></div></div>';
   document.body.insertAdjacentHTML('beforeend',html);
 }
@@ -1383,13 +1383,13 @@ function renderLog(){
 
   // Show due PMs at top
   if(myPMs.length){
-    H+='<div style="background:#1a1a1a;border-radius:12px;padding:14px;margin-bottom:12px;border-left:3px solid #7c3aed">';
+    H+='<div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:12px;border-left:3px solid #7c3aed">';
     H+='<div style="font-size:12px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Your PMs Due Today ('+myPMs.length+')</div>';
     myPMs.forEach(function(pm){
       var pmIdx=PMS.indexOf(pm);
-      H+='<div style="background:#222;border-radius:8px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:8px">';
+      H+='<div style="background:var(--surface-2);border-radius:8px;padding:10px 12px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;gap:8px">';
       H+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#fff">'+pm.asset+'</div>';
-      H+='<div style="font-size:11px;color:#888;margin-top:2px">'+pm.desc.slice(0,50)+'</div></div>';
+      H+='<div style="font-size:11px;color:var(--text-2);margin-top:2px">'+pm.desc.slice(0,50)+'</div></div>';
       H+='<button onclick="logPMByIdx('+pmIdx+')" style="padding:7px 12px;background:rgba(124,58,237,.2);color:#a78bfa;border:1px solid rgba(124,58,237,.3);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">'+T('Log Done')+'</button>';
       H+='</div>';
     });
@@ -1397,7 +1397,7 @@ function renderLog(){
   }
 
   if(!mine.length&&!myPMs.length){
-    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:#555"><div style="font-size:40px;margin-bottom:10px">&#128203;</div><div style="font-size:16px;font-weight:600;color:#777">'+T('Nothing logged yet')+'</div><div style="font-size:14px;margin-top:6px">'+T('Tap + to log your first task')+'</div></div>';
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text-3)"><div style="font-size:40px;margin-bottom:10px">&#128203;</div><div style="font-size:16px;font-weight:600;color:#777">'+T('Nothing logged yet')+'</div><div style="font-size:14px;margin-top:6px">'+T('Tap + to log your first task')+'</div></div>';
     if(myPMs.length)el.innerHTML=H;
     return;
   }
@@ -1418,7 +1418,7 @@ function renderShift(){
   stats+='<div class="kpi"><div class="n">'+cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length+'</div><div class="l">Parts</div></div>';
   stats+='<div class="kpi"><div class="n">'+dt.toFixed(1)+'<span style="font-size:13px;color:var(--text-3)">h</span></div><div class="l">Downtime</div></div>';
   stats+='</div>';
-  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,e.who===user);}).join(''):'<div style="text-align:center;padding:30px;color:#555">'+T('No entries this shift yet')+'</div>');
+  el.innerHTML=stats+(cur.length?cur.slice().reverse().map(function(e){return card(e,e.who===user);}).join(''):'<div style="text-align:center;padding:30px;color:var(--text-3)">'+T('No entries this shift yet')+'</div>');
 }
 
 function renderPrev(){
@@ -1447,9 +1447,9 @@ function renderPrev(){
     var prev=allE.filter(function(e){return e.date===sv.date&&e.shift===sv.shift;});
     prev=prev.sort(function(a,b){return (a.loggedAt||'').localeCompare(b.loggedAt||'');});
     if(!prev.length){
-      H+='<div style="background:#111;border-radius:10px;padding:12px 16px;margin-bottom:10px;border-left:3px solid #333">';
-      H+='<div style="font-size:13px;font-weight:700;color:#555">'+sv.shift+' Shift — '+sv.date+'</div>';
-      H+='<div style="font-size:12px;color:#444;margin-top:4px">No entries logged</div></div>';
+      H+='<div style="background:var(--bg);border-radius:10px;padding:12px 16px;margin-bottom:10px;border-left:3px solid var(--border-2)">';
+      H+='<div style="font-size:13px;font-weight:700;color:var(--text-3)">'+sv.shift+' Shift — '+sv.date+'</div>';
+      H+='<div style="font-size:12px;color:var(--border-2);margin-top:4px">No entries logged</div></div>';
       return;
     }
     foundAny=true;
@@ -1459,11 +1459,11 @@ function renderPrev(){
     var parts=prev.filter(function(e){return e.type==='part'||e.type==='parts';});
     var ackKey='ack_'+sv.date+'_'+sv.shift;
     var acked=localStorage.getItem(ackKey);
-    H+='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin-bottom:12px">';
-    H+='<div style="padding:13px 16px;border-bottom:1px solid #333;display:flex;align-items:center;justify-content:space-between">';
+    H+='<div style="background:var(--surface);border-radius:12px;overflow:hidden;margin-bottom:12px">';
+    H+='<div style="padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">';
     H+='<div><div style="font-size:15px;font-weight:700;color:#fff">'+sv.shift+' Shift — '+sv.date+'</div>';
-    H+='<div style="font-size:11px;color:#666;margin-top:2px">'+techs.join(', ')+'</div></div>';
-    H+='<div style="font-size:12px;color:#888">'+prev.length+' entries'+(parseFloat(dtTotal)>0?' &bull; '+dtTotal+'h DT':'')+'</div>';
+    H+='<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+techs.join(', ')+'</div></div>';
+    H+='<div style="font-size:12px;color:var(--text-2)">'+prev.length+' entries'+(parseFloat(dtTotal)>0?' &bull; '+dtTotal+'h DT':'')+'</div>';
     H+='</div>';
     H+='<div style="padding:12px 16px">';
     if(urg.length){
@@ -1481,8 +1481,8 @@ function renderPrev(){
       H+='<div style="font-size:11px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin:8px 0 6px">Parts Needed</div>';
       parts.forEach(function(e){H+='<div style="font-size:12px;color:#ccc;padding:3px 0">&bull; '+(e.partName||e.desc||'?')+(e.partQty?' x'+e.partQty:'')+'</div>';});
     }
-    var btnBg=acked?'rgba(22,163,74,.15)':'#2563eb';
-    var btnColor=acked?'#4ade80':'#fff';
+    var btnBg=acked?'rgba(22,163,74,.15)':'#fff';
+    var btnColor=acked?'#4ade80':'#000';
     var btnBorder=acked?'1px solid rgba(22,163,74,.3)':'none';
     var btnTxt=acked?'✓ Acked: '+acked:'Acknowledge Handover';
     H+='<button class="ackbtn" data-key="'+ackKey+'" style="width:100%;padding:11px;background:'+btnBg+';color:'+btnColor+';border:'+btnBorder+';border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px">'+btnTxt+'</button>';
@@ -1490,7 +1490,7 @@ function renderPrev(){
     H+=prev.map(function(e){return card(e,e.who===user||user===ADMIN);}).join('');
     H+='</div>';
   });
-  if(!foundAny)H='<div style="text-align:center;padding:40px;color:#555">No previous shift data</div>';
+  if(!foundAny)H='<div style="text-align:center;padding:40px;color:var(--text-3)">No previous shift data</div>';
   el.innerHTML=H;
   el.querySelectorAll('.ackbtn').forEach(function(b){
     b.addEventListener('click',function(){ack(this.getAttribute('data-key'));});
@@ -1529,23 +1529,23 @@ function renderAssets(){
 
   // Summary tiles
   H+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:12px;text-align:center">';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:12px;text-align:center">';
   H+='<div style="font-size:22px;font-weight:800;color:#fff">'+monthData.length+'</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:2px">Total Logs</div></div>';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:12px;text-align:center">';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase;margin-top:2px">Total Logs</div></div>';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:12px;text-align:center">';
   H+='<div style="font-size:22px;font-weight:800;color:#ef4444">'+totalDT.toFixed(1)+'h</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:2px">Machine DT</div></div>';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:12px;text-align:center">';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase;margin-top:2px">Machine DT</div></div>';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:12px;text-align:center">';
   H+='<div style="font-size:22px;font-weight:800;color:#f97316">'+assets.length+'</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase;margin-top:2px">Assets</div></div>';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase;margin-top:2px">Assets</div></div>';
   H+='</div>';
 
   // Month label
-  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+mnames[thisMonth]+' '+thisYear+' — Downtime Ranking</div>';
+  H+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+mnames[thisMonth]+' '+thisYear+' — Downtime Ranking</div>';
 
   // Asset breakdown
   if(!assets.length){
-    H+='<div style="text-align:center;padding:40px;color:#555">No data this month</div>';
+    H+='<div style="text-align:center;padding:40px;color:var(--text-3)">No data this month</div>';
   } else {
     var maxDT=assetDT[assets[0]]||0.01;
     assets.forEach(function(a,i){
@@ -1554,21 +1554,21 @@ function renderAssets(){
       var iss=assetIssues[a]||0;
       var pct=maxDT>0?(dt/maxDT)*100:0;
       var dtColor=dt>4?'#ef4444':dt>1?'#f59e0b':'#4ade80';
-      H+='<div class="asset-card" data-asset="'+encodeURIComponent(a)+'" style="background:#1a1a1a;border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;active:opacity:.8">';
+      H+='<div class="asset-card" data-asset="'+encodeURIComponent(a)+'" style="background:var(--surface);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;active:opacity:.8">';
       H+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
       H+='<div>';
       H+='<div style="font-size:14px;font-weight:700;color:#fff">'+a+'</div>';
-      H+='<div style="font-size:11px;color:#666;margin-top:1px">'+cnt+' log'+(cnt!==1?'s':'')+(iss?' &bull; '+iss+' issue'+(iss!==1?'s':''):'')+'</div>';
+      H+='<div style="font-size:11px;color:var(--text-3);margin-top:1px">'+cnt+' log'+(cnt!==1?'s':'')+(iss?' &bull; '+iss+' issue'+(iss!==1?'s':''):'')+'</div>';
       H+='</div>';
       H+='<div style="display:flex;align-items:center;gap:8px">';
       H+='<div style="text-align:right">';
       H+='<div style="font-size:16px;font-weight:800;color:'+dtColor+'">'+dt.toFixed(1)+'h</div>';
-      H+='<div style="font-size:10px;color:#666">downtime</div>';
+      H+='<div style="font-size:10px;color:var(--text-3)">downtime</div>';
       H+='</div>';
-      H+='<div style="color:#555;font-size:16px">&#8250;</div>';
+      H+='<div style="color:var(--text-3);font-size:16px">&#8250;</div>';
       H+='</div></div>';
       if(dt>0){
-        H+='<div style="height:4px;background:#333;border-radius:2px">';
+        H+='<div style="height:4px;background:var(--surface-3);border-radius:2px">';
         H+='<div style="height:100%;background:'+dtColor+';border-radius:2px;width:'+pct+'%"></div>';
         H+='</div>';
       }
@@ -1579,10 +1579,10 @@ function renderAssets(){
   // CO summary
   var coTotal=monthData.filter(function(e){return e.coMins>0;}).reduce(function(a,e){return a+(e.coMins||0);},0);
   if(coTotal>0){
-    H+='<div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;margin-top:4px">';
+    H+='<div style="background:var(--surface);border-radius:10px;padding:12px 14px;margin-top:4px">';
     H+='<div style="font-size:12px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Changeover This Month</div>';
     H+='<div style="font-size:22px;font-weight:800;color:#f59e0b">'+coTotal+' min</div>';
-    H+='<div style="font-size:11px;color:#666;margin-top:2px">'+(coTotal/60).toFixed(1)+'h total changeover time</div>';
+    H+='<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+(coTotal/60).toFixed(1)+'h total changeover time</div>';
     H+='</div>';
   }
 
@@ -1606,30 +1606,30 @@ function showAssetDetail(assetName){
   var totalDT=logs.filter(function(e){return e.machineDown==='yes'||e.machineDown==='partial';}).reduce(function(a,e){return a+(e.dt||0);},0);
   var totalCO=logs.filter(function(e){return e.coMins>0;}).reduce(function(a,e){return a+(e.coMins||0);},0);
 
-  var H='<div id="asset-detail-modal" style="position:fixed;inset:0;background:#111;z-index:500;overflow-y:auto;padding:0">';
+  var H='<div id="asset-detail-modal" style="position:fixed;inset:0;background:var(--bg);z-index:500;overflow-y:auto;padding:0">';
   // Header
-  H+='<div style="position:sticky;top:0;background:#1a1a1a;border-bottom:1px solid #333;padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10">';
+  H+='<div style="position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:10">';
   H+='<button onclick="closeAssetDetail()" style="background:none;border:none;color:#60a5fa;font-size:16px;cursor:pointer;padding:4px 8px">&#8592; Back</button>';
   H+='<div style="flex:1"><div style="font-size:16px;font-weight:700;color:#fff">'+assetName+'</div>';
-  H+='<div style="font-size:11px;color:#666">'+logs.length+' total logs</div></div>';
+  H+='<div style="font-size:11px;color:var(--text-3)">'+logs.length+' total logs</div></div>';
   H+='</div>';
 
   // Stats
   H+='<div style="padding:14px 16px">';
   H+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:10px;text-align:center">';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:10px;text-align:center">';
   H+='<div style="font-size:20px;font-weight:800;color:#fff">'+logs.length+'</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase">Logs</div></div>';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:10px;text-align:center">';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase">Logs</div></div>';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:10px;text-align:center">';
   H+='<div style="font-size:20px;font-weight:800;color:#ef4444">'+totalDT.toFixed(1)+'h</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase">DT</div></div>';
-  H+='<div style="background:#1a1a1a;border-radius:10px;padding:10px;text-align:center">';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase">DT</div></div>';
+  H+='<div style="background:var(--surface);border-radius:10px;padding:10px;text-align:center">';
   H+='<div style="font-size:20px;font-weight:800;color:#f59e0b">'+totalCO+'m</div>';
-  H+='<div style="font-size:10px;color:#888;text-transform:uppercase">CO</div></div>';
+  H+='<div style="font-size:10px;color:var(--text-2);text-transform:uppercase">CO</div></div>';
   H+='</div>';
 
   if(!logs.length){
-    H+='<div style="text-align:center;padding:40px;color:#555">No logs found</div>';
+    H+='<div style="text-align:center;padding:40px;color:var(--text-3)">No logs found</div>';
   } else {
     H+=logs.map(function(e){return card(e, e.who===user||user===ADMIN);}).join('');
   }
@@ -1654,9 +1654,9 @@ function renderUtil(){
 
   function fieldRow(id, label, placeholder){
     var v=today&&today[id]!=null?today[id]:'';
-    return '<div><div style="font-size:12px;color:#888;margin-bottom:4px">'+label+'</div>'+
+    return '<div><div style="font-size:12px;color:var(--text-2);margin-bottom:4px">'+label+'</div>'+
       '<input type="number" id="'+id+'" value="'+v+'" placeholder="'+placeholder+'" '+
-      'style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace"></div>';
+      'style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:15px;color:#fff;outline:none;font-family:monospace"></div>';
   }
 
   function fieldRowLevel(id, label, placeholder, max, unit){
@@ -1679,7 +1679,7 @@ function renderUtil(){
   }
 
   function section(title, color, rows){
-    return '<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">'+
+    return '<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">'+
       '<div style="font-size:12px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">'+title+'</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+rows+'</div>'+
       '</div>';
@@ -1721,35 +1721,35 @@ function renderUtil(){
     fieldRow('ch_ph','pH','0.0')+
     fieldRow('ch_purity','Purity (%)','0.0');
 
-  var H='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">'+
-    '<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Daily Utility Readings</div>'+
+  var H='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">'+
+    '<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Daily Utility Readings</div>'+
     banner+
     section('Monitoring','#60a5fa',monRows)+
     section('Boiler','#f97316',boilerRows)+
     section('Chiller','#a78bfa',chillerRows)+
-    '<button onclick="saveUtil()" id="u-btn" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px">Save Readings</button>'+
+    '<button onclick="saveUtil()" id="u-btn" style="width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:10px">Save Readings</button>'+
     '<div id="u-flash" style="display:none;margin-top:8px;padding:10px;border-radius:9px;font-size:13px;font-family:monospace;font-weight:600"></div>'+
     '</div>';
 
   // History table
-  H+='<div style="background:#1a1a1a;border-radius:12px;overflow:hidden">';
-  H+='<div style="padding:12px 14px;border-bottom:1px solid #333;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">Recent Readings</div>';
+  H+='<div style="background:var(--surface);border-radius:12px;overflow:hidden">';
+  H+='<div style="padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Recent Readings</div>';
   H+='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px;font-family:monospace">';
-  H+='<thead><tr style="border-bottom:1px solid #333;color:#666;font-size:10px">';
+  H+='<thead><tr style="border-bottom:1px solid var(--border);color:var(--text-3);font-size:10px">';
   ['Date','W3"','W5"','Gas','Elec','Past','CT','Boil','Steam','C1','C2','C3','C4','C5','C6','C7','C8','Stack','ChStart','ChProc','Warmcell','Glycol%','By'].forEach(function(h){
     H+='<th style="padding:7px 6px;text-align:right;white-space:nowrap">'+h+'</th>';
   });
   H+='</tr></thead><tbody>';
   if(!utilLogs.length){
-    H+='<tr><td colspan="23" style="text-align:center;padding:20px;color:#555">No readings yet</td></tr>';
+    H+='<tr><td colspan="23" style="text-align:center;padding:20px;color:var(--text-3)">No readings yet</td></tr>';
   }else{
     utilLogs.slice(0,20).forEach(function(r){
-      H+='<tr style="border-bottom:1px solid #222">';
+      H+='<tr style="border-bottom:1px solid var(--surface-2)">';
       H+='<td style="padding:6px;color:#aaa;text-align:left;white-space:nowrap">'+r.date+'</td>';
       [r.w3,r.w5,r.gas,r.elec,r.past,r.cool,r.boil,r.steam,r.bc1,r.bc2,r.bc3,r.bc4,r.bc5,r.bc6,r.bc7,r.bc8,r.stack,r.chstart,r.chproc,r.warmcell,r.ch_glycol].forEach(function(v){
         H+='<td style="padding:6px;color:#ccc;text-align:right">'+(v!=null?v:'')+'</td>';
       });
-      H+='<td style="padding:6px;color:#666;text-align:right">'+r.by+'</td>';
+      H+='<td style="padding:6px;color:var(--text-3);text-align:right">'+r.by+'</td>';
       H+='</tr>';
     });
   }
@@ -1802,24 +1802,24 @@ function renderPM(){
   var html='';
 
   // Due today section
-  html+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  html+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
   html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
-  html+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">Due Today</div>';
+  html+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">Due Today</div>';
   html+='<span style="background:'+( duePMs.length?'rgba(220,38,38,.2)':'rgba(22,163,74,.15)')+';color:'+(duePMs.length?'#ef4444':'#4ade80')+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+duePMs.length+' PMs</span>';
   html+='</div>';
 
   if(!duePMs.length){
-    html+='<div style="text-align:center;padding:16px;color:#555;font-size:14px">'+T('No PMs scheduled for today')+'</div>';
+    html+='<div style="text-align:center;padding:16px;color:var(--text-3);font-size:14px">'+T('No PMs scheduled for today')+'</div>';
   }else{
     duePMs.forEach(function(pm,_i){
       var pmIdx=PMS.indexOf(pm);
       var pcolor=pm.priority==='High'?'#ef4444':pm.priority==='Medium'?'#f59e0b':'#6b7280';
-      html+='<div style="background:#222;border-radius:9px;padding:12px 14px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
+      html+='<div style="background:var(--surface-2);border-radius:9px;padding:12px 14px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
       html+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">';
       html+='<div style="flex:1">';
       html+='<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:2px">'+pm.asset+'</div>';
       html+='<div style="font-size:13px;color:#ccc;margin-bottom:4px">'+pm.desc+'</div>';
-      html+='<div style="font-size:11px;color:#666;font-family:monospace">'+pm.code+' &bull; '+pm.freq+(pm.assignee?' &bull; '+pm.assignee:'')+(pm.hours?' &bull; '+pm.hours+'h':'')+'</div>';
+      html+='<div style="font-size:11px;color:var(--text-3);font-family:monospace">'+pm.code+' &bull; '+pm.freq+(pm.assignee?' &bull; '+pm.assignee:'')+(pm.hours?' &bull; '+pm.hours+'h':'')+'</div>';
       html+='</div>';
       html+='<span style="font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;background:'+pcolor+'22;color:'+pcolor+';white-space:nowrap">'+pm.priority+'</span>';
       html+='</div>';
@@ -1830,11 +1830,11 @@ function renderPM(){
   html+='</div>';
 
   // All PMs list
-  html+='<div style="background:#1a1a1a;border-radius:12px;padding:16px">';
-  html+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">All PMs ('+allPMs.length+')</div>';
+  html+='<div style="background:var(--surface);border-radius:12px;padding:16px">';
+  html+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">All PMs ('+allPMs.length+')</div>';
 
   // Search
-  html+='<input type="text" id="pm-search" oninput="filterPMs(this.value)" placeholder="Search PMs..." style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px 13px;font-size:14px;color:#fff;outline:none;margin-bottom:10px">';
+  html+='<input type="text" id="pm-search" oninput="filterPMs(this.value)" placeholder="Search PMs..." style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;color:#fff;outline:none;margin-bottom:10px">';
 
   html+='<div id="pm-list">';
   html+=renderPMList(allPMs);
@@ -1845,13 +1845,13 @@ function renderPM(){
 }
 
 function renderPMList(items){
-  if(!items.length)return '<div style="text-align:center;padding:20px;color:#555">No PMs found</div>';
+  if(!items.length)return '<div style="text-align:center;padding:20px;color:var(--text-3)">No PMs found</div>';
   return items.map(function(pm){
     var pcolor=pm.priority==='High'?'#ef4444':pm.priority==='Medium'?'#f59e0b':'#6b7280';
-    return '<div style="background:#222;border-radius:9px;padding:11px 13px;margin-bottom:7px;border-left:3px solid '+pcolor+'">' +
+    return '<div style="background:var(--surface-2);border-radius:9px;padding:11px 13px;margin-bottom:7px;border-left:3px solid '+pcolor+'">' +
       '<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:1px">'+pm.asset+'</div>'+
       '<div style="font-size:12px;color:#ccc;margin-bottom:3px">'+pm.desc+'</div>'+
-      '<div style="font-size:10px;color:#666;font-family:monospace">'+pm.code+' &bull; '+pm.freq+(pm.assignee?' &bull; '+pm.assignee:'')+'</div>'+
+      '<div style="font-size:10px;color:var(--text-3);font-family:monospace">'+pm.code+' &bull; '+pm.freq+(pm.assignee?' &bull; '+pm.assignee:'')+'</div>'+
       '</div>';
   }).join('');
 }
@@ -1911,36 +1911,36 @@ function renderMore(){
       return false;
     }
     var due=PMS.filter(isDue);
-    H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+    H+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
     H+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
-    H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em">'+T('PMs Due Today')+'</div>';
+    H+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em">'+T('PMs Due Today')+'</div>';
     H+='<span style="background:'+(due.length?'rgba(220,38,38,.2)':'rgba(22,163,74,.15)')+';color:'+(due.length?'#ef4444':'#4ade80')+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+due.length+' PMs</span>';
     H+='</div>';
     if(!due.length){
-      H+='<div style="text-align:center;padding:10px;color:#555;font-size:13px">'+T('No PMs scheduled for today')+'</div>';
+      H+='<div style="text-align:center;padding:10px;color:var(--text-3);font-size:13px">'+T('No PMs scheduled for today')+'</div>';
     }else{
       due.forEach(function(pm){
         var pmIdx=PMS.indexOf(pm);
         var pcolor=pm.priority==='High'?'#ef4444':pm.priority==='Medium'?'#f59e0b':'#6b7280';
         var assignee=getAssignee(pm);
-        H+='<div style="background:#222;border-radius:9px;padding:11px 13px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
+        H+='<div style="background:var(--surface-2);border-radius:9px;padding:11px 13px;margin-bottom:8px;border-left:3px solid '+pcolor+'">';
         H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">';
         H+='<div style="flex:1">';
         H+='<div style="font-size:14px;font-weight:700;color:#fff">'+pm.asset+'</div>';
         H+='<div style="font-size:12px;color:#ccc;margin-top:2px">'+pm.desc+'</div>';
-        H+='<div style="font-size:10px;color:#888;font-family:monospace;margin-top:3px">'+pm.code+' &bull; '+assignee+(pm.hours?' &bull; '+pm.hours+'h':'')+'</div>';
+        H+='<div style="font-size:10px;color:var(--text-2);font-family:monospace;margin-top:3px">'+pm.code+' &bull; '+assignee+(pm.hours?' &bull; '+pm.hours+'h':'')+'</div>';
         H+='</div>';
         H+='<span style="font-size:10px;font-weight:700;padding:3px 7px;border-radius:4px;background:'+pcolor+'22;color:'+pcolor+';flex-shrink:0">'+pm.priority+'</span>';
         H+='</div>';
         H+='<div style="display:flex;gap:7px">';
         H+='<button onclick="logPMByIdx('+pmIdx+')" style="flex:1;padding:8px;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.3);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer">&#10003; Done</button>';
-        H+='<button onclick="showReassignModal('+pmIdx+')" style="padding:8px 12px;background:#222;color:#888;border:1px solid #333;border-radius:7px;font-size:12px;cursor:pointer">&#8644; Reassign</button>';
+        H+='<button onclick="showReassignModal('+pmIdx+')" style="padding:8px 12px;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer">&#8644; Reassign</button>';
         H+='</div>';
         H+='</div>';
       });
     }
     H+='<div style="margin-top:10px">';
-    H+='<input type="text" id="pm-search" oninput="filterPMs(this.value)" placeholder="Search all 156 PMs..." style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
+    H+='<input type="text" id="pm-search" oninput="filterPMs(this.value)" placeholder="Search all 156 PMs..." style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
     H+='<div id="pm-list" style="margin-top:8px;max-height:260px;overflow-y:auto"></div>';
     H+='</div>';
     H+='</div>';
@@ -1952,39 +1952,39 @@ function renderMore(){
     H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Upload Schedules</div>';
     H+='<div style="margin-bottom:12px">';
     H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px">Production Schedule (L1_Schedule_New.xlsx)</div>';
-    H+='<div style="font-size:11px;color:#666;margin-bottom:8px">Updates run timeline &amp; changeover warnings</div>';
-    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#222;border:1.5px dashed #333;border-radius:9px;cursor:pointer;color:#888;font-size:13px" id="prod-upload-lbl">&#128193; Upload production schedule<input type="file" id="prod-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseProdSchedule(this)"></label>';
+    H+='<div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Updates run timeline &amp; changeover warnings</div>';
+    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--surface-2);border:1.5px dashed var(--border-2);border-radius:9px;cursor:pointer;color:var(--text-2);font-size:13px" id="prod-upload-lbl">&#128193; Upload production schedule<input type="file" id="prod-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseProdSchedule(this)"></label>';
     H+='<div id="prod-upload-status" style="font-size:12px;color:#4ade80;margin-top:6px;display:none"></div>';
     H+='</div>';
     H+='<div>';
     H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px">Technician Schedule (Schedule.xlsx)</div>';
-    H+='<div style="font-size:11px;color:#666;margin-bottom:8px">Shows who is on shift each day</div>';
-    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:#222;border:1.5px dashed #333;border-radius:9px;cursor:pointer;color:#888;font-size:13px" id="tech-upload-lbl">&#128193; Upload technician schedule<input type="file" id="tech-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseTechSchedule(this)"></label>';
+    H+='<div style="font-size:11px;color:var(--text-3);margin-bottom:8px">Shows who is on shift each day</div>';
+    H+='<label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--surface-2);border:1.5px dashed var(--border-2);border-radius:9px;cursor:pointer;color:var(--text-2);font-size:13px" id="tech-upload-lbl">&#128193; Upload technician schedule<input type="file" id="tech-schedule-file" accept=".xlsx,.xls" style="display:none" onchange="parseTechSchedule(this)"></label>';
     H+='<div id="tech-upload-status" style="font-size:12px;color:#4ade80;margin-top:6px;display:none"></div>';
     H+='</div></div>';
   }
 
   // ── SEND REPORT ──
-  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
-  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Shift Report')+'</div>';
-  H+='<p style="font-size:13px;color:#888;margin-bottom:12px">Generate a full PDF report for this shift — all technicians.</p>';
-  H+='<button onclick="generateAndSendReport()" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">'+T('Generate Shift Report PDF')+'</button>';
+  H+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+T('Shift Report')+'</div>';
+  H+='<p style="font-size:13px;color:var(--text-2);margin-bottom:12px">Generate a full PDF report for this shift — all technicians.</p>';
+  H+='<button onclick="generateAndSendReport()" style="width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer">'+T('Generate Shift Report PDF')+'</button>';
   H+='</div>';
 
   // ── MONTHLY EXPORT ──
-  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
-  H+='<div style="font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Monthly Export')+'</div>';
+  H+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Monthly Export')+'</div>';
   H+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
-  H+='<div><div style="font-size:12px;color:#888;margin-bottom:5px">Month</div>';
-  H+='<select id="exp-m" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
+  H+='<div><div style="font-size:12px;color:var(--text-2);margin-bottom:5px">Month</div>';
+  H+='<select id="exp-m" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
   var mnames=['January','February','March','April','May','June','July','August','September','October','November','December'];
   mnames.forEach(function(m,i){H+='<option value="'+i+'"'+(i===month?' selected':'')+'>'+m+'</option>';});
   H+='</select></div>';
-  H+='<div><div style="font-size:12px;color:#888;margin-bottom:5px">Year</div>';
-  H+='<input type="number" id="exp-y" value="2026" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none;font-family:monospace"></div>';
+  H+='<div><div style="font-size:12px;color:var(--text-2);margin-bottom:5px">Year</div>';
+  H+='<input type="number" id="exp-y" value="2026" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none;font-family:monospace"></div>';
   H+='</div>';
-  H+='<button onclick="doExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Work Log CSV')+'</button>';
-  H+='<button onclick="doUtilExport()" style="width:100%;padding:12px;background:#222;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Utilities CSV')+'</button>';
+  H+='<button onclick="doExport()" style="width:100%;padding:12px;background:var(--surface-2);color:#fff;border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Work Log CSV')+'</button>';
+  H+='<button onclick="doUtilExport()" style="width:100%;padding:12px;background:var(--surface-2);color:#fff;border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">'+T('Utilities CSV')+'</button>';
   H+='<button onclick="sendMonthlyRecap()" style="width:100%;padding:12px;background:rgba(22,163,74,.15);color:#4ade80;border:1px solid rgba(22,163,74,.3);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">'+T('Monthly Recap Email')+'</button>';
   H+='</div>';
 
@@ -1992,7 +1992,7 @@ function renderMore(){
   if(isAdmin){
     H+='<div style="background:#1a0a00;border:1.5px solid #7c2d12;border-radius:12px;padding:16px;margin-bottom:12px">';
     H+='<div style="font-size:12px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Admin — Praful Only</div>';
-    H+='<div id="db-stats" style="background:#111;border-radius:9px;padding:12px 14px;margin-bottom:14px;font-family:monospace;font-size:12px;color:#888">Loading DB stats...</div>';
+    H+='<div id="db-stats" style="background:var(--bg);border-radius:9px;padding:12px 14px;margin-bottom:14px;font-family:monospace;font-size:12px;color:var(--text-2)">Loading DB stats...</div>';
     H+='<button onclick="downloadDataBackup(this)" style="width:100%;padding:12px;background:#15803d;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px">&#11015; '+T('Download Full Backup')+'</button>';
     H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">Reset Technician PINs</div>';
     H+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px">';
@@ -2001,24 +2001,24 @@ function renderMore(){
     });
     H+='</div>';
     H+='<div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:8px">Auto-Send (EmailJS)</div>';
-    H+='<div style="margin-bottom:8px"><div style="font-size:11px;color:#666;margin-bottom:4px">Service ID</div><input id="ejs-s" type="text" placeholder="service_xxxxxxx" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
-    H+='<div style="margin-bottom:8px"><div style="font-size:11px;color:#666;margin-bottom:4px">Template ID</div><input id="ejs-t" type="text" placeholder="template_xxxxxxx" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
-    H+='<div style="margin-bottom:12px"><div style="font-size:11px;color:#666;margin-bottom:4px">Public Key</div><input id="ejs-p" type="text" placeholder="xxxxxxxxxxxxxxx" style="width:100%;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
-    H+='<button onclick="saveEJS()" style="width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Save & Enable Auto-Send</button>';
-    H+='<button onclick="testEJS()" style="width:100%;padding:12px;background:#222;color:#aaa;border:1px solid #333;border-radius:10px;font-size:13px;cursor:pointer">Test Send Now</button>';
+    H+='<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Service ID</div><input id="ejs-s" type="text" placeholder="service_xxxxxxx" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
+    H+='<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Template ID</div><input id="ejs-t" type="text" placeholder="template_xxxxxxx" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
+    H+='<div style="margin-bottom:12px"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">Public Key</div><input id="ejs-p" type="text" placeholder="xxxxxxxxxxxxxxx" style="width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:13px;color:#fff;outline:none"></div>';
+    H+='<button onclick="saveEJS()" style="width:100%;padding:12px;background:#fff;color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Save & Enable Auto-Send</button>';
+    H+='<button onclick="testEJS()" style="width:100%;padding:12px;background:var(--surface-2);color:#aaa;border:1px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer">Test Send Now</button>';
     H+='</div>';
 
     // Changeover Assets Manager
     H+='<div style="background:#0a1a0a;border:1.5px solid #14532d;border-radius:12px;padding:16px;margin-bottom:12px">';
     H+='<div style="font-size:12px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Changeover Assets</div>';
-    H+='<p style="font-size:13px;color:#888;margin-bottom:10px">Assets that typically have changeover time. Add them here and they will be highlighted when logging.</p>';
+    H+='<p style="font-size:13px;color:var(--text-2);margin-bottom:10px">Assets that typically have changeover time. Add them here and they will be highlighted when logging.</p>';
     var coAssets=JSON.parse(localStorage.getItem('bbw_co_assets')||'[]');
     H+='<div id="co-asset-list" style="margin-bottom:10px">';
     if(!coAssets.length){
-      H+='<div style="color:#555;font-size:13px;font-style:italic">No changeover assets defined yet</div>';
+      H+='<div style="color:var(--text-3);font-size:13px;font-style:italic">No changeover assets defined yet</div>';
     }else{
       coAssets.forEach(function(a,i){
-        H+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#111;border-radius:7px;margin-bottom:6px">';
+        H+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg);border-radius:7px;margin-bottom:6px">';
         H+='<span style="color:#fff;font-size:14px">'+a+'</span>';
         H+='<button onclick="removeCOAsset('+i+')" style="background:rgba(220,38,38,.2);border:none;color:#ef4444;padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer">Remove</button>';
         H+='</div>';
@@ -2026,7 +2026,7 @@ function renderMore(){
     }
     H+='</div>';
     H+='<div style="display:flex;gap:8px">';
-    H+='<input type="text" id="co-asset-input" placeholder="Asset name e.g. FILLER" style="flex:1;background:#222;border:1px solid #333;border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
+    H+='<input type="text" id="co-asset-input" placeholder="Asset name e.g. FILLER" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px;color:#fff;outline:none">';
     H+='<button onclick="addCOAsset()" style="padding:10px 16px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">Add</button>';
     H+='</div>';
     H+="'</div>'";
@@ -2053,8 +2053,8 @@ function setLang(l){
   localStorage.setItem('bbw_lang',l);
   var enBtn=gid('lb-en'), ukBtn=gid('lb-uk');
   if(enBtn&&ukBtn){
-    if(l==='en'){enBtn.style.background='#fff';enBtn.style.color='#111';ukBtn.style.background='none';ukBtn.style.color='#666';}
-    else{ukBtn.style.background='#fff';ukBtn.style.color='#111';enBtn.style.background='none';enBtn.style.color='#666';}
+    if(l==='en'){enBtn.style.background='#fff';enBtn.style.color='#111';ukBtn.style.background='none';ukBtn.style.color='var(--text-3)';}
+    else{ukBtn.style.background='#fff';ukBtn.style.color='#111';enBtn.style.background='none';enBtn.style.color='var(--text-3)';}
   }
   // Rebuild dynamic elements that contain translated text
   buildTemplates();
@@ -2151,14 +2151,14 @@ function generateAndSendReport(){
 
   // Build modal
   var modalHtml='<div id="shift-pick-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px">';
-  modalHtml+='<div style="background:#1a1a1a;border-radius:16px;width:100%;max-width:380px;overflow:hidden">';
-  modalHtml+='<div style="padding:18px 20px;border-bottom:1px solid #333"><div style="font-size:17px;font-weight:700;color:#fff">Generate Shift Report</div>';
-  modalHtml+='<div style="font-size:13px;color:#888;margin-top:3px">Select the shift period</div></div>';
+  modalHtml+='<div style="background:var(--surface);border-radius:16px;width:100%;max-width:380px;overflow:hidden">';
+  modalHtml+='<div style="padding:18px 20px;border-bottom:1px solid var(--border)"><div style="font-size:17px;font-weight:700;color:#fff">Generate Shift Report</div>';
+  modalHtml+='<div style="font-size:13px;color:var(--text-2);margin-top:3px">Select the shift period</div></div>';
   modalHtml+='<div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">';
   options.forEach(function(opt){
-    modalHtml+='<button class="spb" data-d="'+opt.date+'" data-s="'+opt.shift+'" style="width:100%;padding:13px 16px;background:#222;color:#fff;border:1.5px solid #333;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:0">'+opt.label+'</button>';
+    modalHtml+='<button class="spb" data-d="'+opt.date+'" data-s="'+opt.shift+'" style="width:100%;padding:13px 16px;background:var(--surface-2);color:#fff;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;text-align:left;margin-bottom:0">'+opt.label+'</button>';
   });
-  modalHtml+='<button class="spm-cancel" style="width:100%;padding:11px;background:none;color:#666;border:1px solid #333;border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>';
+  modalHtml+='<button class="spm-cancel" style="width:100%;padding:11px;background:none;color:var(--text-3);border:1px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer">Cancel</button>';
   modalHtml+='</div></div></div>';
   document.body.insertAdjacentHTML('beforeend',modalHtml);
   // Wire up buttons after insertion
@@ -2369,9 +2369,9 @@ function pickShiftReport(date,shift){
   var lines=reportSummaryLines(R);
   var shiftLabel=(shift==='Day'?'Day Shift':'Night Shift');
   var H='<div id="report-act-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:520;display:flex;align-items:center;justify-content:center;padding:18px" onclick="if(event.target===this)this.remove()">';
-  H+='<div style="background:#181818;border-radius:18px;width:100%;max-width:400px;overflow:hidden;border:1px solid #2a2a2a">';
-  H+='<div style="padding:18px 20px;border-bottom:1px solid #2a2a2a"><div style="font-size:17px;font-weight:800;color:#fff">'+shiftLabel+' Report</div><div style="font-size:13px;color:#888;margin-top:2px">'+date+'</div></div>';
-  H+='<div style="padding:16px 20px;max-height:42vh;overflow-y:auto"><div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Summary')+'</div>';
+  H+='<div style="background:var(--surface);border-radius:18px;width:100%;max-width:400px;overflow:hidden;border:1px solid #2a2a2a">';
+  H+='<div style="padding:18px 20px;border-bottom:1px solid #2a2a2a"><div style="font-size:17px;font-weight:800;color:#fff">'+shiftLabel+' Report</div><div style="font-size:13px;color:var(--text-2);margin-top:2px">'+date+'</div></div>';
+  H+='<div style="padding:16px 20px;max-height:42vh;overflow-y:auto"><div style="font-size:11px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">'+T('Summary')+'</div>';
   H+=lines.map(function(l){return '<div style="font-size:13.5px;color:#ddd;line-height:1.5;margin-bottom:7px;display:flex;gap:8px"><span style="color:#3b82f6">•</span><span>'+l.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span></div>';}).join('');
   H+='</div>';
   H+='<div style="padding:14px 20px 20px;display:flex;flex-direction:column;gap:9px;border-top:1px solid #2a2a2a">';
@@ -2380,7 +2380,7 @@ function pickShiftReport(date,shift){
   H+='<button onclick="downloadReportPDF(\''+date+'\',\''+shift+'\')" style="flex:1;padding:12px;background:#262626;color:#fff;border:1px solid #3a3a3a;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">&#11015; '+T('Download PDF')+'</button>';
   H+='<button onclick="viewReportPDF(\''+date+'\',\''+shift+'\')" style="flex:1;padding:12px;background:#262626;color:#fff;border:1px solid #3a3a3a;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer">&#128065; '+T('View')+'</button>';
   H+='</div>';
-  H+='<button onclick="document.getElementById(\'report-act-modal\').remove()" style="width:100%;padding:10px;background:none;color:#888;border:none;font-size:14px;cursor:pointer">'+T('Cancel')+'</button>';
+  H+='<button onclick="document.getElementById(\'report-act-modal\').remove()" style="width:100%;padding:10px;background:none;color:var(--text-2);border:none;font-size:14px;cursor:pointer">'+T('Cancel')+'</button>';
   H+='</div></div></div>';
   var d=document.createElement('div'); d.innerHTML=H; document.body.appendChild(d.firstChild);
 }
@@ -2409,30 +2409,30 @@ function openReportHTML(date,shift){
   function rows(items,cols){
     if(!items.length)return '<tr><td colspan="'+cols+'" style="padding:10px;color:#999;font-style:italic">None this shift</td></tr>';
     return items.map(function(e){
-      var descCell=(e.issue?'<div style="font-weight:700;color:#111;margin-bottom:2px">'+sanitize(e.issue)+'</div>':'')+(e.desc?'<div style="color:#444;line-height:1.5">'+sanitize(e.desc)+'</div>':'');
-      if(cols===4){return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+(sanitize(e.assetName||'General'))+(e.assetCode?' <span style="color:#999;font-size:11px">('+e.assetCode+')</span>':'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+descCell+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666;white-space:nowrap">'+(e.start?e.start+(e.end?'-'+e.end:''):'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666">'+sanitize(e.who||'')+'</td></tr>';}
-      return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+sanitize(e.assetName||'General')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+descCell+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:#666">'+sanitize(e.who||'')+'</td></tr>';
+      var descCell=(e.issue?'<div style="font-weight:700;color:#111;margin-bottom:2px">'+sanitize(e.issue)+'</div>':'')+(e.desc?'<div style="color:var(--border-2);line-height:1.5">'+sanitize(e.desc)+'</div>':'');
+      if(cols===4){return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+(sanitize(e.assetName||'General'))+(e.assetCode?' <span style="color:#999;font-size:11px">('+e.assetCode+')</span>':'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+descCell+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:var(--text-3);white-space:nowrap">'+(e.start?e.start+(e.end?'-'+e.end:''):'')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:var(--text-3)">'+sanitize(e.who||'')+'</td></tr>';}
+      return '<tr><td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600">'+sanitize(e.assetName||'General')+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee">'+descCell+'</td><td style="padding:8px 10px;border-bottom:1px solid #eee;color:var(--text-3)">'+sanitize(e.who||'')+'</td></tr>';
     }).join('');
   }
   function section(title,color,headers,items,cols){
-    return '<div style="margin-bottom:28px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:4px;height:22px;background:'+color+';border-radius:2px"></div><h3 style="margin:0;font-size:15px;font-weight:700;color:#111">'+title+'</h3><span style="font-size:13px;color:#999">('+items.length+')</span></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+headers.map(function(h){return '<th style="padding:9px 10px;text-align:left;background:#f8f8f8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#666;border-bottom:2px solid '+color+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'+rows(items,cols)+'</tbody></table></div>';
+    return '<div style="margin-bottom:28px"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:4px;height:22px;background:'+color+';border-radius:2px"></div><h3 style="margin:0;font-size:15px;font-weight:700;color:#111">'+title+'</h3><span style="font-size:13px;color:#999">('+items.length+')</span></div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>'+headers.map(function(h){return '<th style="padding:9px 10px;text-align:left;background:#f8f8f8;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:2px solid '+color+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'+rows(items,cols)+'</tbody></table></div>';
   }
   var H='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>BBW Shift Report</title><style>body{font-family:-apple-system,sans-serif;margin:0;padding:32px;color:#111}@media print{.noprint{display:none!important}}</style></head><body>';
   H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:20px;border-bottom:2px solid #111;margin-bottom:24px">';
-  H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:#666;margin-top:6px">'+shiftLabel+' &bull; '+date+'</div></div>';
-  H+='<div style="text-align:right"><div style="font-size:13px;color:#666;margin-bottom:4px">Technicians</div><div style="font-size:14px;font-weight:600">'+(techs.join(', ')||'—')+'</div></div></div>';
+  H+='<div>'+(logoSrc?'<img src="'+logoSrc+'" style="height:36px;margin-bottom:10px;display:block" alt="BBW">':'')+'<h1 style="margin:0;font-size:22px;font-weight:800">Shift Handover Report</h1><div style="font-size:14px;color:var(--text-3);margin-top:6px">'+shiftLabel+' &bull; '+date+'</div></div>';
+  H+='<div style="text-align:right"><div style="font-size:13px;color:var(--text-3);margin-bottom:4px">Technicians</div><div style="font-size:14px;font-weight:600">'+(techs.join(', ')||'—')+'</div></div></div>';
   H+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px">';
-  H+='<div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800">'+shiftEntries.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Total Tasks</div></div>';
-  H+='<div style="background:#fef2f2;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#dc2626">'+issues.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Pending Issues</div></div>';
-  H+='<div style="background:#fff7ed;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ea580c">'+parts.length+'</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Parts Needed</div></div>';
-  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#d97706">'+totalDT+'h</div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Downtime</div></div>';
-  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f59e0b">'+totalCOmins+'<span style="font-size:14px">min</span></div><div style="font-size:11px;color:#666;text-transform:uppercase;margin-top:2px">Changeover</div></div>';
+  H+='<div style="background:#f5f5f7;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800">'+shiftEntries.length+'</div><div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-top:2px">Total Tasks</div></div>';
+  H+='<div style="background:#fef2f2;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#dc2626">'+issues.length+'</div><div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-top:2px">Pending Issues</div></div>';
+  H+='<div style="background:#fff7ed;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#ea580c">'+parts.length+'</div><div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-top:2px">Parts Needed</div></div>';
+  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#d97706">'+totalDT+'h</div><div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-top:2px">Downtime</div></div>';
+  H+='<div style="background:#fffbeb;border-radius:10px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:800;color:#f59e0b">'+totalCOmins+'<span style="font-size:14px">min</span></div><div style="font-size:11px;color:var(--text-3);text-transform:uppercase;margin-top:2px">Changeover</div></div>';
   H+='</div>';
   H+=(issues.length?section('Pending Issues — Next Shift Must Action','#dc2626',['Asset','Description','Technician'],issues,3):'<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;margin-bottom:28px;font-weight:600;color:#16a34a">&#10003; No pending issues — clean handover</div>');
   H+=section('Work Completed This Shift','#16a34a',['Asset','Description','Time','Technician'],done,4);
   if(ongoing.length)H+=section('In Progress — Continue Next Shift','#d97706',['Asset','Description','Time','Technician'],ongoing,4);
   if(parts.length)H+=section('Parts to Order','#ea580c',['Part Name','Asset','Qty','Requested By'],parts,4);
-  if(notes.length)H+=section('Notes','#2563eb',['Asset','Note','Time','Technician'],notes,4);
+  if(notes.length)H+=section('Notes','#9b9ba3',['Asset','Note','Time','Technician'],notes,4);
   // ── Upcoming changeovers section ──
   var nextShiftCos=getUpcomingChangeovers(24);
   var shiftLabel2=isDay()?'Night Shift (19:00-07:00)':'Day Shift (07:00-19:00)';
@@ -2480,7 +2480,7 @@ function openReportHTML(date,shift){
   ml.push('Generated '+new Date().toLocaleString('en-CA'));
   var mailHref='mailto:maintenance@brunswickbierworks.com?subject='+encodeURIComponent(mailSubj)+'&body='+encodeURIComponent(ml.join('\n'));
 
-  H+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div><div class="noprint" style="display:flex;gap:10px"><a href="'+mailHref+'" style="padding:10px 20px;background:#0078d4;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;display:inline-block">&#9993; Send to Outlook</a><button onclick="window.print()" style="padding:10px 20px;background:#111;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">&#11015; Download PDF</button></div></div>';
+  H+='<div style="margin-top:32px;padding-top:16px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div style="font-size:12px;color:#999">Generated '+new Date().toLocaleString('en-CA')+'</div><div class="noprint" style="display:flex;gap:10px"><a href="'+mailHref+'" style="padding:10px 20px;background:#0078d4;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;display:inline-block">&#9993; Send to Outlook</a><button onclick="window.print()" style="padding:10px 20px;background:var(--bg);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">&#11015; Download PDF</button></div></div>';
   H+='</body></html>';
   W.document.write(H);W.document.close();W.focus();
 }
@@ -2493,7 +2493,7 @@ function showSendModal(){
   var pts=cur.filter(function(e){return e.type==='part'||e.type==='parts';}).length;
   var dt=cur.reduce(function(a,e){return a+(e.dt||0);},0).toFixed(1);
   gid('send-sub').textContent=td()+' - '+(isDay()?'Day':'Night')+' shift';
-  gid('send-stats').innerHTML='<div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#fff">'+cur.length+'</div><div style="font-size:10px;color:#666;font-family:monospace">entries</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#ef4444">'+iss+'</div><div style="font-size:10px;color:#666;font-family:monospace">pending</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f97316">'+pts+'</div><div style="font-size:10px;color:#666;font-family:monospace">parts</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f59e0b">'+dt+'</div><div style="font-size:10px;color:#666;font-family:monospace">DT hrs</div></div>';
+  gid('send-stats').innerHTML='<div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#fff">'+cur.length+'</div><div style="font-size:10px;color:var(--text-3);font-family:monospace">entries</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#ef4444">'+iss+'</div><div style="font-size:10px;color:var(--text-3);font-family:monospace">pending</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f97316">'+pts+'</div><div style="font-size:10px;color:var(--text-3);font-family:monospace">parts</div></div><div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#f59e0b">'+dt+'</div><div style="font-size:10px;color:var(--text-3);font-family:monospace">DT hrs</div></div>';
   var m=gid('send-modal');if(m)m.style.display='flex';
 }
 
@@ -2601,10 +2601,10 @@ function loadDBStats(){
       '<div>PM overrides:</div><div style="color:#60a5fa">'+pmCount+' rows</div>'+
       '<div style="margin-top:6px">Est. storage:</div><div style="color:#4ade80;margin-top:6px">~'+estMB+' MB / 500 MB</div>'+
       '</div>'+
-      '<div style="margin-top:10px;background:#222;border-radius:6px;height:6px;overflow:hidden">'+
+      '<div style="margin-top:10px;background:var(--surface-2);border-radius:6px;height:6px;overflow:hidden">'+
       '<div style="height:100%;background:#4ade80;border-radius:6px;width:'+Math.min(100,(estMB/500)*100).toFixed(2)+'%"></div>'+
       '</div>'+
-      '<div style="color:#555;font-size:10px;margin-top:4px">Free tier limit: 500 MB</div>';
+      '<div style="color:var(--text-3);font-size:10px;margin-top:4px">Free tier limit: 500 MB</div>';
   }).catch(function(){
     el.innerHTML='<span style="color:#ef4444">Could not load stats — check connection</span>';
   });
@@ -2641,10 +2641,10 @@ function renderSchedule(){
   // Reload from storage in case it was uploaded in this session
   loadSchedulesFromStorage();
   var H='';
-  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
   H+='<div style="font-size:12px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Shift Schedule</div>';
   if(!Object.keys(techSchedule).length){
-    H+='<div style="color:#555;font-size:13px;font-style:italic">No schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
+    H+='<div style="color:var(--text-3);font-size:13px;font-style:italic">No schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
   }else{
     for(var d=0;d<7;d++){
       var dt2=new Date();dt2.setDate(dt2.getDate()+d);
@@ -2652,8 +2652,8 @@ function renderSchedule(){
       var dayName=dt2.toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'});
       var sc=techSchedule[ds]||{};
       var isT=d===0;
-      H+='<div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #222;gap:10px">';
-      H+='<div style="min-width:76px;font-size:12px;color:'+(isT?'#fff':'#888')+';font-weight:'+(isT?'700':'400')+'">'+dayName+'</div>';
+      H+='<div style="display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--surface-2);gap:10px">';
+      H+='<div style="min-width:76px;font-size:12px;color:'+(isT?'#fff':'var(--text-2)')+';font-weight:'+(isT?'700':'400')+'">'+dayName+'</div>';
       H+='<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">';
       H+='<div style="font-size:11px"><span style="color:#f59e0b">&#9728; </span><span style="color:#ccc">'+(sc.day||'\u2014')+'</span></div>';
       H+='<div style="font-size:11px"><span style="color:#60a5fa">&#127769; </span><span style="color:#ccc">'+(sc.night||'\u2014')+'</span></div>';
@@ -2663,15 +2663,15 @@ function renderSchedule(){
     }
   }
   H+='</div>';
-  H+='<div style="background:#1a1a1a;border-radius:12px;padding:16px;margin-bottom:12px">';
+  H+='<div style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:12px">';
   H+='<div style="font-size:12px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Production Runs &#8212; Next 48h</div>';
   if(!scheduleRuns.length){
-    H+='<div style="color:#555;font-size:13px;font-style:italic">No production schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
+    H+='<div style="color:var(--text-3);font-size:13px;font-style:italic">No production schedule uploaded. Go to More &#8594; Upload Schedules.</div>';
   }else{
     var now2=new Date();
     var cut=new Date(now2.getTime()+48*3600000);
     var runs=scheduleRuns.filter(function(r){return r.startDt&&r.startDt>=now2&&r.startDt<=cut;});
-    if(!runs.length){H+='<div style="color:#555;font-size:13px">No runs in next 48 hours.</div>';}
+    if(!runs.length){H+='<div style="color:var(--text-3);font-size:13px">No runs in next 48 hours.</div>';}
     else{
       var prev2=null;
       runs.forEach(function(run){
@@ -2683,25 +2683,25 @@ function renderSchedule(){
         }
         if(cos.length){
           H+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0">';
-          H+='<div style="flex:1;height:1px;background:#333"></div>';
+          H+='<div style="flex:1;height:1px;background:var(--surface-3)"></div>';
           H+='<div style="display:flex;flex-direction:column;gap:3px;align-items:center">';
-          cos.forEach(function(co){H+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:#222;color:'+co.color+'">&#9888; '+co.type+(co.from?' ('+co.from+' &#8594; '+co.to+')':'')+'</span>';});
-          H+='</div><div style="flex:1;height:1px;background:#333"></div></div>';
+          cos.forEach(function(co){H+='<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--surface-2);color:'+co.color+'">&#9888; '+co.type+(co.from?' ('+co.from+' &#8594; '+co.to+')':'')+'</span>';});
+          H+='</div><div style="flex:1;height:1px;background:var(--surface-3)"></div></div>';
         }
         var rsh=(run.startDt.getHours()>=7&&run.startDt.getHours()<19)?'Day':'Night';
         var psh=prev2?((prev2.startDt.getHours()>=7&&prev2.startDt.getHours()<19)?'Day':'Night'):null;
         if(psh&&psh!==rsh){H+='<div style="text-align:center;padding:6px;font-size:11px;font-weight:700;color:'+(rsh==='Day'?'#f59e0b':'#60a5fa')+'">&#8212; '+(rsh==='Day'?'Day Shift 07:00':'Night Shift 19:00')+' &#8212;</div>';}
-        H+='<div style="background:#222;border-radius:9px;padding:10px 12px;margin-bottom:6px">';
+        H+='<div style="background:var(--surface-2);border-radius:9px;padding:10px 12px;margin-bottom:6px">';
         H+='<div style="display:flex;justify-content:space-between;align-items:flex-start">';
         H+='<div style="flex:1"><div style="font-size:13px;font-weight:700;color:#fff">'+String(run.product||'').slice(0,45)+'</div>';
         H+='<div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">';
-        H+='<span style="font-size:10px;padding:2px 7px;background:#333;color:#ccc;border-radius:4px">'+run.canSize+'</span>';
-        H+='<span style="font-size:10px;padding:2px 7px;background:#333;color:#ccc;border-radius:4px">'+run.pkgFormat+'</span>';
+        H+='<span style="font-size:10px;padding:2px 7px;background:var(--surface-3);color:#ccc;border-radius:4px">'+run.canSize+'</span>';
+        H+='<span style="font-size:10px;padding:2px 7px;background:var(--surface-3);color:#ccc;border-radius:4px">'+run.pkgFormat+'</span>';
         if(run.cleaning&&run.cleaning!=='None')H+='<span style="font-size:10px;padding:2px 7px;background:rgba(167,139,250,.2);color:#a78bfa;border-radius:4px">CIP</span>';
         H+='</div></div>';
         H+='<div style="text-align:right;flex-shrink:0;margin-left:8px">';
         H+='<div style="font-size:12px;font-weight:600;color:#60a5fa">'+run.startDt.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})+'</div>';
-        H+='<div style="font-size:10px;color:#666">'+run.startDt.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</div>';
+        H+='<div style="font-size:10px;color:var(--text-3)">'+run.startDt.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'</div>';
         H+='</div></div></div>';
         prev2=run;
       });

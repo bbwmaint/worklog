@@ -165,6 +165,7 @@
     <button onclick="showTab('schedule')" id="tab-schedule" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Schedule</button>
     <button onclick="showTab('assets')" id="tab-assets" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Assets</button>
     <button onclick="showTab('more')" id="tab-more" style="flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">More</button>
+    <button onclick="showTab('cmms')" id="tab-cmms" style="display:none;flex:1;padding:8px 1px;font-size:11px;font-weight:600;color:var(--text-3);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">CMMS</button>
   </div>
 
   <!-- CONTENT -->
@@ -176,6 +177,7 @@
     <div id="pane-schedule" style="display:none"></div>
   <div id="pane-assets" style="display:none"></div>
   <div id="pane-more" style="display:none"></div>
+  <div id="pane-cmms" style="display:none"></div>
   </div>
 
   <!-- FAB -->
@@ -657,6 +659,7 @@ function checkPin(){
 
 function loginUser(name){
   user=name;
+  try{var _tc=gid('tab-cmms');if(_tc)_tc.style.display=(user===ADMIN)?'':'none';}catch(e){}
   try{gid('uav').textContent=name.charAt(0);}catch(e){console.error('uav',e);}
   try{gid('unm').textContent=name;}catch(e){console.error('unm',e);}
   try{gid('exp-m') && (gid('exp-m').value=new Date().getMonth());}catch(e){}
@@ -698,7 +701,7 @@ function updateClock(){
 
 // TABS
 function showTab(name){
-  ['log','shift','prev','util','assets','schedule','more'].forEach(function(t){
+  ['log','shift','prev','util','assets','schedule','more','cmms'].forEach(function(t){
     gid('pane-'+t).style.display='none';
     var tb=gid('tab-'+t);
     tb.style.color='var(--text-3)';tb.style.borderBottomColor='transparent';
@@ -711,6 +714,7 @@ function showTab(name){
   if(name==='util')renderUtil();
   if(name==='assets')renderAssets();
   if(name==='schedule')renderSchedule();
+  if(name==='cmms'){try{renderCMMS();}catch(e){gid('pane-cmms').innerHTML='<div style="padding:20px;color:#f87171;font-size:12px">'+e.message+'</div>';}}
   if(name==='more'){try{renderMore();}catch(e){gid('pane-more').innerHTML='<div style="padding:20px;color:red;font-family:monospace;font-size:12px">ERROR: '+e.message+'<br>'+e.stack.replace(/</g,"&lt;").replace(/\n/g,"<br>")+'</div>';}}
 }
 
@@ -2079,6 +2083,213 @@ function dashboardPDF(){
   var pages=doc.internal.getNumberOfPages();
   for(var p=1;p<=pages;p++){doc.setPage(p);doc.setFont(RF,'normal');doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Generated '+new Date().toLocaleString('en-CA'),M,H-18);doc.text('Page '+p+' of '+pages,W-M-60,H-18);}
   doc.save('BBW_Dashboard_'+D.month+'.pdf');
+}
+
+// ── PM recurrence engine ──
+function pmParseFreq(freq){
+  if(!freq) return null;
+  var f=String(freq).toLowerCase().trim().replace(/\s+/g,' ');
+  var WD={sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
+  var MO={january:0,february:1,march:2,april:3,may:4,june:5,july:6,august:7,september:8,october:9,november:10,december:11};
+  var m;
+  if(/^every day$/.test(f)) return {kind:'day',interval:1};
+  if((m=f.match(/^every (\d+) days?$/))) return {kind:'day',interval:+m[1]};
+  if((m=f.match(/^every (\d+) weeks? on (\w+)/))) return {kind:'week',interval:+m[1],weekdays:[WD[m[2]]]};
+  if(/^every (monday|tuesday|wednesday|thursday|friday|saturday|sunday)/.test(f) && f.indexOf('week')<0 && f.indexOf('month')<0 && f.indexOf('year')<0){
+    var days=[]; Object.keys(WD).forEach(function(d){ if(f.indexOf(d)>=0) days.push(WD[d]); });
+    if(days.length) return {kind:'week',interval:1,weekdays:days.sort()};
+  }
+  if((m=f.match(/the (\d+)(st|nd|rd|th) day of every month/))) return {kind:'month',interval:1,day:+m[1]};
+  if((m=f.match(/^every (\d+) months? on the (\d+)(st|nd|rd|th)/))) return {kind:'month',interval:+m[1],day:+m[2]};
+  if((m=f.match(/^every (\d+) years?,? on (\w+) (\d+)/))) return {kind:'year',interval:+m[1],month:MO[m[2]],day:+m[3]};
+  if((m=f.match(/^every year,? on (\w+) (\d+)/))) return {kind:'year',interval:1,month:MO[m[1]],day:+m[2]};
+  return null;
+}
+function pmClampDay(y,mo,day){var last=new Date(y,mo+1,0).getDate();return Math.min(day,last);}
+function pmDateOnly(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate());}
+function pmISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+// Next due on/after `from` (used for initial seeding).
+function pmNextFrom(parsed, from){
+  from=pmDateOnly(from); if(!parsed) return null;
+  if(parsed.kind==='day') return from;
+  if(parsed.kind==='week'){ for(var i=0;i<14;i++){var d=new Date(from);d.setDate(d.getDate()+i);if(parsed.weekdays.indexOf(d.getDay())>=0)return d;} return from; }
+  if(parsed.kind==='month'){ var y=from.getFullYear(),mo=from.getMonth(); var c=new Date(y,mo,pmClampDay(y,mo,parsed.day)); if(c<from){mo++;c=new Date(y,mo,pmClampDay(y,mo,parsed.day));} return c; }
+  if(parsed.kind==='year'){ var yy=from.getFullYear(); var c=new Date(yy,parsed.month,pmClampDay(yy,parsed.month,parsed.day)); if(c<from)c=new Date(yy+1,parsed.month,pmClampDay(yy+1,parsed.month,parsed.day)); return c; }
+  return null;
+}
+// Advance due after a completion on `done`.
+function pmAdvance(parsed, done){
+  done=pmDateOnly(done); if(!parsed) return null;
+  if(parsed.kind==='day'){ var d=new Date(done); d.setDate(d.getDate()+parsed.interval); return d; }
+  if(parsed.kind==='week'){ var base=new Date(done); base.setDate(base.getDate()+(parsed.interval*7-6)); for(var i=0;i<14;i++){var d=new Date(base);d.setDate(d.getDate()+i);if(parsed.weekdays.indexOf(d.getDay())>=0)return d;} return base; }
+  if(parsed.kind==='month'){ var y=done.getFullYear(),mo=done.getMonth()+parsed.interval; var yy=y+Math.floor(mo/12); mo=((mo%12)+12)%12; return new Date(yy,mo,pmClampDay(yy,mo,parsed.day)); }
+  if(parsed.kind==='year'){ var ny=done.getFullYear()+parsed.interval; return new Date(ny,parsed.month,pmClampDay(ny,parsed.month,parsed.day)); }
+  return null;
+}
+function pmNextDueISO(freq, from){ var p=pmParseFreq(freq); var d=pmNextFrom(p, from||new Date()); return d?pmISO(d):null; }
+function pmAdvanceISO(freq, doneISO){ var p=pmParseFreq(freq); var d=pmAdvance(p, doneISO?new Date(doneISO+'T00:00:00'):new Date()); return d?pmISO(d):null; }
+
+
+// ═══════════════ CMMS (admin only) ═══════════════
+var CMMS_PMS=[]; var CMMS_SUB='pms'; var CMMS_LOADED=false;
+var CMMS_FILTER={q:'',type:'',assignee:'',status:'active'};
+
+function cmmsParseAsset(s){var m=String(s||'').match(/^(.*?)\s*\(([^)]+)\)\s*$/);if(m)return {name:m[1].trim(),code:m[2].trim()};return {name:(s||'').trim(),code:''};}
+
+function loadCMMS(force){
+  if(CMMS_LOADED&&!force)return Promise.resolve(CMMS_PMS);
+  return sbFetch('bbw_pms?select=*&order=code.asc&limit=5000').then(function(r){
+    if(!r.ok)throw new Error('bbw_pms table not found');return r.json();
+  }).then(function(rows){
+    if(!rows.length)return seedCMMS().then(function(){return sbFetch('bbw_pms?select=*&order=code.asc&limit=5000').then(function(r){return r.json();});});
+    return rows;
+  }).then(function(rows){CMMS_PMS=rows||[];CMMS_LOADED=true;return CMMS_PMS;});
+}
+function seedCMMS(){
+  var today=new Date();
+  var seed=PMS.map(function(p){var a=cmmsParseAsset(p.asset);return {code:p.code,asset:a.name,asset_code:a.code,description:p.desc,freq:p.freq,priority:p.priority||'',assignee:p.assignee||'',hours:p.hours?parseFloat(p.hours):null,pm_type:p.type||'',active:true,next_due:pmNextDueISO(p.freq,today)};});
+  return sbFetch('bbw_pms',{method:'POST',body:JSON.stringify(seed),headers:{'Prefer':'return=minimal'}});
+}
+
+function renderCMMS(){
+  var el=gid('pane-cmms'); if(!el)return;
+  if(user!==ADMIN){el.innerHTML='<div style="padding:40px;text-align:center;color:var(--text-3)">This section is admin-only.</div>';return;}
+  el.innerHTML='<div style="text-align:center;color:var(--text-3);padding:36px;font-size:14px">Loading CMMS\u2026</div>';
+  loadCMMS().then(function(){renderCMMSView();}).catch(function(e){
+    el.innerHTML='<div style="padding:20px;color:#f87171;font-size:13px;line-height:1.6">Couldn\u2019t load CMMS: '+e.message+'.<br><br>Make sure the <b>bbw_pms</b> and <b>bbw_wos</b> tables exist (run the SQL), then reopen this tab.</div>';
+  });
+}
+function cmmsSub(s){CMMS_SUB=s;renderCMMSView();}
+function renderCMMSView(){
+  var el=gid('pane-cmms'); if(!el)return;
+  var subs=[['pms','PMs'],['wos','Work Orders'],['compliance','Compliance'],['calendar','Calendar']];
+  var nav='<div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px">'+subs.map(function(s){
+    var on=CMMS_SUB===s[0];
+    return '<button onclick="cmmsSub(\''+s[0]+'\')" style="padding:8px 15px;border-radius:999px;border:1px solid '+(on?'#fff':'var(--border)')+';background:'+(on?'#fff':'transparent')+';color:'+(on?'#000':'var(--text-2)')+';font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;flex-shrink:0">'+s[1]+'</button>';
+  }).join('')+'</div>';
+  var body;
+  if(CMMS_SUB==='pms')body='<div id="cmms-pms"></div>';
+  else body='<div style="padding:44px 20px;text-align:center;color:var(--text-3);font-size:14px;line-height:1.6">'+({wos:'Work Orders',compliance:'Compliance',calendar:'Calendar'})[CMMS_SUB]+'<br><span style="font-size:12px">Coming in the next increment.</span></div>';
+  el.innerHTML=nav+body;
+  if(CMMS_SUB==='pms')renderPMModule();
+}
+
+function renderPMModule(){
+  var host=gid('cmms-pms'); if(!host)return;
+  var types=Array.from(new Set(CMMS_PMS.map(function(p){return p.pm_type;}).filter(Boolean))).sort();
+  var assignees=Array.from(new Set(CMMS_PMS.map(function(p){return p.assignee;}).filter(Boolean))).sort();
+  var H='';
+  H+='<div style="display:flex;gap:8px;margin-bottom:10px">';
+  H+='<input id="pm-search" value="'+CMMS_FILTER.q.replace(/"/g,'&quot;')+'" oninput="CMMS_FILTER.q=this.value;cmmsRenderPMList()" placeholder="Search code, asset, description\u2026" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);font-size:14px;outline:none">';
+  H+='<button onclick="openPMForm()" class="btn-primary" style="padding:10px 14px;font-size:14px;white-space:nowrap">+ PM</button>';
+  H+='</div>';
+  function sel(id,label,opts,val){var o='<option value="">'+label+'</option>'+opts.map(function(x){return '<option value="'+x+'"'+(x===val?' selected':'')+'>'+x+'</option>';}).join('');return '<select onchange="CMMS_FILTER.'+id+'=this.value;cmmsRenderPMList()" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);font-size:12.5px">'+o+'</select>';}
+  H+='<div style="display:flex;gap:7px;margin-bottom:12px">';
+  H+=sel('type','All types',types,CMMS_FILTER.type);
+  H+=sel('assignee','All techs',assignees,CMMS_FILTER.assignee);
+  H+='<select onchange="CMMS_FILTER.status=this.value;cmmsRenderPMList()" style="flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);font-size:12.5px"><option value="active"'+(CMMS_FILTER.status==='active'?' selected':'')+'>Active</option><option value="paused"'+(CMMS_FILTER.status==='paused'?' selected':'')+'>Paused</option><option value="all"'+(CMMS_FILTER.status==='all'?' selected':'')+'>All</option></select>';
+  H+='</div>';
+  H+='<div id="pm-list"></div>';
+  host.innerHTML=H;
+  cmmsRenderPMList();
+}
+function pmFilter(){
+  var f=CMMS_FILTER, q=f.q.toLowerCase().trim();
+  return CMMS_PMS.filter(function(p){
+    if(f.status==='active'&&!p.active)return false;
+    if(f.status==='paused'&&p.active)return false;
+    if(f.type&&p.pm_type!==f.type)return false;
+    if(f.assignee&&p.assignee!==f.assignee)return false;
+    if(q){var hay=((p.code||'')+' '+(p.asset||'')+' '+(p.asset_code||'')+' '+(p.description||'')+' '+(p.freq||'')).toLowerCase();if(hay.indexOf(q)<0)return false;}
+    return true;
+  });
+}
+function pmDueChip(p){
+  if(!p.next_due)return '';
+  var today=pmISO(new Date()); var overdue=p.next_due<today; var soon=p.next_due===today;
+  var col=overdue?'#f87171':(soon?'#fbbf24':'var(--text-3)');
+  var lbl=overdue?'Overdue '+p.next_due:(soon?'Due today':'Due '+p.next_due);
+  return '<span style="color:'+col+';font-size:11px;font-weight:600">'+lbl+'</span>';
+}
+function cmmsRenderPMList(){
+  var host=gid('pm-list'); if(!host)return;
+  var list=pmFilter();
+  if(!list.length){host.innerHTML='<div style="color:var(--text-3);text-align:center;padding:30px;font-size:13px">No PMs match.</div>';return;}
+  host.innerHTML='<div style="font-size:11px;color:var(--text-3);margin-bottom:8px">'+list.length+' PM'+(list.length>1?'s':'')+'</div>'+list.map(function(p){
+    var pc={Highest:'#f87171',High:'#fb923c',Medium:'#fbbf24',Low:'#9b9ba3'}[p.priority]||'var(--text-3)';
+    var H='<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px'+(p.active?'':';opacity:.55')+'">';
+    H+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">';
+    H+='<div style="min-width:0"><div style="font-size:11px;color:var(--text-3);font-family:monospace">'+(p.code||'')+' \u00b7 '+(p.pm_type||'')+'</div>';
+    H+='<div style="font-size:14px;font-weight:700;color:var(--text);margin:2px 0;line-height:1.3">'+(p.description||'(no description)')+'</div>';
+    H+='<div style="font-size:12px;color:var(--text-2)">'+(p.asset||'')+(p.asset_code?' \u00b7 '+p.asset_code:'')+'</div></div>';
+    H+='<span style="color:'+pc+';font-size:10px;font-weight:800;letter-spacing:.04em;white-space:nowrap">'+(p.priority||'').toUpperCase()+'</span>';
+    H+='</div>';
+    H+='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:11.5px;color:var(--text-3)">';
+    H+='<span>'+(p.freq||'')+'</span>';
+    if(p.assignee)H+='<span>\u00b7 '+p.assignee+'</span>';
+    if(p.hours)H+='<span>\u00b7 '+p.hours+'h</span>';
+    H+='<span style="margin-left:auto">'+pmDueChip(p)+'</span>';
+    H+='</div>';
+    H+='<div style="display:flex;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid var(--border)">';
+    H+='<button onclick="openPMForm('+p.id+')" class="btn-ghost" style="flex:1;height:31px;font-size:12px">Edit</button>';
+    H+='<button onclick="togglePM('+p.id+')" class="btn-ghost" style="flex:1;height:31px;font-size:12px">'+(p.active?'Pause':'Activate')+'</button>';
+    H+='<button onclick="deletePM('+p.id+')" class="btn-ghost" style="flex:1;height:31px;font-size:12px;color:var(--bad)">Delete</button>';
+    H+='</div></div>';
+    return H;
+  }).join('');
+}
+
+function openPMForm(id){
+  var p=id?CMMS_PMS.filter(function(x){return x.id===id;})[0]:{code:'',asset:'',asset_code:'',description:'',freq:'',priority:'',assignee:'',hours:'',pm_type:'Preventive',active:true,next_due:''};
+  if(!p)return;
+  var techOpts=['','Abin','Adam','Akshay','Akshaylal','Anupam','Lahcen','Maksym','Praful','Sachin','Sergei','Technicians','Viktor','Vitalii','Yassine','Yehor'].map(function(t){return '<option'+(t===p.assignee?' selected':'')+'>'+t+'</option>';}).join('');
+  var typeOpts=['Preventive','Inspection','Calibration','Food Safety PM'].map(function(t){return '<option'+(t===p.pm_type?' selected':'')+'>'+t+'</option>';}).join('');
+  var prioOpts=['','Low','Medium','High','Highest'].map(function(t){return '<option'+(t===p.priority?' selected':'')+'>'+(t||'\u2014')+'</option>';}).join('');
+  var assetList=(typeof ASSETS!=='undefined'?ASSETS:[]).map(function(a){return '<option value="'+a.n+'|'+a.c+'"'+(a.n===p.asset?' selected':'')+'>'+a.n+' ('+a.c+')</option>';}).join('');
+  function fld(label,inner){return '<div style="margin-bottom:11px"><div style="font-size:11px;color:var(--text-2);margin-bottom:4px">'+label+'</div>'+inner+'</div>';}
+  var ist='width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:10px;color:var(--text);font-size:14px;outline:none;box-sizing:border-box';
+  var H='<div id="pm-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:flex;align-items:flex-end;justify-content:center">';
+  H+='<div style="background:var(--bg);border-top-left-radius:18px;border-top-right-radius:18px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:18px 18px 28px;border:1px solid var(--border)">';
+  H+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div style="font-size:17px;font-weight:700;color:var(--text)">'+(id?'Edit PM':'New PM')+'</div><button onclick="closePMForm()" class="btn-ghost" style="padding:6px 12px;font-size:13px">Close</button></div>';
+  H+=fld('Code',  '<input id="pf-code" value="'+(p.code||'').replace(/"/g,'&quot;')+'" placeholder="e.g. SM301" style="'+ist+'">');
+  H+=fld('Asset', '<select id="pf-asset" style="'+ist+'"><option value="|">\u2014 select asset \u2014</option>'+assetList+'</select>');
+  H+=fld('Description', '<textarea id="pf-desc" rows="2" style="'+ist+';resize:vertical">'+(p.description||'')+'</textarea>');
+  H+=fld('Frequency (e.g. \u201cEvery Friday\u201d, \u201cThe 1st day of every month\u201d, \u201cEvery 3 months on the 1st\u201d)', '<input id="pf-freq" value="'+(p.freq||'').replace(/"/g,'&quot;')+'" oninput="pmFreqPreview()" style="'+ist+'"><div id="pf-freqprev" style="font-size:11px;color:var(--text-3);margin-top:4px"></div>');
+  H+='<div style="display:flex;gap:9px">'+fld('Type','<select id="pf-type" style="'+ist+'">'+typeOpts+'</select>')+fld('Priority','<select id="pf-prio" style="'+ist+'">'+prioOpts+'</select>')+'</div>';
+  H+='<div style="display:flex;gap:9px">'+fld('Assignee','<select id="pf-assignee" style="'+ist+'"><option value=""></option>'+techOpts+'</select>')+fld('Est. hours','<input id="pf-hours" type="number" step="0.05" value="'+(p.hours!=null?p.hours:'')+'" style="'+ist+'">')+'</div>';
+  H+=fld('Next due (auto from frequency if blank)', '<input id="pf-nextdue" type="date" value="'+(p.next_due||'')+'" style="'+ist+'">');
+  H+='<button onclick="savePM('+(id||'')+')" class="btn-primary" style="width:100%;padding:14px;font-size:16px;margin-top:6px">'+(id?'Save changes':'Create PM')+'</button>';
+  H+='</div></div>';
+  var ex=gid('pm-modal'); if(ex)ex.remove();
+  document.body.insertAdjacentHTML('beforeend',H);
+  pmFreqPreview();
+}
+function pmFreqPreview(){var el=gid('pf-freqprev');if(!el)return;var f=gid('pf-freq').value;var p=pmParseFreq(f);if(!f){el.textContent='';return;}if(!p){el.innerHTML='<span style="color:#fbbf24">Unrecognized pattern \u2014 will still save, but won\u2019t auto-schedule.</span>';return;}el.innerHTML='<span style="color:#34d399">\u2713 Next due '+pmNextDueISO(f,new Date())+'</span>';}
+function closePMForm(){var e=gid('pm-modal');if(e)e.remove();}
+function savePM(id){
+  var av=(gid('pf-asset').value||'|').split('|');
+  var freq=gid('pf-freq').value.trim();
+  var nd=gid('pf-nextdue').value||pmNextDueISO(freq,new Date());
+  var rec={code:gid('pf-code').value.trim(),asset:av[0]||'',asset_code:av[1]||'',description:gid('pf-desc').value.trim(),freq:freq,pm_type:gid('pf-type').value,priority:gid('pf-prio').value,assignee:gid('pf-assignee').value,hours:gid('pf-hours').value?parseFloat(gid('pf-hours').value):null,next_due:nd||null,updated_at:new Date().toISOString()};
+  if(!rec.description){alert('Add a description');return;}
+  var path=id?'bbw_pms?id=eq.'+id:'bbw_pms';
+  var method=id?'PATCH':'POST';
+  if(!id)rec.active=true;
+  sbFetch(path,{method:method,body:JSON.stringify(rec),headers:{'Prefer':'return=minimal'}}).then(function(r){
+    if(!r.ok&&r.status!==204){alert('Save failed ('+r.status+')');return;}
+    closePMForm();
+    loadCMMS(true).then(function(){cmmsRenderPMList();});
+  }).catch(function(e){alert('Save failed: '+e.message);});
+}
+function togglePM(id){
+  var p=CMMS_PMS.filter(function(x){return x.id===id;})[0]; if(!p)return;
+  sbFetch('bbw_pms?id=eq.'+id,{method:'PATCH',body:JSON.stringify({active:!p.active}),headers:{'Prefer':'return=minimal'}}).then(function(){p.active=!p.active;cmmsRenderPMList();});
+}
+function deletePM(id){
+  var p=CMMS_PMS.filter(function(x){return x.id===id;})[0]; if(!p)return;
+  if(!confirm('Delete '+(p.code||'this PM')+'? This cannot be undone.'))return;
+  sbFetch('bbw_pms?id=eq.'+id,{method:'DELETE',headers:{'Prefer':'return=minimal'}}).then(function(){CMMS_PMS=CMMS_PMS.filter(function(x){return x.id!==id;});cmmsRenderPMList();});
 }
 
 function renderMore(){
